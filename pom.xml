@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.scheible.testgapanalysis</groupId>
+	<artifactId>test-gap-analysis-parent</artifactId>
+	<version>1.0.0</version>
+
+	<packaging>pom</packaging>
+	<name>com.scheible::test-gap-analysis</name>
+
+	<url>https://github.com/janScheible/test-gap-analysis</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Jan Scheible</name>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>test-gap-analysis</module>
+		<module>test-gap-analysis-maven-plugin</module>
+	</modules>
+</project>

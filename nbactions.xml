@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+	<action>
+		<actionName>CUSTOM-Sortpom</actionName>
+		<displayName>Sortpom</displayName>
+		<goals>
+			<goal>com.github.ekryd.sortpom:sortpom-maven-plugin:sort</goal>
+		</goals>
+		<properties>
+			<sort.keepBlankLines>true</sort.keepBlankLines>
+			<sort.nrOfIndentSpace>-1</sort.nrOfIndentSpace>
+			<sort.createBackupFile>false</sort.createBackupFile>
+		</properties>
+	</action>
+</actions>

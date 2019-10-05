@@ -1,0 +1,23 @@
+<FindBugsFilter>
+	<!-- Path is specified by user, checking therfore impossible. -->
+	<Match>
+		<Class name="com.scheible.testgapanalysis.git.GitHelper" />
+		<Method name="readFromWorkingCopyUtf8" />
+		<Bug pattern="PATH_TRAVERSAL_IN" />
+	</Match>
+	
+	<!-- Usage of e.g. UncheckedIOException is fine. -->
+	<Match>
+		<Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+	</Match>
+	
+	<!-- Nice hint but seems to be too restrictive. -->
+	<Match>
+		<Bug pattern="SLF4J_SIGN_ONLY_FORMAT" />
+	</Match>
+	
+	<!-- Seems to trigger a false positive with Java 11: https://github.com/spotbugs/spotbugs/issues/756. -->
+	<Match>
+		<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+	</Match>
+</FindBugsFilter>

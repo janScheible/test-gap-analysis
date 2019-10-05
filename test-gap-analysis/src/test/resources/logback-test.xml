@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%msg%n</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="com.scheible.testgapanalysis" level="DEBUG" /> 
+
+	<root level="ERROR">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</configuration>
