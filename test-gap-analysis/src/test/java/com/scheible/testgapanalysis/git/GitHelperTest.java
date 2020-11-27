@@ -1,10 +1,10 @@
 package com.scheible.testgapanalysis.git;
 
+import static com.scheible.testgapanalysis.common.Files2.getWorkingDir;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class GitHelperTest {
 
 	@Test
 	public void testRepositoryStatusAndContent() {
-		final RepositoryStatus status = RepositoryStatus.ofWorkingCopyChanges(Optional.empty());
+		final RepositoryStatus status = RepositoryStatus.ofWorkingCopyChanges(getWorkingDir());
 		assertThat(status).isNotNull();
 
 		final Map<String, String> content = status.getOldContents((file) -> true);
@@ -26,10 +26,10 @@ public class GitHelperTest {
 
 	@Test
 	public void testCompareToHead() {
-		final List<String> commitHashes = GitHelper.getCommitHashes(Optional.empty(), 5);
+		final List<String> commitHashes = GitHelper.getCommitHashes(getWorkingDir(), 5);
 		final String commitHash = commitHashes.get(commitHashes.size() - 1);
 
-		final RepositoryStatus status = RepositoryStatus.ofCommitComparedToHead(Optional.empty(), commitHash);
+		final RepositoryStatus status = RepositoryStatus.ofCommitComparedToHead(getWorkingDir(), commitHash);
 
 		assertThat(status.getAddedFiles()).isNotNull();
 		assertThat(status.getChangedFiles()).isNotNull();
@@ -37,11 +37,11 @@ public class GitHelperTest {
 
 	@Test
 	public void testCompareToCommits() {
-		final List<String> commitHashes = GitHelper.getCommitHashes(Optional.empty(), 5);
+		final List<String> commitHashes = GitHelper.getCommitHashes(getWorkingDir(), 5);
 		final String oldCommitHash = commitHashes.get(commitHashes.size() - 1);
 		final String newCommitHash = commitHashes.get(0);
 
-		final RepositoryStatus status = RepositoryStatus.ofCommitsCompared(Optional.empty(), oldCommitHash,
+		final RepositoryStatus status = RepositoryStatus.ofCommitsCompared(getWorkingDir(), oldCommitHash,
 				newCommitHash);
 
 		assertThat(status.getAddedFiles()).isNotNull();

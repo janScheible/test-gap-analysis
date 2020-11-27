@@ -1,5 +1,7 @@
 package com.scheible.testgapanalysis;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +15,8 @@ public class JaCoCoReportCleaner {
 
 	private static final Logger logger = LoggerFactory.getLogger(JaCoCoReportCleaner.class);
 
-	public static void run() {
-		JaCoCoHelper.findJaCoCoFiles().forEach(f -> {
+	public static void run(final File workingDir) {
+		JaCoCoHelper.findJaCoCoFiles(workingDir).forEach(f -> {
 			if (f.delete()) {
 				logger.info("Deleted {}.", f);
 			} else {

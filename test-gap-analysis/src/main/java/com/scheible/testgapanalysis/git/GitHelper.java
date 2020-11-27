@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -41,13 +40,11 @@ public class GitHelper {
 
 	private static final Logger logger = LoggerFactory.getLogger(GitHelper.class);
 
-	static Repository open(final Optional<File> currentDir) throws IOException {
-		return new FileRepositoryBuilder()
-				.findGitDir(currentDir.isPresent() ? currentDir.get() : new File("").getCanonicalFile())
-				.setMustExist(true).build();
+	static Repository open(final File currentDir) throws IOException {
+		return new FileRepositoryBuilder().findGitDir(currentDir).setMustExist(true).build();
 	}
 
-	static Map<String, String> getCommitedContents(final Optional<File> currentDir, final String objectId,
+	static Map<String, String> getCommitedContents(final File currentDir, final String objectId,
 			final Set<String> files) {
 		final Map<String, String> fileLastCommitContentMapping = new HashMap<>();
 
@@ -103,7 +100,7 @@ public class GitHelper {
 		return readUtf8(new File(file));
 	}
 
-	static List<String> getCommitHashes(final Optional<File> currentDir, final int count) {
+	static List<String> getCommitHashes(final File currentDir, final int count) {
 		try (Repository repository = GitHelper.open(currentDir)) {
 			try (Git git = new Git(repository)) {
 				final Iterator<RevCommit> logs = git.log().call().iterator();

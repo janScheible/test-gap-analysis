@@ -45,4 +45,16 @@ public class Files2 {
 			throw new UncheckedIOException(ex);
 		}
 	}
+
+	public static File toCanonical(final File file) {
+		try {
+			return file.getCanonicalFile();
+		} catch (IOException ex) {
+			return file;
+		}
+	}
+
+	public static File getWorkingDir() {
+		return toCanonical(new File("."));
+	}
 }

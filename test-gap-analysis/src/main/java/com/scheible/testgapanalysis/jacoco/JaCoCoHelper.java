@@ -9,7 +9,6 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -82,9 +81,9 @@ public class JaCoCoHelper {
 		}
 	}
 
-	public static Set<File> findJaCoCoFiles() {
+	public static Set<File> findJaCoCoFiles(final File workingDir) {
 		try {
-			final Path searchRoot = Paths.get("./target/site");
+			final Path searchRoot = workingDir.toPath().resolve("./target/site");
 			if (Files.exists(searchRoot)) {
 				return Files.walk(searchRoot).filter(p -> "jacoco.xml".equals(p.getFileName().toString()))
 						.map(Path::toFile).collect(Collectors.toSet());

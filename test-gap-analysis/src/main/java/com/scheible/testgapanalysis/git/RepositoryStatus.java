@@ -21,6 +21,10 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.scheible.testgapanalysis.common.Files2;
 
 /**
  *
@@ -28,7 +32,9 @@ import org.eclipse.jgit.lib.Repository;
  */
 public class RepositoryStatus {
 
-	private final Optional<File> currentDir;
+	private static final Logger logger = LoggerFactory.getLogger(RepositoryStatus.class);
+
+	private final File workTreeDir;
 
 	private final String oldCommitHash;
 	private final Optional<String> newCommitHash;
@@ -36,9 +42,9 @@ public class RepositoryStatus {
 	private final Set<String> addedFiles;
 	private final Set<String> changedFiles;
 
-	public RepositoryStatus(final Optional<File> currentDir, final String oldCommitHash,
-			final Optional<String> newCommitHash, final Set<String> addedFiles, final Set<String> changedFiles) {
-		this.currentDir = currentDir;
+	private RepositoryStatus(final File workTreeDir, final String oldCommitHash, final Optional<String> newCommitHash,
+			final Set<String> addedFiles, final Set<String> changedFiles) {
+		this.workTreeDir = workTreeDir;
 
 		this.oldCommitHash = oldCommitHash;
 		this.newCommitHash = newCommitHash;
@@ -47,14 +53,16 @@ public class RepositoryStatus {
 		this.changedFiles = Collections.unmodifiableSet(changedFiles);
 	}
 
-	public static RepositoryStatus ofWorkingCopyChanges(final Optional<File> currentDir) {
+	public static RepositoryStatus ofWorkingCopyChanges(final File workingDir) {
 		final Set<String> addedFiles = new HashSet<>();
 		final Set<String> changedFiles = new HashSet<>();
 
 		final Ref head;
+		File workTreeDir;
 
 		try {
-			try (Repository repository = GitHelper.open(currentDir)) {
+			try (Repository repository = GitHelper.open(workingDir)) {
+				workTreeDir = repository.getWorkTree();
 				try (Git git = new Git(repository)) {
 					head = repository.exactRef(Constants.HEAD);
 
@@ -73,23 +81,26 @@ public class RepositoryStatus {
 			throw new UncheckedIOException(ex);
 		}
 
-		return new RepositoryStatus(currentDir, head.getObjectId().getName(), Optional.empty(), addedFiles,
+		return filterFiles(workingDir, workTreeDir, head.getObjectId().getName(), Optional.empty(), addedFiles,
 				changedFiles);
 	}
 
-	public static RepositoryStatus ofCommitComparedToHead(final Optional<File> currentDir, final String commitHash) {
-		return ofCommitsCompared(currentDir, commitHash, Constants.HEAD);
+	public static RepositoryStatus ofCommitComparedToHead(final File workingDir, final String commitHash) {
+		return ofCommitsCompared(workingDir, commitHash, Constants.HEAD);
 	}
 
-	public static RepositoryStatus ofCommitsCompared(final Optional<File> currentDir, final String oldObjectId,
+	public static RepositoryStatus ofCommitsCompared(final File workingDir, final String oldObjectId,
 			final String newObjectId) {
 		final Set<String> addedFiles = new HashSet<>();
 		final Set<String> changedFiles = new HashSet<>();
 
 		String resolvedNewObjectId;
+		File workTreeDir;
 
 		try {
-			try (Repository repository = GitHelper.open(currentDir)) {
+			try (Repository repository = GitHelper.open(workingDir)) {
+				workTreeDir = repository.getWorkTree();
+
 				try (Git git = new Git(repository)) {
 					resolvedNewObjectId = Constants.HEAD.equals(newObjectId)
 							? repository.exactRef(Constants.HEAD).getObjectId().getName()
@@ -103,6 +114,7 @@ public class RepositoryStatus {
 						if (entry.getChangeType() == DiffEntry.ChangeType.ADD
 								|| entry.getChangeType() == DiffEntry.ChangeType.COPY) {
 							addedFiles.add(entry.getNewPath());
+
 						} else if (entry.getChangeType() == DiffEntry.ChangeType.MODIFY
 								|| entry.getChangeType() == DiffEntry.ChangeType.RENAME) {
 							changedFiles.add(entry.getNewPath());
@@ -116,12 +128,31 @@ public class RepositoryStatus {
 			throw new UncheckedIOException(ex);
 		}
 
-		return new RepositoryStatus(currentDir, oldObjectId, Optional.of(resolvedNewObjectId), addedFiles,
+		return filterFiles(workingDir, workTreeDir, oldObjectId, Optional.of(resolvedNewObjectId), addedFiles,
 				changedFiles);
 	}
 
+	/**
+	 * Only include files that are in the working dir or in a sub-directory of working dir.
+	 */
+	private static RepositoryStatus filterFiles(final File workingDir, final File workTreeDir,
+			final String oldCommitHash, final Optional<String> newCommitHash, final Set<String> addedFiles,
+			final Set<String> changedFiles) {
+		final String canonicalWorkingDir = Files2.toCanonical(workingDir).getAbsolutePath();
+		final Predicate<String> isInWorkingDirSubDir = file -> appendChildFile(workTreeDir, file).getAbsolutePath()
+				.startsWith(canonicalWorkingDir);
+
+		return new RepositoryStatus(workTreeDir, oldCommitHash, newCommitHash,
+				addedFiles.stream().filter(isInWorkingDirSubDir).collect(Collectors.toSet()),
+				changedFiles.stream().filter(isInWorkingDirSubDir).collect(Collectors.toSet()));
+	}
+
+	private static File appendChildFile(final File parent, final String child) {
+		return new File(parent, child);
+	}
+
 	public Map<String, String> getOldContents(final Predicate<String> fileFilter) {
-		return GitHelper.getCommitedContents(currentDir, oldCommitHash,
+		return GitHelper.getCommitedContents(workTreeDir, oldCommitHash,
 				changedFiles.stream().filter(fileFilter).collect(Collectors.toSet()));
 	}
 
@@ -131,9 +162,12 @@ public class RepositoryStatus {
 					.unmodifiableMap(Stream.concat(addedFiles.stream(), changedFiles.stream()).filter(fileFilter)
 							.collect(Collectors.toMap(Function.identity(), GitHelper::readFromWorkingCopyUtf8)));
 		} else {
-			return GitHelper.getCommitedContents(currentDir, newCommitHash.get(),
-					Collections.unmodifiableSet(Stream.concat(addedFiles.stream(), changedFiles.stream())
-							.filter(fileFilter).collect(Collectors.toSet())));
+			return GitHelper.getCommitedContents(workTreeDir, newCommitHash.get(), Collections
+					.unmodifiableSet(Stream.concat(addedFiles.stream(), changedFiles.stream()).filter(file -> {
+						final boolean includeFile = fileFilter.test(file);
+						logger.debug(" - {}{}", includeFile ? "" : "skipped ", file);
+						return includeFile;
+					}).collect(Collectors.toSet())));
 		}
 	}
 
