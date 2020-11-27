@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author sj
  */
-public class ParsedMethod {
+public class ParsedMethod implements Comparable<ParsedMethod> {
 
 	private final String typeFullyQualifiedName;
 	private final String methodName;
@@ -28,6 +28,15 @@ public class ParsedMethod {
 
 	public String getHash() {
 		return hash;
+	}
+
+	@Override
+	public int compareTo(final ParsedMethod other) {
+		if (typeFullyQualifiedName.equals(other.typeFullyQualifiedName)) {
+			return methodName.compareTo(other.methodName);
+		} else {
+			return typeFullyQualifiedName.compareTo(other.typeFullyQualifiedName);
+		}
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author sj
  */
-public class MethodWithCoverageInfo {
+public class MethodWithCoverageInfo implements Comparable<MethodWithCoverageInfo> {
 
 	private final String typeFullyQualifiedName;
 	private final String methodName;
@@ -29,6 +29,15 @@ public class MethodWithCoverageInfo {
 
 	public int getCoveredInstructionCount() {
 		return coveredInstructionCount;
+	}
+
+	@Override
+	public int compareTo(final MethodWithCoverageInfo other) {
+		if (typeFullyQualifiedName.equals(other.typeFullyQualifiedName)) {
+			return methodName.compareTo(other.methodName);
+		} else {
+			return typeFullyQualifiedName.compareTo(other.typeFullyQualifiedName);
+		}
 	}
 
 	@Override
