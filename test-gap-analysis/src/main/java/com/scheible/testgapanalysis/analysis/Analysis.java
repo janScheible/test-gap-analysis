@@ -23,7 +23,7 @@ public class Analysis {
 	private static final Logger logger = LoggerFactory.getLogger(Analysis.class);
 
 	private static final Predicate<String> NON_TEST_JAVA_FILE = f -> f.endsWith(".java")
-			&& !f.startsWith("src/test/java");
+			&& !f.startsWith("src/test/java") && !f.contains("/src/test/java/");
 	private static final Predicate<ParsedMethod> NON_GETTER_OR_SETTER_METHOD = pm -> !pm.getMethodName()
 			.startsWith("get") && !pm.getMethodName().startsWith("set");
 
