@@ -21,7 +21,7 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<test-gap-analysis.version>1.0.0</test-gap-analysis.version>
+		<test-gap-analysis.version>1.1.0</test-gap-analysis.version>
 	</properties>
 
 	<dependencies>
