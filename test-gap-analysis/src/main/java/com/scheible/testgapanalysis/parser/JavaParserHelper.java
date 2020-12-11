@@ -23,9 +23,14 @@ public class JavaParserHelper {
 		compilationUnit.accept(new VoidVisitorAdapter<Void>() {
 			@Override
 			public void visit(final ClassOrInterfaceDeclaration n, final Void arg) {
-				n.getMethods()
-						.forEach(m -> result.add(new ParsedMethod(n.getFullyQualifiedName().orElse("") + dollaryName(n),
-								m.getNameAsString(), m.getBody().map(b -> Sha256.hash(b.toString())).orElse("-"))));
+				if (!n.isInterface()) {
+					n.getMethods().forEach(m -> {
+						if (!m.isAbstract()) {
+							result.add(new ParsedMethod(n.getFullyQualifiedName().orElse("") + dollaryName(n),
+									m.getNameAsString(), m.getBody().map(b -> Sha256.hash(b.toString())).orElse("-")));
+						}
+					});
+				}
 
 				super.visit(n, arg);
 			}
