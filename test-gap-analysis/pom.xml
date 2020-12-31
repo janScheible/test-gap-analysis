@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.scheible.testgapanalysis</groupId>
 		<artifactId>test-gap-analysis-parent</artifactId>
-		<version>1.1.1</version>
+		<version>1.1.2</version>
 	</parent>
 
 	<groupId>com.scheible.testgapanalysis</groupId>
 	<artifactId>test-gap-analysis</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 
 	<packaging>jar</packaging>
 	<name>com.scheible::test-gap-analysis library</name>
@@ -27,7 +27,7 @@
 		<sb-contrib.version>7.4.6</sb-contrib.version>
 		<slf4j.bug-pattern.version>1.5.0</slf4j.bug-pattern.version>
 
-		<jgit.version>5.5.0.201909110433-r</jgit.version>
+		<jgit.version>5.10.0.202012080955-r</jgit.version>
 		<javaparser.version>3.14.14</javaparser.version>
 
 		<!-- NOTE Dependency versions alligned with Spring Boot 2.1.7.RELEASE (as well spring-boot-maven-plugin version). -->
