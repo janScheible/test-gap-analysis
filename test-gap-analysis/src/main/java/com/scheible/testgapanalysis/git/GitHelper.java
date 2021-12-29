@@ -1,7 +1,5 @@
 package com.scheible.testgapanalysis.git;
 
-import static com.scheible.testgapanalysis.common.Files2.readUtf8;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -94,10 +92,6 @@ public class GitHelper {
 
 			return treeParser;
 		}
-	}
-
-	static String readFromWorkingCopyUtf8(final String file) {
-		return readUtf8(new File(file));
 	}
 
 	static List<String> getCommitHashes(final File currentDir, final int count) {

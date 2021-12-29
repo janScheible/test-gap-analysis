@@ -3,13 +3,14 @@ package com.scheible.testgapanalysis.git;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -160,7 +161,8 @@ public class RepositoryStatus {
 		if (!newCommitHash.isPresent()) {
 			return Collections
 					.unmodifiableMap(Stream.concat(addedFiles.stream(), changedFiles.stream()).filter(fileFilter)
-							.collect(Collectors.toMap(Function.identity(), GitHelper::readFromWorkingCopyUtf8)));
+							.map(file -> new SimpleImmutableEntry<>(file, appendChildFile(workTreeDir, file)))
+							.collect(Collectors.toMap(Entry::getKey, entry -> Files2.readUtf8(entry.getValue()))));
 		} else {
 			return GitHelper.getCommitedContents(workTreeDir, newCommitHash.get(), Collections
 					.unmodifiableSet(Stream.concat(addedFiles.stream(), changedFiles.stream()).filter(file -> {

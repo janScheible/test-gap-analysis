@@ -1,15 +1,10 @@
 <FindBugsFilter>
 	<!-- Path is specified by user, checking therfore impossible. -->
 	<Match>
-		<Class name="com.scheible.testgapanalysis.git.GitHelper" />
-		<Method name="readFromWorkingCopyUtf8" />
-		<Bug pattern="PATH_TRAVERSAL_IN" />
-	</Match>
-	<Match>
 		<Class name="com.scheible.testgapanalysis.git.RepositoryStatus" />
 		<Method name="appendChildFile" />
 		<Bug pattern="PATH_TRAVERSAL_IN" />
-	</Match>	
+	</Match>
 	
 	<!-- Usage of e.g. UncheckedIOException is fine. -->
 	<Match>
