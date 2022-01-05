@@ -36,7 +36,7 @@ public class AnalysisTest {
 		doAnswer((Answer<Map<String, String>>) (InvocationOnMock iom) -> {
 			final Map<String, String> fileContentMapping = new HashMap<>();
 			fileContentMapping.put("Changed.java",
-					"package test; public class Changed { private void doAction() { /* :-( */ }}");
+					"package test; public class Changed { private void doAction() { \"\".trim(); }}");
 			return fileContentMapping;
 		}).when(repositoryStatus).getOldContents(any());
 
@@ -44,7 +44,7 @@ public class AnalysisTest {
 			final Map<String, String> fileContentMapping = new HashMap<>();
 			fileContentMapping.put("Added.java", "package test; public class Added { private void doIt() {}}");
 			fileContentMapping.put("Changed.java",
-					"package test; public class Changed { private void doAction() { /* :-) */ }}");
+					"package test; public class Changed { private void doAction() { \"\".size(); }}");
 			return fileContentMapping;
 		}).when(repositoryStatus).getNewContents(any());
 
@@ -55,7 +55,7 @@ public class AnalysisTest {
 		assertThat(result).isPresent().get()
 				.satisfies(ar -> assertThat(ar.getUncoveredNewOrChangedMethods()).hasSize(2));
 		assertThat(result.get().getUncoveredNewOrChangedMethods().stream()
-				.map(pm -> pm.getTypeFullyQualifiedName() + "#" + pm.getMethodName()))
-						.containsExactly("test.Added#doIt", "test.Changed#doAction");
+				.map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName())).containsOnly("test.Added#doIt",
+						"test.Changed#doAction");
 	}
 }

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.scheible.testgapanalysis.git.RepositoryStatus;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.JavaParserHelper;
-import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
  *
@@ -25,15 +24,15 @@ public class Analysis {
 
 	private static final Predicate<String> NON_TEST_JAVA_FILE = f -> f.endsWith(".java")
 			&& !f.startsWith("src/test/java/") && !f.contains("/src/test/java/");
-	private static final Predicate<ParsedMethod> NON_GETTER_OR_SETTER_METHOD = pm -> !pm.getMethodName()
-			.startsWith("get") && !pm.getMethodName().startsWith("set");
+	private static final Predicate<MethodCompareWrapper> NON_GETTER_OR_SETTER_METHOD = pm -> !pm.getName()
+			.startsWith("get") && !pm.getName().startsWith("set");
 
 	public static Optional<AnalysisResult> perform(final RepositoryStatus status,
 			final Set<MethodWithCoverageInfo> coverageInfo) {
 		final Map<String, String> newOrChangedFilesWithContent = status.getNewContents(NON_TEST_JAVA_FILE);
-		final Set<ParsedMethod> newOrChangedMethods = newOrChangedFilesWithContent.entrySet().stream()
-				.flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream()).filter(NON_GETTER_OR_SETTER_METHOD)
-				.collect(Collectors.toSet());
+		final Set<MethodCompareWrapper> newOrChangedMethods = newOrChangedFilesWithContent.entrySet().stream()
+				.flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
+				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		if (newOrChangedFilesWithContent.isEmpty()) {
 			logger.info("No new or changed files!");
@@ -42,11 +41,11 @@ public class Analysis {
 
 		logger.info("Found {} new or changed Java files.", newOrChangedFilesWithContent.size());
 
-		final Set<ParsedMethod> changedFileLastCommitMethods = status.getOldContents(NON_TEST_JAVA_FILE).entrySet()
-				.stream().flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream())
-				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
+		final Set<MethodCompareWrapper> changedFileLastCommitMethods = status.getOldContents(NON_TEST_JAVA_FILE)
+				.entrySet().stream().flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream())
+				.map(MethodCompareWrapper::new).filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
-		final Set<ParsedMethod> unchangedMethods = new HashSet<>(newOrChangedMethods);
+		final Set<MethodCompareWrapper> unchangedMethods = new HashSet<>(newOrChangedMethods);
 		unchangedMethods.retainAll(changedFileLastCommitMethods);
 
 		newOrChangedMethods.removeAll(unchangedMethods);
@@ -55,7 +54,7 @@ public class Analysis {
 				.map(ci -> ci.getTypeFullyQualifiedName() + "#" + ci.getMethodName()).collect(Collectors.toSet());
 
 		logger.info("New or changed methods (excluding setter and getter):");
-		newOrChangedMethods.stream().sorted().map(ParsedMethod::toString).forEach(m -> logger.info(" - {}", m));
+		newOrChangedMethods.stream().sorted().map(MethodCompareWrapper::toString).forEach(m -> logger.info(" - {}", m));
 
 		logger.info("Covered methods:");
 		coverageInfo.stream().sorted().map(MethodWithCoverageInfo::toString)
@@ -64,17 +63,19 @@ public class Analysis {
 			logger.info(" - ...");
 		}
 
-		final Set<ParsedMethod> uncoveredNewOrChangedMethods = newOrChangedMethods.stream()
-				.filter(m -> !coveredMethods.contains(m.getTypeFullyQualifiedName() + "#" + m.getMethodName()))
+		final Set<MethodCompareWrapper> uncoveredNewOrChangedMethods = newOrChangedMethods.stream()
+				.filter(m -> !coveredMethods.contains(m.getTopLevelTypeFqn() + "#" + m.getName()))
 				.collect(Collectors.toSet());
 		logger.info("Uncovered new or changed methods (excluding setter and getter):");
-		uncoveredNewOrChangedMethods.stream().sorted()
-				.map(pm -> pm.getTypeFullyQualifiedName() + "#" + pm.getMethodName())
+		uncoveredNewOrChangedMethods.stream().sorted().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName())
 				.forEach(m -> logger.info(" - {}", m));
 		if (uncoveredNewOrChangedMethods.isEmpty()) {
 			logger.info("none :-)");
 		}
 
-		return Optional.of(new AnalysisResult(newOrChangedMethods, coverageInfo, uncoveredNewOrChangedMethods));
+		return Optional.of(new AnalysisResult(
+				newOrChangedMethods.stream().map(MethodCompareWrapper::getParsedMethod).collect(Collectors.toSet()),
+				coverageInfo, uncoveredNewOrChangedMethods.stream().map(MethodCompareWrapper::getParsedMethod)
+						.collect(Collectors.toSet())));
 	}
 }

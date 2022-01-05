@@ -1,42 +1,76 @@
 package com.scheible.testgapanalysis.parser;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
  * @author sj
  */
-public class ParsedMethod implements Comparable<ParsedMethod> {
+public class ParsedMethod {
 
-	private final String typeFullyQualifiedName;
-	private final String methodName;
-	private final String hash;
-
-	public ParsedMethod(final String typeFullyQualifiedName, final String methodName, final String hash) {
-		this.typeFullyQualifiedName = typeFullyQualifiedName;
-		this.methodName = methodName;
-		this.hash = hash;
+	public enum MethodType {
+		INITIALIZER, STATIC_INITIALIZER, CONSTRUCTOR, METHOD, STATIC_METHOD, LAMBDA_METHOD;
 	}
 
-	public String getTypeFullyQualifiedName() {
-		return typeFullyQualifiedName;
+	private final MethodType methodType;
+	private final String topLevelTypeFqn;
+	private final List<String> scope;
+	private final String name;
+	private final String relevantCode;
+	private final int firstCodeLine;
+	private final int codeColumn;
+	private final List<String> argumentTypes;
+
+	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
+			final String name, final String relevantCode, final int firstCodeLine, final int codeColumn) {
+		this(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, codeColumn, null);
 	}
 
-	public String getMethodName() {
-		return methodName;
+	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
+			final String name, final String relevantCode, final int firstCodeLine, final int codeColumn,
+			final List<String> argumentTypes) {
+		this.methodType = methodType;
+		this.topLevelTypeFqn = topLevelTypeFqn;
+		this.scope = scope;
+		this.name = name;
+		this.relevantCode = relevantCode;
+		this.firstCodeLine = firstCodeLine;
+		this.codeColumn = codeColumn;
+		this.argumentTypes = argumentTypes;
 	}
 
-	public String getHash() {
-		return hash;
+	public MethodType getMethodType() {
+		return methodType;
 	}
 
-	@Override
-	public int compareTo(final ParsedMethod other) {
-		if (typeFullyQualifiedName.equals(other.typeFullyQualifiedName)) {
-			return methodName.compareTo(other.methodName);
-		} else {
-			return typeFullyQualifiedName.compareTo(other.typeFullyQualifiedName);
-		}
+	public String getTopLevelTypeFqn() {
+		return topLevelTypeFqn;
+	}
+
+	public List<String> getScope() {
+		return scope;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getRelevantCode() {
+		return relevantCode;
+	}
+
+	public int getFirstCodeLine() {
+		return firstCodeLine;
+	}
+
+	public int getCodeColumn() {
+		return codeColumn;
+	}
+
+	public Optional<List<String>> getArgumentTypes() {
+		return Optional.ofNullable(argumentTypes);
 	}
 
 	@Override
@@ -45,8 +79,11 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
 			return true;
 		} else if (obj instanceof ParsedMethod) {
 			final ParsedMethod other = (ParsedMethod) obj;
-			return Objects.equals(this.typeFullyQualifiedName, other.typeFullyQualifiedName)
-					&& Objects.equals(this.methodName, other.methodName) && Objects.equals(this.hash, other.hash);
+			return Objects.equals(methodType, other.methodType)
+					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn) && Objects.equals(scope, other.scope)
+					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
+					&& Objects.equals(firstCodeLine, other.firstCodeLine)
+					&& Objects.equals(argumentTypes, other.argumentTypes);
 		} else {
 			return false;
 		}
@@ -54,11 +91,13 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.typeFullyQualifiedName, this.methodName, this.hash);
+		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, argumentTypes);
 	}
 
 	@Override
 	public String toString() {
-		return typeFullyQualifiedName + "#" + methodName + "@" + hash;
+		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
+				+ "', scope='" + scope + "', name='" + name + "', firstCodeLine=" + firstCodeLine
+				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
 	}
 }
