@@ -10,9 +10,11 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -68,10 +70,14 @@ public class JaCoCoHelper {
 				final int coveredInstructionCount = Integer
 						.parseInt(node.getAttributes().getNamedItem("covered").getNodeValue());
 				final String methodName = node.getParentNode().getAttributes().getNamedItem("name").getNodeValue();
+				final String methodDescription = node.getParentNode().getAttributes().getNamedItem("desc")
+						.getNodeValue();
+				final int methodLine = Integer
+						.parseInt(node.getParentNode().getAttributes().getNamedItem("line").getNodeValue());
 				final String className = node.getParentNode().getParentNode().getAttributes().getNamedItem("name")
 						.getNodeValue();
 
-				result.add(new MethodWithCoverageInfo(className.replaceAll(Pattern.quote("/"), "."), methodName,
+				result.add(new MethodWithCoverageInfo(className, methodName, methodDescription, methodLine,
 						coveredInstructionCount));
 			}
 
@@ -79,6 +85,26 @@ public class JaCoCoHelper {
 		} catch (final ParserConfigurationException | IOException | SAXException | XPathExpressionException ex) {
 			throw new IllegalStateException(ex);
 		}
+	}
+
+	/**
+	 * Reads multiple JaCoCo reports that could contain coverage inforamtion for the same methods (e.g. coverage
+	 * report for unit and integration tests). This methods takes care of merging multiple entries for the same
+	 * method.
+	 */
+	public static Set<MethodWithCoverageInfo> getMethodCoverage(final Set<File> reportFiles) {
+		final Map<String, Set<MethodWithCoverageInfo>> methods = new HashMap<>();
+
+		for (final File reportFile : reportFiles) {
+			for (final MethodWithCoverageInfo method : JaCoCoHelper.getMethodCoverage(reportFile)) {
+				final String key = method.getClassName() + method.getName() + method.getDescription()
+						+ method.getLine();
+				methods.computeIfAbsent(key, k -> new HashSet<>()).add(method);
+			}
+		}
+
+		return methods.entrySet().stream().map(Entry::getValue).map(MethodWithCoverageInfo::merge)
+				.collect(Collectors.toSet());
 	}
 
 	public static Set<File> findJaCoCoFiles(final File workingDir) {

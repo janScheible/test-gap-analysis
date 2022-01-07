@@ -58,8 +58,7 @@ public class JavaParserHelper {
 					final Range range = node.getRange().get();
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 					final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
-							.map(Type::asString).map(t -> t.contains(".") ? t.substring(t.lastIndexOf('.') + 1) : t)
-							.collect(Collectors.toList());
+							.map(Type::asString).collect(Collectors.toList());
 
 					result.add(new ParsedMethod(MethodType.CONSTRUCTOR, getTopLevelFqn(node), getScope(node), "<init>",
 							relevantCode, getFirstCodeLine(node), range.begin.column, argumentTypes));

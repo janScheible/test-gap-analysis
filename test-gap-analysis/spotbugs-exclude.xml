@@ -5,6 +5,18 @@
 		<Method name="appendChildFile" />
 		<Bug pattern="PATH_TRAVERSAL_IN" />
 	</Match>
+	<Match>
+		<Class name="com.scheible.testgapanalysis.DebugCoverageResolution" />
+		<Method name="parseMethods" />
+		<Bug pattern="PATH_TRAVERSAL_IN" />
+	</Match>	
+	
+	<!-- Original JacoCo information should be preserved whilst a parsed representation for comparison is needed. -->
+	<Match>
+		<Class name="com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo" />
+		<Method name="getLambdaIndex" />
+		<Bug pattern="STT_STRING_PARSING_A_FIELD" />
+	</Match>
 	
 	<!-- Usage of e.g. UncheckedIOException is fine. -->
 	<Match>

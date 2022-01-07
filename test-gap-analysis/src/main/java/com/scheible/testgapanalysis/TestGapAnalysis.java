@@ -27,8 +27,7 @@ public class TestGapAnalysis {
 				.orElseGet(() -> "working copy changes with the repository head."));
 
 		final Set<File> jaCoCoFiles = JaCoCoHelper.findJaCoCoFiles(workingDir);
-		final Set<MethodWithCoverageInfo> coverageInfo = jaCoCoFiles.stream()
-				.flatMap(f -> JaCoCoHelper.getMethodCoverage(f).stream()).collect(Collectors.toSet());
+		final Set<MethodWithCoverageInfo> coverageInfo = JaCoCoHelper.getMethodCoverage(jaCoCoFiles);
 		if (coverageInfo.isEmpty()) {
 			logger.info("No coverage info available!");
 			return;

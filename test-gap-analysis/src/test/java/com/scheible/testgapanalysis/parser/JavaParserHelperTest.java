@@ -2,19 +2,17 @@ package com.scheible.testgapanalysis.parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
+import com.scheible.testgapanalysis.common.Files2;
 
 /**
  *
@@ -65,25 +63,21 @@ public class JavaParserHelperTest {
 
 	@Test
 	public void testCoverageTestClassMethodParsing() throws IOException {
-		final String code = readCoverageTestClass();
-
-		final List<ParsedMethod> methods = JavaParserHelper.getMethods(code).stream()
-				.sorted(((Comparator<ParsedMethod>) (a, b) -> a.getMethodType().compareTo(b.getMethodType()))
-						.thenComparing((a, b) -> Integer.compare(a.getFirstCodeLine(), b.getFirstCodeLine())))
-				.collect(Collectors.toList());
+		final Set<ParsedMethod> methods = JavaParserHelper
+				.getMethods(Files2.readUtf8(JavaParserHelper.class, "CoverageTestClass.java"));
 
 		assertThat(methods).extracting(ParsedMethod::getTopLevelTypeFqn)
 				.containsOnly("com.scheible.testgapanalysis._test.CoverageTestClass");
 
-		final List<ParsedMethod> constructors = filter(methods, MethodType.CONSTRUCTOR);
+		final List<ParsedMethod> constructors = filter(methods, ParsedMethod::isConstructor);
 		assertThat(constructors.stream().map(JavaParserHelperTest::toMethodWithLine))
 				.containsOnly(new MethodWithLine("<init>", 36), new MethodWithLine("<init>", 43));
 
-		final List<ParsedMethod> initializers = filter(methods, MethodType.INITIALIZER);
+		final List<ParsedMethod> initializers = filter(methods, ParsedMethod::isInitializer);
 		assertThat(initializers.stream().map(JavaParserHelperTest::toMethodWithLine))
 				.containsOnly(new MethodWithLine("<initbl>", 26));
 
-		final List<ParsedMethod> lambdas = filter(methods, MethodType.LAMBDA_METHOD);
+		final List<ParsedMethod> lambdas = filter(methods, ParsedMethod::isLambdaMethod);
 		assertThat(lambdas.stream().map(JavaParserHelperTest::toMethodWithLine)).containsOnly(
 				new MethodWithLine("lambda", 30), new MethodWithLine("doItLambda", "lambda", 52),
 				new MethodWithLine("doItRunanble.Runnable.run", "lambda", 70),
@@ -92,18 +86,18 @@ public class JavaParserHelperTest {
 				new MethodWithLine("doItMultipleLamdaSingleLineMultiLine", "lambda", 88),
 				new MethodWithLine("doItMultipleLamdaSingleLineMultiLine", "lambda", 89));
 
-		final List<ParsedMethod> instanceMethods = filter(methods, MethodType.METHOD);
+		final List<ParsedMethod> instanceMethods = filter(methods, ParsedMethod::isMethod);
 		assertThat(instanceMethods.stream().map(JavaParserHelperTest::toMethodWithLine)).containsOnly(
 				new MethodWithLine("doIt", 48), new MethodWithLine("doItLambda", 52), new MethodWithLine("execute", 58),
 				new MethodWithLine("doItRunanble", 65), new MethodWithLine("doItRunanble.Runnable", "run", 70),
 				new MethodWithLine("doItMultipleLamdaSingleLine", 83),
 				new MethodWithLine("doItMultipleLamdaSingleLineMultiLine", 87));
 
-		final List<ParsedMethod> staticInitializers = filter(methods, MethodType.STATIC_INITIALIZER);
+		final List<ParsedMethod> staticInitializers = filter(methods, ParsedMethod::isStaticInitializer);
 		assertThat(staticInitializers.stream().map(JavaParserHelperTest::toMethodWithLine))
 				.containsOnly(new MethodWithLine("<clinit>", 22));
 
-		final List<ParsedMethod> staticMethods = filter(methods, MethodType.STATIC_METHOD);
+		final List<ParsedMethod> staticMethods = filter(methods, ParsedMethod::isStaticMethod);
 		assertThat(staticMethods.stream().map(JavaParserHelperTest::toMethodWithLine))
 				.containsOnly(new MethodWithLine("staticMethod", 95));
 	}
@@ -132,19 +126,13 @@ public class JavaParserHelperTest {
 						+ "}");
 	}
 
-	private static List<ParsedMethod> filter(final List<ParsedMethod> units, final MethodType methodType) {
-		return units.stream().filter(u -> u.getMethodType() == methodType).collect(Collectors.toList());
+	private static List<ParsedMethod> filter(final Collection<ParsedMethod> units,
+			final Predicate<ParsedMethod> predicate) {
+		return units.stream().filter(predicate).collect(Collectors.toList());
 	}
 
 	private static MethodWithLine toMethodWithLine(final ParsedMethod method) {
 		return new MethodWithLine(method.getScope().stream().collect(Collectors.joining(".")), method.getName(),
 				method.getFirstCodeLine());
-	}
-
-	private static String readCoverageTestClass() throws IOException {
-		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(
-				JavaParserHelper.class.getResourceAsStream("CoverageTestClass.java"), StandardCharsets.UTF_8))) {
-			return buffer.lines().collect(Collectors.joining("\n"));
-		}
 	}
 }

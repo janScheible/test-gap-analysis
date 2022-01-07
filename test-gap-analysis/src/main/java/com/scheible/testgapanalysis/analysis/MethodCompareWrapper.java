@@ -1,6 +1,8 @@
 package com.scheible.testgapanalysis.analysis;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
@@ -22,12 +24,8 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 		return method;
 	}
 
-	public String getName() {
-		return method.getName();
-	}
-
-	public String getTopLevelTypeFqn() {
-		return method.getTopLevelTypeFqn();
+	public static Set<ParsedMethod> unwrap(final Set<MethodCompareWrapper> methodWrappers) {
+		return methodWrappers.stream().map(MethodCompareWrapper::getParsedMethod).collect(Collectors.toSet());
 	}
 
 	@Override

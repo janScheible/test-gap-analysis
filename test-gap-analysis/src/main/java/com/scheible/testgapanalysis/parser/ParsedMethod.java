@@ -45,12 +45,40 @@ public class ParsedMethod {
 		return methodType;
 	}
 
+	public boolean isInitializer() {
+		return methodType == MethodType.INITIALIZER;
+	}
+
+	public boolean isStaticInitializer() {
+		return methodType == MethodType.STATIC_INITIALIZER;
+	}
+
+	public boolean isConstructor() {
+		return methodType == MethodType.CONSTRUCTOR;
+	}
+
+	public boolean isMethod() {
+		return methodType == MethodType.METHOD;
+	}
+
+	public boolean isStaticMethod() {
+		return methodType == MethodType.STATIC_METHOD;
+	}
+
+	public boolean isLambdaMethod() {
+		return methodType == MethodType.LAMBDA_METHOD;
+	}
+
 	public String getTopLevelTypeFqn() {
 		return topLevelTypeFqn;
 	}
 
 	public List<String> getScope() {
 		return scope;
+	}
+
+	public long getLevel() {
+		return Math.max(0, scope.size() - 1);
 	}
 
 	public String getName() {
@@ -83,6 +111,7 @@ public class ParsedMethod {
 					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn) && Objects.equals(scope, other.scope)
 					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
 					&& Objects.equals(firstCodeLine, other.firstCodeLine)
+					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes);
 		} else {
 			return false;
@@ -91,13 +120,14 @@ public class ParsedMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, argumentTypes);
+		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, codeColumn,
+				argumentTypes);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
-				+ "', scope='" + scope + "', name='" + name + "', firstCodeLine=" + firstCodeLine
-				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
+				+ "', scope='" + scope + "', name='" + name + "', firstCodeLine=" + firstCodeLine + ", codeColumn="
+				+ codeColumn + (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
 	}
 }

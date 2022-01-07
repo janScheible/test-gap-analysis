@@ -8,7 +8,7 @@ import com.scheible.testgapanalysis.ExternalFunctionalities.SaxParser;
  *
  * @author sj
  */
-@SubModule(uses = {DomParser.class, SaxParser.class})
+@SubModule(includeSubPackages = false, uses = {DomParser.class, SaxParser.class})
 public class JaCoCoSubModule {
 
 }

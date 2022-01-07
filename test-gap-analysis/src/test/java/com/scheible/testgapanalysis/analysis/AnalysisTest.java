@@ -49,13 +49,11 @@ public class AnalysisTest {
 		}).when(repositoryStatus).getNewContents(any());
 
 		final Set<MethodWithCoverageInfo> coverageInfo = new HashSet<>(
-				Arrays.asList(new MethodWithCoverageInfo("test.Changed", "covered", 1)));
+				Arrays.asList(new MethodWithCoverageInfo("test.Added", "doIt", "", 1, 1),
+						new MethodWithCoverageInfo("test.Changed", "covered", "", 1, 0)));
 
 		final Optional<AnalysisResult> result = Analysis.perform(repositoryStatus, coverageInfo);
-		assertThat(result).isPresent().get()
-				.satisfies(ar -> assertThat(ar.getUncoveredNewOrChangedMethods()).hasSize(2));
 		assertThat(result.get().getUncoveredNewOrChangedMethods().stream()
-				.map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName())).containsOnly("test.Added#doIt",
-						"test.Changed#doAction");
+				.map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName())).containsOnly("test.Changed#doAction");
 	}
 }

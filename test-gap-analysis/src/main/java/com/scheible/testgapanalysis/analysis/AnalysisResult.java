@@ -14,13 +14,13 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
 public class AnalysisResult {
 
 	private final Set<ParsedMethod> newOrChangedMethods;
-	private final Set<MethodWithCoverageInfo> coveredMethods;
+	private final Set<MethodWithCoverageInfo> coverageInfo;
 	private final Set<ParsedMethod> uncoveredNewOrChangedMethods;
 
-	public AnalysisResult(final Set<ParsedMethod> newOrChangedMethods, final Set<MethodWithCoverageInfo> coveredMethods,
+	public AnalysisResult(final Set<ParsedMethod> newOrChangedMethods, final Set<MethodWithCoverageInfo> coverageInfo,
 			final Set<ParsedMethod> uncoveredNewOrChangedMethods) {
 		this.newOrChangedMethods = unmodifiableSet(newOrChangedMethods);
-		this.coveredMethods = unmodifiableSet(coveredMethods);
+		this.coverageInfo = unmodifiableSet(coverageInfo);
 		this.uncoveredNewOrChangedMethods = unmodifiableSet(uncoveredNewOrChangedMethods);
 	}
 
@@ -28,8 +28,8 @@ public class AnalysisResult {
 		return newOrChangedMethods;
 	}
 
-	public Set<MethodWithCoverageInfo> getCoveredMethods() {
-		return coveredMethods;
+	public Set<MethodWithCoverageInfo> getCoverageInfo() {
+		return coverageInfo;
 	}
 
 	public Set<ParsedMethod> getUncoveredNewOrChangedMethods() {
