@@ -60,8 +60,8 @@ For example the method
 
 ```java
 public String doIt(String arg1, final boolean isDebugMode) {
-	// trim the string or just be happy
-	return Optional.ofNullable(arg1).map(a -> /* make it short */ a.trim()).orElse(":-)");
+    // trim the string or just be happy
+    return Optional.ofNullable(arg1).map(a -> /* make it short */ a.trim()).orElse(":-)");
 }
 ```
 
@@ -72,8 +72,8 @@ After masking the code of the method looks like this:
 
 ```
 public String doIt(String arg1, final boolean isDebugMode) {
-	###################################
-	return Optional.ofNullable(arg1).map(#################################).orElse(":-)");
+    ###################################
+    return Optional.ofNullable(arg1).map(#################################).orElse(":-)");
 }
 ```
 
