@@ -1,25 +1,28 @@
 package com.scheible.testgapanalysis.maven;
 
-import com.scheible.testgapanalysis.JaCoCoReportCleaner;
 import java.io.File;
-import org.apache.maven.plugin.AbstractMojo;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  *
  * @author sj
  */
 @Mojo(name = "clean-jacoco-reports", threadSafe = true, requiresProject = false)
-public class JaCoCoReportCleanerMojo extends AbstractMojo {
+public class JaCoCoReportCleanerMojo extends AbstractTestGapMojo {
 
-	@Parameter(defaultValue = "${project.basedir}")
-	private File outputDirectory;
-	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		JaCoCoReportCleaner.run(outputDirectory);
+		getLog().info(String.format("Deleting all JaCoCo reports in: %s", buildDir));
+
+		for (final File file : findRelevantJaCoCoReportFiles()) {
+			if (file.delete()) {
+				getLog().info(String.format("Deleted %s.", file));
+			} else {
+				getLog().info(String.format("Failed to delete %s!", file));
+			}
+		}
 	}
 }

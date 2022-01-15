@@ -9,13 +9,14 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -107,17 +108,19 @@ public class JaCoCoHelper {
 				.collect(Collectors.toSet());
 	}
 
-	public static Set<File> findJaCoCoFiles(final File workingDir) {
+	public static Set<File> findJaCoCoReportFiles(final File baseDir, final File... excludeDirs) {
+		final Set<Path> excludeDirsAsPaths = Stream.of(excludeDirs).map(File::toPath).collect(Collectors.toSet());
+		final Predicate<Path> isNotChildOfExcludeDir = getIsNotChildOfSubDirsPredicate(excludeDirsAsPaths);
+
 		try {
-			final Path searchRoot = workingDir.toPath().resolve("./target/site");
-			if (Files.exists(searchRoot)) {
-				return Files.walk(searchRoot).filter(p -> "jacoco.xml".equals(p.getFileName().toString()))
-						.map(Path::toFile).collect(Collectors.toSet());
-			} else {
-				return Collections.emptySet();
-			}
+			return Files.walk(baseDir.toPath()).filter(p -> "jacoco.xml".equals(p.getFileName().toString()))
+					.filter(isNotChildOfExcludeDir).map(Path::toFile).collect(Collectors.toSet());
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}
+	}
+
+	static Predicate<Path> getIsNotChildOfSubDirsPredicate(final Set<Path> subDirs) {
+		return jaCoCoReport -> subDirs.stream().filter(excludeDir -> jaCoCoReport.startsWith(excludeDir)).count() == 0;
 	}
 }

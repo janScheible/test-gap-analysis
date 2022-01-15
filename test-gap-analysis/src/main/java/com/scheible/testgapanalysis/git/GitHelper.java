@@ -39,7 +39,7 @@ public class GitHelper {
 	private static final Logger logger = LoggerFactory.getLogger(GitHelper.class);
 
 	static Repository open(final File currentDir) throws IOException {
-		return new FileRepositoryBuilder().findGitDir(currentDir).setMustExist(true).build();
+		return new FileRepositoryBuilder().findGitDir(currentDir.getAbsoluteFile()).setMustExist(true).build();
 	}
 
 	static Map<String, String> getCommitedContents(final File currentDir, final String objectId,

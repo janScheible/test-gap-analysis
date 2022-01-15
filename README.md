@@ -51,7 +51,7 @@ In case of changed files the contents of the previous revision and the current o
 All files of the change set are then parsed for methods in the second step.
 Methods are (static) methods, (static) initializers, constructors and lambda methods.
 Methods can be nested.
-The code of the inner methods shouldn't be considered as code of the outer messages.
+The code of the inner methods shouldn't be considered as code of the outer methods.
 Therefore the code of the inner methods is masked.
 The same masking applies to comments.
 Comment changes shouldn't be treated as as code change as well.
@@ -60,12 +60,12 @@ For example the method
 
 ```java
 public String doIt(String arg1, final boolean isDebugMode) {
-	// trim the string or jsut be happy
+	// trim the string or just be happy
 	return Optional.ofNullable(arg1).map(a -> /* make it short */ a.trim()).orElse(":-)");
 }
 ```
 
-contains a lambda method.
+contains a lambda method and comments.
 Changes in the lambda method shouldn't be treated as changes in the `doIt(...)` method but as changes of the lambda method itself.
 
 After masking the code of the method looks like this:
@@ -97,7 +97,7 @@ All unchanged methods are filtered out.
 The coverage information is resolved on a per top level type base.
 
 In a first preparation step it is checked if an initializer is among the to be resolved parsed methods.
-if yes also all constructors are added to the set of methods that will be resolved.
+If yes also all constructors are added to the set of methods that will be resolved.
 Reason is that initializers don't have dedicated coverage info but are part of the constructor coverage (the Java compiler injects all initializers into the constructors).
 That means as soon as the coverage of a initalizer should be resolved all constructors of the class have to be considered instead.
 
@@ -112,35 +112,93 @@ Reason is again that the initalizers are injected into the constructors and the 
 
 ### Report generation
 
-tbd
+A report named `test-gap-report.json` is placed in the `target` folder of the Maven project.
+The report contains the information printed by the plugin in a machine readable format.
 
-## Sample output
+This is an example of an shortened JSON report:
 
-Sample output is from the upcomming pocketsaw2.
+```javascript
+{
+  "workDir": "test-gap-analysis\test-gap-analysis",
+  "oldCommitHash": "c87e3c027be7781d39b06b8a95b3cbc926eb03df",
+  "compareWithWorkingCopyChanges": true,
+  "jaCoCoReportFiles": [
+    "target/site/jacoco/jacoco.xml"
+  ],
+  "jaCoCoCoverageCount": 233,
+  "newOrChangedFiles": [
+    {
+      "repositoryPath": "test-gap-analysis/src/main/java/com/scheible/testgapanalysis/jacoco/JaCoCoHelper.java",
+      "skipped": false,
+      "state": "CHANGED"
+    },
+    ...
+  ],
+  "consideredNewOrChangedFilesCount": 12,
+  "coveredMethodsCount": 37,
+  "uncoveredMethodsCount": 4,
+  "unresolvableMethodsCount": 5,
+  "coveredMethods": [
+    {
+      "topLevelTypeFqn": "com.scheible.testgapanalysis.jacoco.JaCoCoHelper",
+      "description": " lambda method",
+      "sourceLine": 124,
+      "sourceColumn": 10,
+      "coveredMethodName": "lambda$getIsNotChildOfSubDirsPredicate$3",
+      "coveredMethodLine": 124
+    },
+	...
+  ],
+  "uncoveredMethods": [
+    {
+      "topLevelTypeFqn": "com.scheible.testgapanalysis.parser.ParsedMethod",
+      "description": "#equals(...)",
+      "sourceLine": 133,
+      "sourceColumn": 2,
+      "coveredMethodName": "equals",
+      "coveredMethodLine": 136
+    },
+    ...
+  ],
+  "unresolvableMethods": [
+    {
+      "topLevelTypeFqn": "com.scheible.testgapanalysis.TestGapAnalysis",
+      "description": " constructor with 2 arguments",
+      "sourceLine": 36,
+      "sourceColumn": 3
+    },
+    ...
+  ]
+}
+```
+
+## Sample output of the plugin
+
+Sample output is from a development version of the plugin.
 At the bottom all changed or added methods (which are not a getter or setter) that are not covered are listed.
 
 ```
-Comparing the working copy changes with the repository head.
-Found coverage info about 297 methods.
-Found 8 new or changed Java files.
-New or changed methods (excluding setter and getter):
- - com.scheible.pocketsaw2.api.unittest.Pocketsaw#createAnalysis@aa6ed6814a638d238063be02c723d96f4e2103884afd5e4cd3bf30ca7358334f
- - com.scheible.pocketsaw2.engine.CycleDetector#analyzeCode@0c5b08fc0dea8d3794188cbbee5525430d2dc6486310bcbff04b8e28d77e600c
- - com.scheible.pocketsaw2.api.unittest.Pocketsaw#analize@76e731a0f9eb8ae75db6ab3e3b8b94ecfafe194142721d4d48dc8e0b20ed9aec
- - com.scheible.pocketsaw2.engine.CycleDetector#analyzeDescriptors@0f42df1a5a8b9a441fbe3a31595270eddb5154a95bd073d63a7e1c5e77004c57
+Performing test gap analysis in 'test-gap-analysis\test-gap-analysis'.
+Found coverage info about 233 methods in [target/site/jacoco/jacoco.xml].
+Comparing the working copy changes with the repository head (c87e3c0).
+Found 20 new or changed Java files (12 non-test Java files are considered):
+ - [skipped, changed] test-gap-analysis/nbactions.xml
+ - [changed] test-gap-analysis/src/main/java/com/scheible/testgapanalysis/DebugCoverageResolution.java
+ - [new] test-gap-analysis/src/main/java/com/scheible/testgapanalysis/DebugCoverageResolutionReport.java
+ - [changed] test-gap-analysis/src/main/java/com/scheible/testgapanalysis/TestGapAnalysis.java
+   ...
+Method blacklist (excluded from coverage check): all getter and setter
 Covered methods:
- - com.scheible.pocketsaw2.api.dependency.CodeUnit#getNativeCodeType@0
- - com.scheible.pocketsaw2.common.Arrays2#<init>@0
- - com.scheible.pocketsaw2.common.graph.algorithm.Dijkstra#findAllShortestPaths@116
- - com.scheible.pocketsaw2.api.unittest.Pocketsaw#initialize@0
- - com.scheible.pocketsaw2.api.visualization.CodeCycle#getShortestCycle@0
- - com.scheible.pocketsaw2.addon.descriptor.builder.PrefixMatcherBuilder#getExcludes@0
- - com.scheible.pocketsaw2.common.graph.algorithm.Dijkstra$QueueNode#equals@0
- - com.scheible.pocketsaw2.engine.DependencyGraphFactory#collectNeighbors@0
- - com.scheible.pocketsaw2.api.dependency.CodeGroup#getNativeCodeGroup@0
- - com.scheible.pocketsaw2.addon.code.dependencycruiser.DependencyCruiserSource#<clinit>@7
- - ...
-Uncovered new or changed methods (excluding setter and getter):
- - com.scheible.pocketsaw2.api.unittest.Pocketsaw#createAnalysis
- - com.scheible.pocketsaw2.api.unittest.Pocketsaw#analize
+ - com.scheible.testgapanalysis.DebugCoverageResolution.parseMethods(...) at 50:2 resolved to 'parseMethods' with line 51
+ - com.scheible.testgapanalysis.DebugCoverageResolution.run(...) at 38:2 resolved to 'run' with line 40
+ - com.scheible.testgapanalysis.DebugCoverageResolutionReport constructor with 5 arguments at 22:2 resolved to '<init>' with line 24
+ - com.scheible.testgapanalysis.TestGapAnalysis lambda method at 100:75 resolved to 'lambda$performTestGapAnalysis$4' with line 100
+   ...
+Uncovered methods:
+ - com.scheible.testgapanalysis.TestGapReport#toString(...) at 42:3 resolved to 'toString' with line 44
+ - com.scheible.testgapanalysis.TestGapReport#toString(...) at 99:3 resolved to 'toString' with line 101
+ - com.scheible.testgapanalysis.parser.ParsedMethod#equals(...) at 133:2 resolved to 'equals' with line 136
+ - com.scheible.testgapanalysis.parser.ParsedMethod#toString(...) at 157:2 resolved to 'toString' with line 159
+Unresolvable methods (no coverage information available):
+   ...
 ```

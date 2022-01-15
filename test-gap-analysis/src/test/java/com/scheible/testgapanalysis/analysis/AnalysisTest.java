@@ -10,13 +10,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.scheible.testgapanalysis.TestGapAnalysis;
 import com.scheible.testgapanalysis.git.RepositoryStatus;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 
@@ -52,8 +52,9 @@ public class AnalysisTest {
 				Arrays.asList(new MethodWithCoverageInfo("test.Added", "doIt", "", 1, 1),
 						new MethodWithCoverageInfo("test.Changed", "covered", "", 1, 0)));
 
-		final Optional<AnalysisResult> result = Analysis.perform(repositoryStatus, coverageInfo);
-		assertThat(result.get().getUncoveredNewOrChangedMethods().stream()
-				.map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName())).containsOnly("test.Changed#doAction");
+		final AnalysisResult result = Analysis.perform(repositoryStatus, TestGapAnalysis.NON_TEST_JAVA_FILE,
+				coverageInfo);
+		assertThat(result.getUncoveredMethods().stream().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName()))
+				.containsOnly("test.Changed#doAction");
 	}
 }

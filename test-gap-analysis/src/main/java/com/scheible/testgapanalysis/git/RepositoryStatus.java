@@ -22,8 +22,6 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.scheible.testgapanalysis.common.Files2;
 
@@ -32,8 +30,6 @@ import com.scheible.testgapanalysis.common.Files2;
  * @author sj
  */
 public class RepositoryStatus {
-
-	private static final Logger logger = LoggerFactory.getLogger(RepositoryStatus.class);
 
 	private final File workTreeDir;
 
@@ -139,9 +135,9 @@ public class RepositoryStatus {
 	private static RepositoryStatus filterFiles(final File workingDir, final File workTreeDir,
 			final String oldCommitHash, final Optional<String> newCommitHash, final Set<String> addedFiles,
 			final Set<String> changedFiles) {
-		final String canonicalWorkingDir = Files2.toCanonical(workingDir).getAbsolutePath();
-		final Predicate<String> isInWorkingDirSubDir = file -> appendChildFile(workTreeDir, file).getAbsolutePath()
-				.startsWith(canonicalWorkingDir);
+		final String canonicalWorkingDir = Files2.toCanonical(workingDir).getAbsolutePath() + File.separator;
+		final Predicate<String> isInWorkingDirSubDir = file -> Files2.toCanonical(appendChildFile(workTreeDir, file))
+				.getAbsolutePath().startsWith(canonicalWorkingDir);
 
 		return new RepositoryStatus(workTreeDir, oldCommitHash, newCommitHash,
 				addedFiles.stream().filter(isInWorkingDirSubDir).collect(Collectors.toSet()),
@@ -164,13 +160,18 @@ public class RepositoryStatus {
 							.map(file -> new SimpleImmutableEntry<>(file, appendChildFile(workTreeDir, file)))
 							.collect(Collectors.toMap(Entry::getKey, entry -> Files2.readUtf8(entry.getValue()))));
 		} else {
-			return GitHelper.getCommitedContents(workTreeDir, newCommitHash.get(), Collections
-					.unmodifiableSet(Stream.concat(addedFiles.stream(), changedFiles.stream()).filter(file -> {
-						final boolean includeFile = fileFilter.test(file);
-						logger.debug(" - {}{}", includeFile ? "" : "skipped ", file);
-						return includeFile;
-					}).collect(Collectors.toSet())));
+			return GitHelper.getCommitedContents(workTreeDir, newCommitHash.get(),
+					Collections.unmodifiableSet(Stream.concat(addedFiles.stream(), changedFiles.stream())
+							.filter(fileFilter).collect(Collectors.toSet())));
 		}
+	}
+
+	public String getOldCommitHash() {
+		return oldCommitHash;
+	}
+
+	public Optional<String> getNewCommitHash() {
+		return newCommitHash;
 	}
 
 	public Set<String> getAddedFiles() {

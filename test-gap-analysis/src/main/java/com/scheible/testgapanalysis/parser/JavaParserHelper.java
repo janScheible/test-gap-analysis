@@ -61,7 +61,7 @@ public class JavaParserHelper {
 							.map(Type::asString).collect(Collectors.toList());
 
 					result.add(new ParsedMethod(MethodType.CONSTRUCTOR, getTopLevelFqn(node), getScope(node), "<init>",
-							relevantCode, getFirstCodeLine(node), range.begin.column, argumentTypes));
+							relevantCode, range.begin.line, getFirstCodeLine(node), range.begin.column, argumentTypes));
 				}
 
 				super.visit(node, arg);
@@ -76,7 +76,7 @@ public class JavaParserHelper {
 					result.add(
 							new ParsedMethod(node.isStatic() ? MethodType.STATIC_INITIALIZER : MethodType.INITIALIZER,
 									getTopLevelFqn(node), getScope(node), node.isStatic() ? "<clinit>" : "<initbl>",
-									relevantCode, getFirstCodeLine(node), range.begin.column));
+									relevantCode, range.begin.line, getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);
@@ -90,7 +90,7 @@ public class JavaParserHelper {
 
 					result.add(new ParsedMethod(node.isStatic() ? MethodType.STATIC_METHOD : MethodType.METHOD,
 							getTopLevelFqn(node), getScope(node), node.getNameAsString(), relevantCode,
-							getFirstCodeLine(node), range.begin.column));
+							range.begin.line, getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);
@@ -103,7 +103,7 @@ public class JavaParserHelper {
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(MethodType.LAMBDA_METHOD, getTopLevelFqn(node), getScope(node),
-							"lambda", relevantCode, getFirstCodeLine(node), range.begin.column));
+							"lambda", relevantCode, range.begin.line, getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);

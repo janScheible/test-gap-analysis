@@ -1,8 +1,10 @@
 package com.scheible.testgapanalysis.maven;
 
 import com.scheible.testgapanalysis.DebugCoverageResolution;
+import com.scheible.testgapanalysis.DebugCoverageResolutionReport;
+
 import java.io.File;
-import org.apache.maven.plugin.AbstractMojo;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -13,13 +15,36 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author sj
  */
 @Mojo(name = "debug-coverage-resolution", threadSafe = true, requiresProject = false)
-public class DebugCoverageResolutionMojo extends AbstractMojo {
+public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 
-	@Parameter(defaultValue = "${project.basedir}")
-	private File workingDir;
-	
+	@Parameter(defaultValue = "${project.build.sourceDirectory}")
+	private File sourceDir;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		DebugCoverageResolution.run(workingDir);
+		final DebugCoverageResolutionReport report = DebugCoverageResolution.run(baseDir, sourceDir,
+				findRelevantJaCoCoReportFiles());
+
+		logReport(report);
+	}
+
+	private void logReport(final DebugCoverageResolutionReport report) {
+		if (report.getCoverageInfo().isEmpty()) {
+			getLog().info("No coverage info available!");
+		} else {
+			getLog().info(String.format("Found coverage info about %d methods in %s.", report.getCoverageInfo().size(),
+					report.getJaCoCoReportFiles()));
+		}
+
+		getLog().info(String.format("Found %d Java files with %d methods in '%s'.", report.getJavaFileCount(),
+				report.getResolved().size() + report.getUnresolved().size(), sourceDir));
+
+		getLog().info("Resolved methods:");
+		report.getResolved().entrySet()
+				.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
+
+		getLog().info("Unresolvable methods (no coverage information available):");
+		report.getUnresolved()
+				.forEach(u -> getLog().info(String.format(" - %s", u)));
 	}
 }

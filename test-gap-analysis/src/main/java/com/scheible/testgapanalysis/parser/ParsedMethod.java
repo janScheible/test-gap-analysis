@@ -19,23 +19,26 @@ public class ParsedMethod {
 	private final List<String> scope;
 	private final String name;
 	private final String relevantCode;
-	private final int firstCodeLine;
+	private final int codeLine; // the line where the node of the methods starts
+	private final int firstCodeLine; // the first line with real code
 	private final int codeColumn;
 	private final List<String> argumentTypes;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int firstCodeLine, final int codeColumn) {
-		this(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, codeColumn, null);
+			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
+			final int codeColumn) {
+		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, null);
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int firstCodeLine, final int codeColumn,
-			final List<String> argumentTypes) {
+			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
+			final int codeColumn, final List<String> argumentTypes) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
 		this.scope = scope;
 		this.name = name;
 		this.relevantCode = relevantCode;
+		this.codeLine = codeLine;
 		this.firstCodeLine = firstCodeLine;
 		this.codeColumn = codeColumn;
 		this.argumentTypes = argumentTypes;
@@ -89,6 +92,10 @@ public class ParsedMethod {
 		return relevantCode;
 	}
 
+	public int getCodeLine() {
+		return codeLine;
+	}
+
 	public int getFirstCodeLine() {
 		return firstCodeLine;
 	}
@@ -101,7 +108,30 @@ public class ParsedMethod {
 		return Optional.ofNullable(argumentTypes);
 	}
 
+	public String getDescription() {
+		String description = null;
+
+		if (isMethod()) {
+			description = "#" + getName() + "(...)";
+		} else if (isStaticMethod()) {
+			description = "." + getName() + "(...)";
+		} else if (isConstructor()) {
+			description = " constructor with " + getArgumentTypes().get().size() + " arguments";
+		} else if (isInitializer()) {
+			description = " initializer";
+		} else if (isStaticInitializer()) {
+			description = " static initializer";
+		} else if (isLambdaMethod()) {
+			description = " lambda method";
+		} else {
+			throw new IllegalStateException("Unknown method type!");
+		}
+
+		return description;
+	}
+
 	@Override
+	@SuppressWarnings("checkstyle:CyclomaticComplexity")
 	public boolean equals(final Object obj) {
 		if (obj == this) {
 			return true;
@@ -110,7 +140,7 @@ public class ParsedMethod {
 			return Objects.equals(methodType, other.methodType)
 					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn) && Objects.equals(scope, other.scope)
 					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
-					&& Objects.equals(firstCodeLine, other.firstCodeLine)
+					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes);
 		} else {
@@ -120,14 +150,15 @@ public class ParsedMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, firstCodeLine, codeColumn,
+		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn,
 				argumentTypes);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
-				+ "', scope='" + scope + "', name='" + name + "', firstCodeLine=" + firstCodeLine + ", codeColumn="
-				+ codeColumn + (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
+				+ "', scope='" + scope + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
+				+ firstCodeLine + ", codeColumn=" + codeColumn
+				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
 	}
 }
