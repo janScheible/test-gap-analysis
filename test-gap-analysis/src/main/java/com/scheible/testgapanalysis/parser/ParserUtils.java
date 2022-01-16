@@ -1,7 +1,9 @@
 package com.scheible.testgapanalysis.parser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -11,6 +13,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.TryStmt;
 
 /**
  *
@@ -20,9 +24,35 @@ public class ParserUtils {
 
 	static int getFirstCodeLine(final Node node) {
 		return node.getChildNodes().stream().filter(c -> c instanceof BlockStmt && c.getRange().isPresent())
-				.flatMap(bs -> bs.getChildNodes().stream().filter(cn -> cn.getRange().isPresent())
+				.flatMap(bs -> flatMapToCodeNodes(bs).stream().filter(cn -> cn.getRange().isPresent())
 						.map(cn -> cn.getRange().get().begin.line))
 				.sorted().findFirst().orElse(node.getRange().get().begin.line);
+	}
+
+	/**
+	 * Flat map a node to all direct children containing code.
+	 */
+	static Set<Node> flatMapToCodeNodes(final Node node) {
+		final Set<Node> childrenWithCode = new HashSet<>();
+
+		for (final Node child : node.getChildNodes()) {
+			findCodeNodes(child, childrenWithCode);
+		}
+
+		return childrenWithCode;
+	}
+
+	/**
+	 * Skip block, try and do statements (because they don't contain code) by recusring to their children.
+	 */
+	static void findCodeNodes(final Node node, final Set<Node> childrenWithCode) {
+		if (node instanceof BlockStmt || node instanceof TryStmt || node instanceof DoStmt) {
+			for (final Node child : node.getChildNodes()) {
+				findCodeNodes(child, childrenWithCode);
+			}
+		} else {
+			childrenWithCode.add(node);
+		}
 	}
 
 	static String getTopLevelFqn(final Node node) {

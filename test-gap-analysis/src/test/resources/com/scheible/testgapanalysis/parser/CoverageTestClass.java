@@ -94,4 +94,17 @@ public abstract class CoverageTestClass {
 	public static String staticMethod() {
 		return ":-)";
 	}
+
+	public void methodWithTryCatch() {
+		try {
+			throw new IllegalStateException();
+		} catch (IllegalStateException ex) {
+		}
+	}
+
+	public void methodWithDoLoop() {
+		do {
+			"".trim();
+		} while ("a".equals("b"));
+	}
 }

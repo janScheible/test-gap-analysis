@@ -91,7 +91,8 @@ public class JavaParserHelperTest {
 				new MethodWithLine("doIt", 48), new MethodWithLine("doItLambda", 52), new MethodWithLine("execute", 58),
 				new MethodWithLine("doItRunanble", 65), new MethodWithLine("doItRunanble.Runnable", "run", 70),
 				new MethodWithLine("doItMultipleLamdaSingleLine", 83),
-				new MethodWithLine("doItMultipleLamdaSingleLineMultiLine", 87));
+				new MethodWithLine("doItMultipleLamdaSingleLineMultiLine", 87),
+				new MethodWithLine("methodWithDoLoop", 107), new MethodWithLine("methodWithTryCatch", 100));
 
 		final List<ParsedMethod> staticInitializers = filter(methods, ParsedMethod::isStaticInitializer);
 		assertThat(staticInitializers.stream().map(JavaParserHelperTest::toMethodWithLine))
@@ -103,7 +104,7 @@ public class JavaParserHelperTest {
 	}
 
 	@Test
-	public void testMethodParsing() {
+	public void testMethodMasking() {
 		final Set<ParsedMethod> methods = JavaParserHelper.getMethods("" //
 				+ "package com.scheible.testgapanalysis.parser;\n" //
 				+ "\n" //

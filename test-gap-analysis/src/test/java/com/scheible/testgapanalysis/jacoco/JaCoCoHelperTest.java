@@ -19,7 +19,7 @@ public class JaCoCoHelperTest {
 
 	@Test
 	public void testMethodCoverage() {
-		assertThat(getMethodCoverage(Files2.readUtf8(JaCoCoHelperTest.class, "jacoco.xml"))).hasSize(20);
+		assertThat(getMethodCoverage(Files2.readUtf8(JaCoCoHelperTest.class, "jacoco.xml"))).hasSize(22);
 	}
 
 	@Test

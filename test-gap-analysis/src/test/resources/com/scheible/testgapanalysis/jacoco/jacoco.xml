@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd">
 <report name="com.scheible::test-gap-analysis library">
-	<sessioninfo id="Session-7e318d67" start="1641296263260" dump="1641296272652"/>
+	<sessioninfo id="Session-41ad03ab" start="1642367123818" dump="1642367130988"/>
 	<package name="com/scheible/testgapanalysis/_test">
 		<class name="com/scheible/testgapanalysis/_test/CoverageTestClass" sourcefilename="CoverageTestClass.java">
 			<method name="&lt;init&gt;" desc="()V" line="26">
@@ -58,6 +58,19 @@
 				<counter type="COMPLEXITY" missed="1" covered="0"/>
 				<counter type="METHOD" missed="1" covered="0"/>
 			</method>
+			<method name="methodWithTryCatch" desc="()V" line="100">
+				<counter type="INSTRUCTION" missed="6" covered="0"/>
+				<counter type="LINE" missed="3" covered="0"/>
+				<counter type="COMPLEXITY" missed="1" covered="0"/>
+				<counter type="METHOD" missed="1" covered="0"/>
+			</method>
+			<method name="methodWithDoLoop" desc="()V" line="107">
+				<counter type="INSTRUCTION" missed="8" covered="0"/>
+				<counter type="BRANCH" missed="2" covered="0"/>
+				<counter type="LINE" missed="3" covered="0"/>
+				<counter type="COMPLEXITY" missed="2" covered="0"/>
+				<counter type="METHOD" missed="1" covered="0"/>
+			</method>
 			<method name="lambda$doItMultipleLamdaSingleLineMultiLine$5" desc="(Ljava/lang/String;)V" line="89">
 				<counter type="INSTRUCTION" missed="4" covered="0"/>
 				<counter type="LINE" missed="1" covered="0"/>
@@ -100,10 +113,11 @@
 				<counter type="COMPLEXITY" missed="1" covered="0"/>
 				<counter type="METHOD" missed="1" covered="0"/>
 			</method>
-			<counter type="INSTRUCTION" missed="99" covered="0"/>
-			<counter type="LINE" missed="31" covered="0"/>
-			<counter type="COMPLEXITY" missed="16" covered="0"/>
-			<counter type="METHOD" missed="16" covered="0"/>
+			<counter type="INSTRUCTION" missed="113" covered="0"/>
+			<counter type="BRANCH" missed="2" covered="0"/>
+			<counter type="LINE" missed="37" covered="0"/>
+			<counter type="COMPLEXITY" missed="19" covered="0"/>
+			<counter type="METHOD" missed="18" covered="0"/>
 			<counter type="CLASS" missed="1" covered="0"/>
 		</class>
 		<class name="com/scheible/testgapanalysis/_test/CoverageTestClass$InnerStatic" sourcefilename="CoverageTestClass.java">
@@ -181,22 +195,30 @@
 			<line nr="89" mi="4" ci="0" mb="0" cb="0"/>
 			<line nr="90" mi="1" ci="0" mb="0" cb="0"/>
 			<line nr="95" mi="2" ci="0" mb="0" cb="0"/>
-			<counter type="INSTRUCTION" missed="120" covered="0"/>
-			<counter type="LINE" missed="36" covered="0"/>
-			<counter type="COMPLEXITY" missed="20" covered="0"/>
-			<counter type="METHOD" missed="20" covered="0"/>
+			<line nr="100" mi="4" ci="0" mb="0" cb="0"/>
+			<line nr="101" mi="1" ci="0" mb="0" cb="0"/>
+			<line nr="103" mi="1" ci="0" mb="0" cb="0"/>
+			<line nr="107" mi="3" ci="0" mb="0" cb="0"/>
+			<line nr="108" mi="4" ci="0" mb="2" cb="0"/>
+			<line nr="109" mi="1" ci="0" mb="0" cb="0"/>
+			<counter type="INSTRUCTION" missed="134" covered="0"/>
+			<counter type="BRANCH" missed="2" covered="0"/>
+			<counter type="LINE" missed="42" covered="0"/>
+			<counter type="COMPLEXITY" missed="23" covered="0"/>
+			<counter type="METHOD" missed="22" covered="0"/>
 			<counter type="CLASS" missed="3" covered="0"/>
 		</sourcefile>
-		<counter type="INSTRUCTION" missed="120" covered="0"/>
-		<counter type="LINE" missed="36" covered="0"/>
-		<counter type="COMPLEXITY" missed="20" covered="0"/>
-		<counter type="METHOD" missed="20" covered="0"/>
+		<counter type="INSTRUCTION" missed="134" covered="0"/>
+		<counter type="BRANCH" missed="2" covered="0"/>
+		<counter type="LINE" missed="42" covered="0"/>
+		<counter type="COMPLEXITY" missed="23" covered="0"/>
+		<counter type="METHOD" missed="22" covered="0"/>
 		<counter type="CLASS" missed="3" covered="0"/>
 	</package>
-	<counter type="INSTRUCTION" missed="809" covered="1742"/>
-	<counter type="BRANCH" missed="104" covered="94"/>
-	<counter type="LINE" missed="180" covered="305"/>
-	<counter type="COMPLEXITY" missed="127" covered="120"/>
-	<counter type="METHOD" missed="61" covered="87"/>
-	<counter type="CLASS" missed="6" covered="13"/>
+	<counter type="INSTRUCTION" missed="725" covered="3667"/>
+	<counter type="BRANCH" missed="91" covered="255"/>
+	<counter type="LINE" missed="162" covered="673"/>
+	<counter type="COMPLEXITY" missed="143" covered="288"/>
+	<counter type="METHOD" missed="71" covered="187"/>
+	<counter type="CLASS" missed="3" covered="28"/>
 </report>
