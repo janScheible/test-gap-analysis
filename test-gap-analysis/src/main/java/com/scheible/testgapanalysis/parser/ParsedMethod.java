@@ -81,7 +81,7 @@ public class ParsedMethod {
 	}
 
 	public long getLevel() {
-		return Math.max(0, scope.size() - 1);
+		return scope.size();
 	}
 
 	public String getName() {

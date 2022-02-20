@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.scheible.testgapanalysis._test.CoverageTestClass;
 import com.scheible.testgapanalysis.git.RepositoryStatus;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
@@ -22,8 +21,7 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
 public class Analysis {
 
 	static final Predicate<MethodCompareWrapper> NON_GETTER_OR_SETTER_METHOD = mcw -> !mcw.getParsedMethod().getName()
-			.startsWith("get") && !mcw.getParsedMethod().getName().startsWith("set")
-			&& !mcw.getParsedMethod().getTopLevelTypeFqn().equals(CoverageTestClass.class.getName());
+			.startsWith("get") && !mcw.getParsedMethod().getName().startsWith("set");
 
 	public static AnalysisResult perform(final RepositoryStatus status, final Predicate<String> fileFilter,
 			final Set<MethodWithCoverageInfo> coverageInfo) {

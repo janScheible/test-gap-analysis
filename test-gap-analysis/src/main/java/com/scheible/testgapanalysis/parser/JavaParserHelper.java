@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.Range;
@@ -111,6 +112,29 @@ public class JavaParserHelper {
 		}, null);
 
 		return result;
+	}
+
+	static int getClassBeginLine(final String code, final String className) {
+		final AtomicInteger beginLine = new AtomicInteger(-1);
+
+		final CompilationUnit compilationUnit = StaticJavaParser.parse(code);
+		compilationUnit.accept(new VoidVisitorAdapter<Void>() {
+
+			@Override
+			public void visit(final ClassOrInterfaceDeclaration node, final Void arg) {
+				if (node.getNameAsString().equals(className)) {
+					node.getRange().map(r -> r.begin.line).ifPresent(beginLine::set);
+				}
+
+				super.visit(node, arg);
+			}
+		}, null);
+
+		if (beginLine.get() >= 0) {
+			return beginLine.get();
+		} else {
+			throw new IllegalStateException("Did not find the begin line of '" + className + "' in '" + code + "'!");
+		}
 	}
 
 	private static boolean isMethod(final Node node) {
