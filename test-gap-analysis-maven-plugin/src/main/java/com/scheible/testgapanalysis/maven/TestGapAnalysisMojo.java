@@ -27,11 +27,16 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		final TestGapReport report = TestGapAnalysis.run(baseDir, findRelevantJaCoCoReportFiles(),
-				Optional.ofNullable(referenceCommitHash));
+		if (buildDir.exists()) {
+			final TestGapReport report = TestGapAnalysis.run(baseDir, findRelevantJaCoCoReportFiles(),
+					Optional.ofNullable(referenceCommitHash));
 
-		logReport(report);
-		writeJsonReport(report);
+			logReport(report);
+			writeJsonReport(report);
+		} else {
+			getLog().debug(String.format("Skipping test gap analysis because the '%s' directory does not exist and "
+					+ "therefore no JaCoCo coverage reports are available.", buildDir));
+		}
 	}
 
 	private void logReport(final TestGapReport report) {

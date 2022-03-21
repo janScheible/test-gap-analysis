@@ -22,10 +22,15 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		final DebugCoverageResolutionReport report = DebugCoverageResolution.run(baseDir, sourceDir,
-				findRelevantJaCoCoReportFiles());
+		if (buildDir.exists()) {
+			final DebugCoverageResolutionReport report = DebugCoverageResolution.run(baseDir, sourceDir,
+					findRelevantJaCoCoReportFiles());
 
-		logReport(report);
+			logReport(report);
+		} else {
+			getLog().debug(String.format("Skipping debug coverage resolution because the '%s' directory does not "
+					+ "exist and therefore no JaCoCo coverage reports are available.", buildDir));
+		}
 	}
 
 	private void logReport(final DebugCoverageResolutionReport report) {
