@@ -54,7 +54,8 @@ public class AnalysisTest {
 
 		final AnalysisResult result = Analysis.perform(repositoryStatus, TestGapAnalysis.NON_TEST_JAVA_FILE,
 				coverageInfo);
-		assertThat(result.getUncoveredMethods().stream().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName()))
-				.containsOnly("test.Changed#doAction");
+		assertThat(
+				result.getUncoveredMethods().keySet().stream().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName()))
+						.containsOnly("test.Changed#doAction");
 	}
 }

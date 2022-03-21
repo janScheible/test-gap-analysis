@@ -25,7 +25,7 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleLambda() throws Exception {
-		assertThat(resolve(SimpleLambda.class, LAMBDA_METHOD).getUnresolved()).isEmpty();
+		assertThat(resolve(SimpleLambda.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
 	}
 
 	public static class MultipleLambdaSingleLine {
@@ -41,7 +41,7 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleLambdaSingleLine() throws Exception {
-		assertThat(resolve(MultipleLambdaSingleLine.class, LAMBDA_METHOD).getUnresolved()).isEmpty();
+		assertThat(resolve(MultipleLambdaSingleLine.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
 	}
 
 	public static class MultipleLambdaSingleLineMultiLine {
@@ -59,6 +59,6 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleLambdaSingleLineMultiLine() throws Exception {
-		assertThat(resolve(MultipleLambdaSingleLineMultiLine.class, LAMBDA_METHOD).getUnresolved()).isEmpty();
+		assertThat(resolve(MultipleLambdaSingleLineMultiLine.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
 	}
 }

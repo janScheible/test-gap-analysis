@@ -43,8 +43,9 @@ public class DebugCoverageResolution {
 		final CoverageResolver resolver = CoverageResolver.with(parseResult.methods, coverageInfo);
 		final CoverageResult result = resolver.resolve(parseResult.methods);
 
-		return new DebugCoverageResolutionReport(coverageInfo, Files2.toRelative(workDir, jaCoCoReportFiles),
-				parseResult.javaFileCount, result.getResolved(), result.getUnresolved());
+		return new DebugCoverageResolutionReport(coverageInfo.size(), Files2.toRelative(workDir, jaCoCoReportFiles),
+				parseResult.javaFileCount, result.getResolvedMethods(), result.getUnresolvedMethods(),
+				result.getAmbiguousCoverage());
 	}
 
 	private static ParseResult parseMethods(final File workingDir) throws UncheckedIOException {

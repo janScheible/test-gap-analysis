@@ -4,7 +4,6 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
@@ -16,56 +15,36 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class AnalysisResult {
 
-	private final String oldCommitHash;
-	private final Optional<String> newCommitHash;
+	private final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods;
+	private final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods;
 
-	private final Set<String> newOrChangedFiles;
-
-	private final Set<ParsedMethod> allNewOrChangedMethods;
-	private final Map<ParsedMethod, MethodWithCoverageInfo> resolvedCoverage;
-	private final Set<ParsedMethod> uncoveredMethods;
 	private final Set<ParsedMethod> unresolvableMethods;
+	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage;
 
-	public AnalysisResult(final String oldCommitHash, final Optional<String> newCommitHash,
-			final Set<String> newOrChangedFiles, final Set<ParsedMethod> allNewOrChangedMethods,
-			final Map<ParsedMethod, MethodWithCoverageInfo> resolvedCoverage, final Set<ParsedMethod> uncoveredMethods,
-			final Set<ParsedMethod> unresolvableMethods) {
-		this.oldCommitHash = oldCommitHash;
-		this.newCommitHash = newCommitHash;
+	public AnalysisResult(final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods,
+			final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods,
+			final Set<ParsedMethod> unresolvableMethods,
+			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+		this.coveredMethods = unmodifiableMap(coveredMethods);
+		this.uncoveredMethods = unmodifiableMap(uncoveredMethods);
 
-		this.newOrChangedFiles = unmodifiableSet(newOrChangedFiles);
-
-		this.allNewOrChangedMethods = unmodifiableSet(allNewOrChangedMethods);
-		this.resolvedCoverage = unmodifiableMap(resolvedCoverage);
-		this.uncoveredMethods = unmodifiableSet(uncoveredMethods);
 		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
+		this.ambiguouslyResolvedCoverage = unmodifiableMap(ambiguouslyResolvedCoverage);
 	}
 
-	public String getOldCommitHash() {
-		return oldCommitHash;
+	public Map<ParsedMethod, MethodWithCoverageInfo> getCoveredMethods() {
+		return coveredMethods;
 	}
 
-	public Optional<String> getNewCommitHash() {
-		return newCommitHash;
-	}
-
-	public Set<String> getNewOrChangedFiles() {
-		return newOrChangedFiles;
-	}
-
-	public Set<ParsedMethod> getAllNewOrChangedMethods() {
-		return allNewOrChangedMethods;
-	}
-
-	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedCoverage() {
-		return resolvedCoverage;
-	}
-
-	public Set<ParsedMethod> getUncoveredMethods() {
+	public Map<ParsedMethod, MethodWithCoverageInfo> getUncoveredMethods() {
 		return uncoveredMethods;
 	}
 
 	public Set<ParsedMethod> getUnresolvableMethods() {
 		return unresolvableMethods;
+	}
+
+	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguouslyResolvedCoverage() {
+		return ambiguouslyResolvedCoverage;
 	}
 }

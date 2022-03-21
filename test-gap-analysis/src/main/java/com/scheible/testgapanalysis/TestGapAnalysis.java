@@ -3,14 +3,16 @@ package com.scheible.testgapanalysis;
 import static java.util.Collections.emptySet;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.scheible.testgapanalysis.TestGapReport.CoverageReportMethod;
 import com.scheible.testgapanalysis.TestGapReport.NewOrChangedFile;
 import com.scheible.testgapanalysis.TestGapReport.NewOrChangedFile.State;
 import com.scheible.testgapanalysis.TestGapReport.TestGapMethod;
@@ -44,13 +46,18 @@ public class TestGapAnalysis {
 
 		private final Set<TestGapMethod> coveredMethods;
 		private final Set<TestGapMethod> uncoveredMethods;
+
 		private final Set<TestGapMethod> unresolvableMethods;
+		private final Map<TestGapReport.CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
 		private CoverageResult(final Set<TestGapMethod> coveredMethods, final Set<TestGapMethod> uncoveredMethods,
-				final Set<TestGapMethod> unresolvableMethods) {
+				final Set<TestGapMethod> unresolvableMethods,
+				final Map<TestGapReport.CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 			this.coveredMethods = coveredMethods;
 			this.uncoveredMethods = uncoveredMethods;
+
 			this.unresolvableMethods = unresolvableMethods;
+			this.ambiguouslyResolvedCoverage = ambiguouslyResolvedCoverage;
 		}
 	}
 
@@ -66,7 +73,8 @@ public class TestGapAnalysis {
 		return new TestGapReport(workDir.getAbsolutePath(), repositoryResult.repositoryStatus.getOldCommitHash(),
 				repositoryResult.repositoryStatus.getNewCommitHash(), Files2.toRelative(workDir, jaCoCoReportFiles),
 				coverageInfo.size(), repositoryResult.newOrChangedFiles, coverageResult.coveredMethods,
-				coverageResult.uncoveredMethods, coverageResult.unresolvableMethods);
+				coverageResult.uncoveredMethods, coverageResult.unresolvableMethods,
+				coverageResult.ambiguouslyResolvedCoverage);
 	}
 
 	private static RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash,
@@ -93,21 +101,19 @@ public class TestGapAnalysis {
 			final Set<MethodWithCoverageInfo> coverageInfo) {
 		final AnalysisResult result = Analysis.perform(status, NON_TEST_JAVA_FILE, coverageInfo);
 
-		final Set<ParsedMethod> coveredMethods = new HashSet<>(result.getAllNewOrChangedMethods());
-		coveredMethods.removeAll(result.getUncoveredMethods());
-		coveredMethods.removeAll(result.getUnresolvableMethods());
-
-		final Function<ParsedMethod, MethodWithCoverageInfo> coverageProvider = m -> result.getResolvedCoverage()
-				.get(m);
-		return new CoverageResult(toTestGapMethods(coveredMethods, coverageProvider),
-				toTestGapMethods(result.getUncoveredMethods(), coverageProvider),
-				toTestGapMethods(result.getUnresolvableMethods(), coverageProvider));
+		return new CoverageResult(toTestGapMethods(result.getCoveredMethods()),
+				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getUnresolvableMethods()),
+				toAmbigouslyResolvedTestGapMethod(result.getAmbiguouslyResolvedCoverage()));
 	}
 
-	private static Set<TestGapMethod> toTestGapMethods(final Set<ParsedMethod> parsedMethod,
-			final Function<ParsedMethod, MethodWithCoverageInfo> coverageProvider) {
-		return parsedMethod.stream().map(m -> toTestGapMethod(m, coverageProvider.apply(m)))
+	private static Set<TestGapMethod> toTestGapMethods(
+			final Map<ParsedMethod, MethodWithCoverageInfo> methodsWithCoverage) {
+		return methodsWithCoverage.entrySet().stream().map(mwc -> toTestGapMethod(mwc.getKey(), mwc.getValue()))
 				.collect(Collectors.toSet());
+	}
+
+	private static Set<TestGapMethod> toTestGapMethods(final Set<ParsedMethod> methodsOnly) {
+		return methodsOnly.stream().map(m -> toTestGapMethod(m, null)).collect(Collectors.toSet());
 	}
 
 	private static TestGapMethod toTestGapMethod(final ParsedMethod method, final MethodWithCoverageInfo coverage) {
@@ -116,5 +122,14 @@ public class TestGapAnalysis {
 						method.getCodeLine(), method.getCodeColumn())
 				: new TestGapReport.TestGapMethod(method.getTopLevelTypeFqn(), method.getDescription(),
 						method.getCodeLine(), method.getCodeColumn(), coverage.getName(), coverage.getLine());
+	}
+
+	private static Map<CoverageReportMethod, Set<TestGapMethod>> toAmbigouslyResolvedTestGapMethod(
+			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+		return ambiguouslyResolvedCoverage.entrySet().stream()
+				.map(e -> new AbstractMap.SimpleImmutableEntry<>(
+						new CoverageReportMethod(e.getKey().getName(), e.getKey().getLine()),
+						toTestGapMethods(e.getValue())))
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 }

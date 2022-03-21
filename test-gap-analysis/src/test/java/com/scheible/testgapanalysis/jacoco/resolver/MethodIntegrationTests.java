@@ -20,7 +20,7 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleMethod() throws Exception {
-		assertThat(resolve(SimpleMethod.class, METHOD).getUnresolved()).isEmpty();
+		assertThat(resolve(SimpleMethod.class, METHOD).getUnresolvedMethods()).isEmpty();
 	}
 
 	public static class MultiLineArgumentsMethod {
@@ -33,6 +33,6 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultiLineArgumentsMethod() throws Exception {
-		assertThat(resolve(MultiLineArgumentsMethod.class, METHOD).getUnresolved()).isEmpty();
+		assertThat(resolve(MultiLineArgumentsMethod.class, METHOD).getUnresolvedMethods()).isEmpty();
 	}
 }

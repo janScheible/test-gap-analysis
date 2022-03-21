@@ -20,7 +20,7 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleConstructor() throws Exception {
-		assertThat(resolve(SimpleConstructor.class, CONSTRUCTOR).getUnresolved()).isEmpty();
+		assertThat(resolve(SimpleConstructor.class, CONSTRUCTOR).getUnresolvedMethods()).isEmpty();
 	}
 
 	public static class ConstructorWithInitializer {
@@ -36,6 +36,6 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testConstructorWithInitializer() throws Exception {
-		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR).getUnresolved()).isEmpty();
+		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR).getUnresolvedMethods()).isEmpty();
 	}
 }

@@ -1,5 +1,6 @@
 package com.scheible.testgapanalysis.analysis;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,12 +69,15 @@ public class Analysis {
 		final CoverageResult coverageResult = coverageResolver
 				.resolve(MethodCompareWrapper.unwrap(newOrChangedMethods));
 
-		final Set<ParsedMethod> uncoveredNewOrChangedMethods = coverageResult.getResolved().entrySet().stream()
-				.filter(e -> e.getValue().getCoveredInstructionCount() == 0).map(Entry::getKey)
-				.collect(Collectors.toSet());
+		final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredNewOrChangedMethods = coverageResult
+				.getResolvedMethods().entrySet().stream().filter(e -> e.getValue().getCoveredInstructionCount() == 0)
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		return new AnalysisResult(status.getOldCommitHash(), status.getNewCommitHash(),
-				newOrChangedFilesWithContent.keySet(), MethodCompareWrapper.unwrap(newOrChangedMethods),
-				coverageResult.getResolved(), uncoveredNewOrChangedMethods, coverageResult.getUnresolved());
+		final Map<ParsedMethod, MethodWithCoverageInfo> coveredNewOrChangedMethods = new HashMap<>(
+				coverageResult.getResolvedMethods());
+		uncoveredNewOrChangedMethods.forEach(coveredNewOrChangedMethods::remove);
+
+		return new AnalysisResult(coveredNewOrChangedMethods, uncoveredNewOrChangedMethods,
+				coverageResult.getUnresolvedMethods(), coverageResult.getAmbiguousCoverage());
 	}
 }

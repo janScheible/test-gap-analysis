@@ -29,10 +29,10 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 	}
 
 	private void logReport(final DebugCoverageResolutionReport report) {
-		if (report.getCoverageInfo().isEmpty()) {
+		if (report.getCoverageInfoCount() == 0) {
 			getLog().info("No coverage info available!");
 		} else {
-			getLog().info(String.format("Found coverage info about %d methods in %s.", report.getCoverageInfo().size(),
+			getLog().info(String.format("Found coverage info about %d methods in %s.", report.getCoverageInfoCount(),
 					report.getJaCoCoReportFiles()));
 		}
 
@@ -43,8 +43,16 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 		report.getResolved().entrySet()
 				.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
 
-		getLog().info("Unresolvable methods (no coverage information available):");
-		report.getUnresolved()
-				.forEach(u -> getLog().info(String.format(" - %s", u)));
+		if (!report.getAmbiguousCoverage().isEmpty()) {
+			getLog().info("Ambiguously resolved methods:");
+			report.getAmbiguousCoverage().entrySet()
+					.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
+		}
+
+		if (!report.getUnresolved().isEmpty()) {
+			getLog().info("Unresolvable methods (no coverage information available):");
+			report.getUnresolved()
+					.forEach(u -> getLog().info(String.format(" - %s", u)));
+		}
 	}
 }

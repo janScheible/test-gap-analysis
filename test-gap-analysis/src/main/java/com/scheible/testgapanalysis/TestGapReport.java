@@ -1,7 +1,9 @@
 package com.scheible.testgapanalysis;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -56,7 +58,7 @@ public class TestGapReport {
 		private final String coveredMethodName;
 		private final Integer coveredMethodLine;
 
-		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
+		private TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
 				final int sourceColumn, final String coveredMethodName, final Integer coveredMethodLine) {
 			this.topLevelTypeFqn = topLevelTypeFqn;
 			this.description = description;
@@ -65,6 +67,12 @@ public class TestGapReport {
 
 			this.coveredMethodName = coveredMethodName;
 			this.coveredMethodLine = coveredMethodLine;
+		}
+
+		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
+				final int sourceColumn, final String coveredMethodName, final int coveredMethodLine) {
+			this(topLevelTypeFqn, description, sourceLine, sourceColumn, coveredMethodName,
+					(Integer) coveredMethodLine);
 		}
 
 		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
@@ -106,6 +114,30 @@ public class TestGapReport {
 		}
 	}
 
+	public static class CoverageReportMethod {
+
+		private final String coveredMethodName;
+		private final int coveredMethodLine;
+
+		public CoverageReportMethod(final String coveredMethodName, final int coveredMethodLine) {
+			this.coveredMethodName = coveredMethodName;
+			this.coveredMethodLine = coveredMethodLine;
+		}
+
+		public String getCoveredMethodName() {
+			return coveredMethodName;
+		}
+
+		public int getCoveredMethodLine() {
+			return coveredMethodLine;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("'%s' at line %d", coveredMethodName, coveredMethodLine);
+		}
+	}
+
 	private final String workDir;
 
 	private final String oldCommitHash;
@@ -121,15 +153,19 @@ public class TestGapReport {
 	private final int coveredMethodsCount;
 	private final int uncoveredMethodsCount;
 	private final int unresolvableMethodsCount;
+	private final int ambiguouslyResolvedCount;
 
 	private final Set<TestGapMethod> coveredMethods;
 	private final Set<TestGapMethod> uncoveredMethods;
+
 	private final Set<TestGapMethod> unresolvableMethods;
+	private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
 	public TestGapReport(final String workDir, final String oldCommitHash, final Optional<String> newCommitHash,
 			final Set<String> jaCoCoReportFiles, final int jaCoCoCoverageCount,
 			final Set<NewOrChangedFile> newOrChangedFiles, final Set<TestGapMethod> coveredMethods,
-			final Set<TestGapMethod> uncoveredMethods, final Set<TestGapMethod> unresolvableMethods) {
+			final Set<TestGapMethod> uncoveredMethods, final Set<TestGapMethod> unresolvableMethods,
+			final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 		this.workDir = workDir;
 
 		this.oldCommitHash = oldCommitHash;
@@ -148,6 +184,8 @@ public class TestGapReport {
 		this.uncoveredMethods = unmodifiableSet(uncoveredMethods);
 		unresolvableMethodsCount = unresolvableMethods.size();
 		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
+		ambiguouslyResolvedCount = ambiguouslyResolvedCoverage.size();
+		this.ambiguouslyResolvedCoverage = unmodifiableMap(ambiguouslyResolvedCoverage);
 	}
 
 	public String getWorkDir() {
@@ -194,6 +232,10 @@ public class TestGapReport {
 		return unresolvableMethodsCount;
 	}
 
+	public int getAmbiguouslyResolvedCount() {
+		return ambiguouslyResolvedCount;
+	}
+
 	public Set<TestGapMethod> getCoveredMethods() {
 		return coveredMethods;
 	}
@@ -204,5 +246,9 @@ public class TestGapReport {
 
 	public Set<TestGapMethod> getUnresolvableMethods() {
 		return unresolvableMethods;
+	}
+
+	public Map<CoverageReportMethod, Set<TestGapMethod>> getAmbiguouslyResolvedCoverage() {
+		return ambiguouslyResolvedCoverage;
 	}
 }

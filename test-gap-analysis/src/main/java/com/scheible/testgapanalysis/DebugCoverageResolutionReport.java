@@ -13,24 +13,31 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class DebugCoverageResolutionReport {
 
-	private final Set<MethodWithCoverageInfo> coverageInfo;
+	private final int coverageInfoCount;
 	private final Set<String> jaCoCoReportFiles;
 	private final int javaFileCount;
+
 	private final Map<ParsedMethod, MethodWithCoverageInfo> resolved;
 	private final Set<ParsedMethod> unresolved;
 
-	public DebugCoverageResolutionReport(final Set<MethodWithCoverageInfo> coverageInfo,
-			final Set<String> jaCoCoReportFiles, final int javaFileCount,
-			final Map<ParsedMethod, MethodWithCoverageInfo> resolved, final Set<ParsedMethod> unresolved) {
-		this.coverageInfo = coverageInfo;
+	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
+
+	public DebugCoverageResolutionReport(final int coverageInfoCount, final Set<String> jaCoCoReportFiles,
+			final int javaFileCount, final Map<ParsedMethod, MethodWithCoverageInfo> resolved,
+			final Set<ParsedMethod> unresolved,
+			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage) {
+		this.coverageInfoCount = coverageInfoCount;
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(jaCoCoReportFiles);
 		this.javaFileCount = javaFileCount;
+
 		this.resolved = Collections.unmodifiableMap(resolved);
 		this.unresolved = Collections.unmodifiableSet(unresolved);
+
+		this.ambiguousCoverage = Collections.unmodifiableMap(ambiguousCoverage);
 	}
 
-	public Set<MethodWithCoverageInfo> getCoverageInfo() {
-		return coverageInfo;
+	public int getCoverageInfoCount() {
+		return coverageInfoCount;
 	}
 
 	public Set<String> getJaCoCoReportFiles() {
@@ -47,5 +54,9 @@ public class DebugCoverageResolutionReport {
 
 	public Set<ParsedMethod> getUnresolved() {
 		return unresolved;
+	}
+
+	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
+		return ambiguousCoverage;
 	}
 }
