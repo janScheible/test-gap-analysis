@@ -91,9 +91,22 @@ public class JavaMethodUtilTest {
 	}
 
 	@Test
-	public void testNormalizeMethodArguments() {
-		assertThat(normalizeMethodArguments(
-				Arrays.asList("Map.Entry", "Map<String, String>", "List<Map<String, String>>")))
-						.containsExactly("Entry", "Map", "List");
+	public void testNormalizeMethodArgumentsNestedClass() {
+		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"))).containsExactly("Entry");
+	}
+
+	@Test
+	public void testNormalizeMethodArgumentsGenerics() {
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"))).containsExactly("Map");
+	}
+
+	@Test
+	public void testNormalizeMethodArgumentsNestedGenerics() {
+		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"))).containsExactly("List");
+	}
+
+	@Test
+	public void testNormalizeMethodArgumentsNestedClassAndNestedGenerics() {
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"))).containsExactly("Map");
 	}
 }

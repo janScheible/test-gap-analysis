@@ -38,12 +38,23 @@ public class MethodWithCoverageInfoTest {
 	}
 
 	@Test
-	public void testLevel() {
-		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass").getLevel()).isEqualTo(0);
-		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass$InnerStatic").getLevel()).isEqualTo(1);
+	public void testSimpleName() {
+		assertThat(withClassName("CoverageTestClass").getSimpleClassName()).isEqualTo("CoverageTestClass");
+		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass$InnerStatic").getSimpleClassName())
+				.isEqualTo("CoverageTestClass$InnerStatic");
 	}
 
-	private MethodWithCoverageInfo withClassName(final String className) {
+	@Test
+	public void testEnclosingSimpleName() {
+		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass").getEnclosingSimpleName())
+				.isEqualTo("CoverageTestClass");
+		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass$InnerStatic").getEnclosingSimpleName())
+				.isEqualTo("InnerStatic");
+		assertThat(withClassName("testgapanalysis/_test/CoverageTestClass$Foo$InnerStatic").getEnclosingSimpleName())
+				.isEqualTo("InnerStatic");
+	}
+
+	private static MethodWithCoverageInfo withClassName(final String className) {
 		return new MethodWithCoverageInfo(className, "name", "", 0, 0);
 	}
 }

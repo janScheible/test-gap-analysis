@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.scheible.testgapanalysis.common.JavaMethodUtil;
+
 /**
  *
  * @author sj
@@ -16,6 +18,7 @@ public class ParsedMethod {
 
 	private final MethodType methodType;
 	private final String topLevelTypeFqn;
+	private final String topLevelSimpleName;
 	private final List<String> scope;
 	private final String name;
 	private final String relevantCode;
@@ -35,6 +38,7 @@ public class ParsedMethod {
 			final int codeColumn, final List<String> argumentTypes) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
+		this.topLevelSimpleName = JavaMethodUtil.getSimpleName(topLevelTypeFqn, ".");
 		this.scope = scope;
 		this.name = name;
 		this.relevantCode = relevantCode;
@@ -76,12 +80,16 @@ public class ParsedMethod {
 		return topLevelTypeFqn;
 	}
 
+	public String getTopLevelSimpleName() {
+		return topLevelSimpleName;
+	}
+
 	public List<String> getScope() {
 		return scope;
 	}
 
-	public long getLevel() {
-		return scope.size();
+	public String getEnclosingSimpleName() {
+		return scope.isEmpty() ? getTopLevelSimpleName() : scope.get(scope.size() - 1);
 	}
 
 	public String getName() {
@@ -138,9 +146,11 @@ public class ParsedMethod {
 		} else if (obj instanceof ParsedMethod) {
 			final ParsedMethod other = (ParsedMethod) obj;
 			return Objects.equals(methodType, other.methodType)
-					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn) && Objects.equals(scope, other.scope)
-					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
-					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
+					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn)
+					&& Objects.equals(topLevelSimpleName, other.topLevelSimpleName)
+					&& Objects.equals(scope, other.scope) && Objects.equals(name, other.name)
+					&& Objects.equals(relevantCode, other.relevantCode) && Objects.equals(codeLine, other.codeLine)
+					&& Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes);
 		} else {
@@ -150,15 +160,15 @@ public class ParsedMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn,
-				argumentTypes);
+		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, name, relevantCode, codeLine,
+				firstCodeLine, codeColumn, argumentTypes);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
-				+ "', scope='" + scope + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
-				+ firstCodeLine + ", codeColumn=" + codeColumn
+				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', name='" + name
+				+ "', codeLine=" + codeLine + ", firstCodeLine=" + firstCodeLine + ", codeColumn=" + codeColumn
 				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
 	}
 }

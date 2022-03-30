@@ -15,22 +15,26 @@ import org.junit.Test;
  */
 public class JaCoCoHelperTest {
 
-	private static final String REPORT = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-			+ "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">\n"
-			+ "<report name=\"com.scheible::test-gap-analysis library\">\n"
-			+ "	<package name=\"com/scheible/testgapanalysis/git\">\n"
-			+ "		<class name=\"com/scheible/testgapanalysis/git/GitHelper\" sourcefilename=\"GitHelper.java\">\n"
-			+ "			<method name=\"&lt;init&gt;\" desc=\"()V\" line=\"37\">\n"
-			+ "				<counter type=\"INSTRUCTION\" missed=\"3\" covered=\"0\"/>\n"
-			+ "				<counter type=\"LINE\" missed=\"1\" covered=\"0\"/>\n"
-			+ "				<counter type=\"COMPLEXITY\" missed=\"1\" covered=\"0\"/>\n"
-			+ "				<counter type=\"METHOD\" missed=\"1\" covered=\"0\"/>\n" + "			</method>\n"
-			+ "			<method name=\"open\" desc=\"(Ljava/io/File;)Lorg/eclipse/jgit/lib/Repository;\" line=\"42\">\n"
-			+ "				<counter type=\"INSTRUCTION\" missed=\"0\" covered=\"12\"/>\n"
-			+ "				<counter type=\"LINE\" missed=\"0\" covered=\"1\"/>\n"
-			+ "				<counter type=\"COMPLEXITY\" missed=\"0\" covered=\"1\"/>\n"
-			+ "				<counter type=\"METHOD\" missed=\"0\" covered=\"1\"/>\n" + "			</method>\n"
-			+ "		</class>\n" + "	</package>\n" + "</report>";
+	private static final String REPORT = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
+			+ "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">\n" //
+			+ "<report name=\"com.scheible::test-gap-analysis library\">\n" //
+			+ "	<package name=\"com/scheible/testgapanalysis/git\">\n" //
+			+ "		<class name=\"com/scheible/testgapanalysis/git/GitHelper\" sourcefilename=\"GitHelper.java\">\n" //
+			+ "			<method name=\"&lt;init&gt;\" desc=\"()V\" line=\"37\">\n" //
+			+ "				<counter type=\"INSTRUCTION\" missed=\"3\" covered=\"0\"/>\n" //
+			+ "				<counter type=\"LINE\" missed=\"1\" covered=\"0\"/>\n" //
+			+ "				<counter type=\"COMPLEXITY\" missed=\"1\" covered=\"0\"/>\n" //
+			+ "				<counter type=\"METHOD\" missed=\"1\" covered=\"0\"/>\n" //
+			+ "			</method>\n" //
+			+ "			<method name=\"open\" desc=\"(Ljava/io/File;)Lorg/eclipse/jgit/lib/Repository;\" line=\"42\">\n" //
+			+ "				<counter type=\"INSTRUCTION\" missed=\"0\" covered=\"12\"/>\n" //
+			+ "				<counter type=\"LINE\" missed=\"0\" covered=\"1\"/>\n" //
+			+ "				<counter type=\"COMPLEXITY\" missed=\"0\" covered=\"1\"/>\n" //
+			+ "				<counter type=\"METHOD\" missed=\"0\" covered=\"1\"/>\n" //
+			+ "			</method>\n" //
+			+ "		</class>\n" //
+			+ "	</package>\n" //
+			+ "</report>";
 
 	@Test
 	public void testMethodCoverage() {

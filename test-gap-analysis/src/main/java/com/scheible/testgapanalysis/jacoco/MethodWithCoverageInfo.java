@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.scheible.testgapanalysis.common.JavaMethodUtil;
+
 /**
  *
  * @author sj
@@ -11,6 +13,7 @@ import java.util.Optional;
 public class MethodWithCoverageInfo {
 
 	private final String className;
+	private final String simpleClassName;
 	private final String name;
 	private final String description;
 	private final int line;
@@ -19,6 +22,7 @@ public class MethodWithCoverageInfo {
 	public MethodWithCoverageInfo(final String className, final String name, final String description, final int line,
 			final int coveredInstructionCount) {
 		this.className = className;
+		this.simpleClassName = JavaMethodUtil.getSimpleName(className, "/");
 		this.name = name;
 		this.description = description;
 		this.line = line;
@@ -68,8 +72,14 @@ public class MethodWithCoverageInfo {
 		return className;
 	}
 
-	public long getLevel() {
-		return className.chars().filter(c -> c == '$').count();
+	public String getSimpleClassName() {
+		return simpleClassName;
+	}
+
+	public String getEnclosingSimpleName() {
+		return !className.contains("$")
+				? simpleClassName
+				: simpleClassName.substring(simpleClassName.lastIndexOf('$') + 1);
 	}
 
 	public String getName() {
@@ -110,8 +120,9 @@ public class MethodWithCoverageInfo {
 			return true;
 		} else if (obj instanceof MethodWithCoverageInfo) {
 			final MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
-			return Objects.equals(className, other.className) && Objects.equals(name, other.name)
-					&& Objects.equals(description, other.description) && Objects.equals(line, other.line)
+			return Objects.equals(className, other.className) && Objects.equals(simpleClassName, other.simpleClassName)
+					&& Objects.equals(name, other.name) && Objects.equals(description, other.description)
+					&& Objects.equals(line, other.line)
 					&& Objects.equals(coveredInstructionCount, other.coveredInstructionCount);
 		} else {
 			return false;
@@ -120,12 +131,13 @@ public class MethodWithCoverageInfo {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(className, name, description, line, coveredInstructionCount);
+		return Objects.hash(className, simpleClassName, name, description, line, coveredInstructionCount);
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[className='" + className + "', name='" + name + "', line=" + line
-				+ ", description='" + description + "', coveredInstructionCount=" + coveredInstructionCount + "]";
+		return getClass().getSimpleName() + "[className='" + className + "simpleClassName='" + simpleClassName
+				+ "', name='" + name + "', line=" + line + ", description='" + description
+				+ "', coveredInstructionCount=" + coveredInstructionCount + "]";
 	}
 }

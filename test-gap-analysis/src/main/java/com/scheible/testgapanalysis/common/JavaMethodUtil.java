@@ -123,7 +123,11 @@ public class JavaMethodUtil {
 	 * returned and generic type parameters are stripped of.
 	 */
 	public static List<String> normalizeMethodArguments(final Collection<String> arguments) {
-		return arguments.stream().map(t -> t.contains(".") ? t.substring(t.lastIndexOf('.') + 1) : t)
-				.map(t -> t.contains("<") ? t.substring(0, t.indexOf('<')) : t).collect(Collectors.toList());
+		return arguments.stream().map(t -> t.contains("<") ? t.substring(0, t.indexOf('<')) : t)
+				.map(t -> t.contains(".") ? t.substring(t.lastIndexOf('.') + 1) : t).collect(Collectors.toList());
+	}
+
+	public static String getSimpleName(final String fqn, final String separator) {
+		return fqn.contains(separator) ? fqn.substring(fqn.lastIndexOf(separator) + 1) : fqn;
 	}
 }

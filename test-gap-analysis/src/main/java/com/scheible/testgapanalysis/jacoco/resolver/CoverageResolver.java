@@ -150,7 +150,8 @@ public class CoverageResolver {
 	private Optional<MethodWithCoverageInfo> resolveConstructor(final ParsedMethod constructor) {
 		final Set<MethodWithCoverageInfo> coveredConstructors = coverageReport
 				.getOrDefault(TopLevelType.of(constructor), Collections.emptySet()).stream()
-				.filter(MethodWithCoverageInfo::isConstructor).filter(mwci -> mwci.getLevel() == constructor.getLevel())
+				.filter(MethodWithCoverageInfo::isConstructor)
+				.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
 				.filter(mwci -> normalizeMethodArguments(constructor.getArgumentTypes().get())
 						.equals(normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()))))
 				.collect(Collectors.toSet());
