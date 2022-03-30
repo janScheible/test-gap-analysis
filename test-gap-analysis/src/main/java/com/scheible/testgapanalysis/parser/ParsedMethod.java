@@ -20,6 +20,7 @@ public class ParsedMethod {
 	private final String topLevelTypeFqn;
 	private final String topLevelSimpleName;
 	private final List<String> scope;
+	private final String enclosingSimpleName;
 	private final String name;
 	private final String relevantCode;
 	private final int codeLine; // the line where the node of the methods starts
@@ -40,6 +41,7 @@ public class ParsedMethod {
 		this.topLevelTypeFqn = topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtil.getSimpleName(topLevelTypeFqn, ".");
 		this.scope = scope;
+		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : scope.get(scope.size() - 1);
 		this.name = name;
 		this.relevantCode = relevantCode;
 		this.codeLine = codeLine;
@@ -89,7 +91,7 @@ public class ParsedMethod {
 	}
 
 	public String getEnclosingSimpleName() {
-		return scope.isEmpty() ? getTopLevelSimpleName() : scope.get(scope.size() - 1);
+		return enclosingSimpleName;
 	}
 
 	public String getName() {
@@ -148,9 +150,10 @@ public class ParsedMethod {
 			return Objects.equals(methodType, other.methodType)
 					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn)
 					&& Objects.equals(topLevelSimpleName, other.topLevelSimpleName)
-					&& Objects.equals(scope, other.scope) && Objects.equals(name, other.name)
-					&& Objects.equals(relevantCode, other.relevantCode) && Objects.equals(codeLine, other.codeLine)
-					&& Objects.equals(firstCodeLine, other.firstCodeLine)
+					&& Objects.equals(scope, other.scope)
+					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
+					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
+					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes);
 		} else {
@@ -160,15 +163,16 @@ public class ParsedMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, name, relevantCode, codeLine,
-				firstCodeLine, codeColumn, argumentTypes);
+		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
+				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
-				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', name='" + name
-				+ "', codeLine=" + codeLine + ", firstCodeLine=" + firstCodeLine + ", codeColumn=" + codeColumn
+				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', enclosingSimpleName='"
+				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
+				+ firstCodeLine + ", codeColumn=" + codeColumn
 				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
 	}
 }

@@ -14,6 +14,7 @@ public class MethodWithCoverageInfo {
 
 	private final String className;
 	private final String simpleClassName;
+	private final String enclosingSimpleName;
 	private final String name;
 	private final String description;
 	private final int line;
@@ -23,6 +24,7 @@ public class MethodWithCoverageInfo {
 			final int coveredInstructionCount) {
 		this.className = className;
 		this.simpleClassName = JavaMethodUtil.getSimpleName(className, "/");
+		this.enclosingSimpleName = JavaMethodUtil.getSimpleName(simpleClassName, "$");
 		this.name = name;
 		this.description = description;
 		this.line = line;
@@ -77,9 +79,7 @@ public class MethodWithCoverageInfo {
 	}
 
 	public String getEnclosingSimpleName() {
-		return !className.contains("$")
-				? simpleClassName
-				: simpleClassName.substring(simpleClassName.lastIndexOf('$') + 1);
+		return enclosingSimpleName;
 	}
 
 	public String getName() {
@@ -121,6 +121,7 @@ public class MethodWithCoverageInfo {
 		} else if (obj instanceof MethodWithCoverageInfo) {
 			final MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
 			return Objects.equals(className, other.className) && Objects.equals(simpleClassName, other.simpleClassName)
+					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
 					&& Objects.equals(name, other.name) && Objects.equals(description, other.description)
 					&& Objects.equals(line, other.line)
 					&& Objects.equals(coveredInstructionCount, other.coveredInstructionCount);
@@ -131,13 +132,14 @@ public class MethodWithCoverageInfo {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(className, simpleClassName, name, description, line, coveredInstructionCount);
+		return Objects.hash(className, simpleClassName, enclosingSimpleName, name, description, line,
+				coveredInstructionCount);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[className='" + className + "simpleClassName='" + simpleClassName
-				+ "', name='" + name + "', line=" + line + ", description='" + description
-				+ "', coveredInstructionCount=" + coveredInstructionCount + "]";
+				+ "', enclosingSimpleName='" + enclosingSimpleName + "', name='" + name + "', line=" + line
+				+ ", description='" + description + "', coveredInstructionCount=" + coveredInstructionCount + "]";
 	}
 }
