@@ -1,7 +1,7 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
+import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResultAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleMethod() throws Exception {
-		assertThat(resolve(SimpleMethod.class, METHOD).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(SimpleMethod.class, METHOD)).isUnambiguouslyResolved();
 	}
 
 	public static class MultiLineArgumentsMethod {
@@ -33,6 +33,6 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultiLineArgumentsMethod() throws Exception {
-		assertThat(resolve(MultiLineArgumentsMethod.class, METHOD).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(MultiLineArgumentsMethod.class, METHOD)).isUnambiguouslyResolved();
 	}
 }

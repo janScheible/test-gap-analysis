@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
+import org.assertj.core.api.AbstractAssert;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -28,6 +29,28 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  * @author sj
  */
 public abstract class AbstractIntegrationTest {
+
+	public static class CoverageResultAssert extends AbstractAssert<CoverageResultAssert, CoverageResult> {
+
+		private CoverageResultAssert(final CoverageResult actual) {
+			super(actual, CoverageResultAssert.class);
+		}
+
+		public static CoverageResultAssert assertThat(final CoverageResult actual) {
+			return new CoverageResultAssert(actual);
+		}
+
+		public CoverageResultAssert isUnambiguouslyResolved() {
+			if (!actual.getUnresolvedMethods().isEmpty() || !actual.getAmbiguousCoverage().isEmpty()) {
+				failWithMessage(
+						"Expected unambiguously resolved coverage result but unresolved methods is %s and "
+								+ "ambiguous coverage is %s",
+						actual.getUnresolvedMethods(), actual.getAmbiguousCoverage());
+			}
+
+			return this;
+		}
+	}
 
 	protected CoverageResult resolve(final Class<?> testClass, final MethodType... filterTypes) throws Exception {
 		final String testClassName = testClass.getName();

@@ -1,7 +1,7 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
+import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResultAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA_METHOD;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -25,7 +25,7 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleLambda() throws Exception {
-		assertThat(resolve(SimpleLambda.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(SimpleLambda.class, LAMBDA_METHOD)).isUnambiguouslyResolved();
 	}
 
 	public static class MultipleLambdaSingleLine {
@@ -41,7 +41,7 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleLambdaSingleLine() throws Exception {
-		assertThat(resolve(MultipleLambdaSingleLine.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(MultipleLambdaSingleLine.class, LAMBDA_METHOD)).isUnambiguouslyResolved();
 	}
 
 	public static class MultipleLambdaSingleLineMultiLine {
@@ -59,6 +59,6 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleLambdaSingleLineMultiLine() throws Exception {
-		assertThat(resolve(MultipleLambdaSingleLineMultiLine.class, LAMBDA_METHOD).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(MultipleLambdaSingleLineMultiLine.class, LAMBDA_METHOD)).isUnambiguouslyResolved();
 	}
 }

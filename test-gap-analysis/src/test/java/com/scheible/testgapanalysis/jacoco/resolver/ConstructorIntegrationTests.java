@@ -1,7 +1,7 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
+import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResultAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleConstructor() throws Exception {
-		assertThat(resolve(SimpleConstructor.class, CONSTRUCTOR).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(SimpleConstructor.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 
 	public static class ConstructorWithGenericParameter {
@@ -34,7 +34,7 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testConstructorWithGenericParameter() throws Exception {
-		assertThat(resolve(ConstructorWithGenericParameter.class, CONSTRUCTOR).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(ConstructorWithGenericParameter.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 
 	public static class ConstructorWithInitializer {
@@ -50,6 +50,6 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testConstructorWithInitializer() throws Exception {
-		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR).getUnresolvedMethods()).isEmpty();
+		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 }
