@@ -1,6 +1,6 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
-import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResultAssert.assertThat;
+import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResolutionAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
 
 import java.util.Set;

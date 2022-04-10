@@ -21,7 +21,7 @@ public class CoverageResult {
 	private final Set<ParsedMethod> unresolvedMethods = new HashSet<>();
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage = new HashMap<>();
 
-	CoverageResult() {
+	public CoverageResult() {
 	}
 
 	public CoverageResult(final Map<ParsedMethod, MethodWithCoverageInfo> resolved,
@@ -48,9 +48,15 @@ public class CoverageResult {
 		add(result.resolvedMethods, result.unresolvedMethods);
 	}
 
+	/**
+	 * Creates a map of all methods that are ambiguously resolved (excluding (static) initializers). The reason
+	 * that (static) initalizers are ignored is their special handling. See {@code CoverageResolver} for details.
+	 */
 	private static Map<MethodWithCoverageInfo, Set<ParsedMethod>> findAmbiguouslyResolvedCoverage(
 			final Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
-		return resolved.entrySet().stream().collect(Collectors.groupingBy(Entry::getValue)).entrySet().stream()
+		return resolved.entrySet().stream()
+				.filter(e -> !(e.getKey().isInitializer() || e.getKey().isStaticInitializer()))
+				.collect(Collectors.groupingBy(Entry::getValue)).entrySet().stream()
 				.filter(e -> e.getValue().size() > 1).collect(Collectors.toMap(Entry::getKey,
 						e -> e.getValue().stream().map(Entry::getKey).collect(Collectors.toSet())));
 	}
@@ -65,5 +71,10 @@ public class CoverageResult {
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
 		return Collections.unmodifiableMap(ambiguousCoverage);
+	}
+
+	public boolean contains(final ParsedMethod method) {
+		return resolvedMethods.containsKey(method) || unresolvedMethods.contains(method)
+				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
 	}
 }

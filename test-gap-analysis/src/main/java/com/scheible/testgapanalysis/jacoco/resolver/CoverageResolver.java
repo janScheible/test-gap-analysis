@@ -4,6 +4,7 @@ import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethod
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
@@ -23,22 +25,17 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class CoverageResolver {
 
-	private final Map<TopLevelType, Set<ParsedMethod>> allMethods;
 	private final Map<TopLevelType, Set<MethodWithCoverageInfo>> coverageReport;
 
-	CoverageResolver(final Map<TopLevelType, Set<ParsedMethod>> allMethods,
-			final Map<TopLevelType, Set<MethodWithCoverageInfo>> coverageReport) {
-		this.allMethods = allMethods;
+	CoverageResolver(final Map<TopLevelType, Set<MethodWithCoverageInfo>> coverageReport) {
 		this.coverageReport = coverageReport;
 	}
 
 	/**
-	 * A coverage resolver is created with all parsed methods of a set of Java files and a fitting coverage
-	 * report.
+	 * A coverage resolver is created with fitting coverage report.
 	 */
-	public static CoverageResolver with(final Set<ParsedMethod> allMethods,
-			final Set<MethodWithCoverageInfo> coverage) {
-		return new CoverageResolver(groupMethodsByType(allMethods), groupCoverageByType(coverage));
+	public static CoverageResolver with(final Set<MethodWithCoverageInfo> coverage) {
+		return new CoverageResolver(groupCoverageByType(coverage));
 	}
 
 	/**
@@ -61,12 +58,13 @@ public class CoverageResolver {
 
 		final Set<MethodWithCoverageInfo> coverage = coverageReport.getOrDefault(type, Collections.emptySet());
 
-		// handle initializer
-		handleInitializer(type, methods);
+		// first deal with the special cases
+		result.add(resolveInitializers(methods, coverage));
+		result.add(resolveStaticInitializers(methods, coverage));
 
-		// line matching
-		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods,
-				ParsedMethod::getFirstCodeLine);
+		// then resolve the rest based on line numbers
+		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods, ParsedMethod::getFirstCodeLine,
+				m -> !result.contains(m));
 		final Map<Integer, Set<MethodWithCoverageInfo>> lineCoverageMapping = toLineMapping(coverage,
 				MethodWithCoverageInfo::getLine);
 
@@ -78,18 +76,57 @@ public class CoverageResolver {
 	}
 
 	/**
-	 * Initializers don't have dedicated coverage info but are part of the constructor coverage (the Java compiler
-	 * injects all initializers into the constructors). That means as soon as the coverage of a initalizer should
-	 * be resolved all constructors of the class have to be considered instead.
+	 * Initializers don't have dedicated coverage equivalent but are part of the constructor coverage (the Java
+	 * compiler injects all initializers into the beginning of each of the constructors). That means initializers
+	 * have to be resolved to a constructor (to a code covered one in best case).
 	 */
-	private void handleInitializer(final TopLevelType type, final Set<ParsedMethod> methods) {
-		final Set<ParsedMethod> initializerMethods = methods.stream().filter(ParsedMethod::isInitializer)
-				.collect(Collectors.toSet());
-		if (!initializerMethods.isEmpty()) {
-			methods.removeAll(initializerMethods);
+	private CoverageResult resolveInitializers(final Set<ParsedMethod> methods,
+			final Set<MethodWithCoverageInfo> coverage) {
+		final List<ParsedMethod> initializerMethods = methods.stream().filter(ParsedMethod::isInitializer)
+				.collect(Collectors.toList());
+		final List<MethodWithCoverageInfo> constructorCoverage = coverage.stream()
+				.filter(MethodWithCoverageInfo::isConstructor).collect(Collectors.toList());
 
-			allMethods.get(type).stream().filter(ParsedMethod::isConstructor).forEach(m -> methods.add(m));
+		if (initializerMethods.size() == 1 && constructorCoverage.size() == 1) {
+			final Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
+			resolvedInitializers.put(initializerMethods.get(0), constructorCoverage.get(0));
+			return new CoverageResult(resolvedInitializers, Collections.emptySet());
+		} else {
+			// try to find a constructor with covered code, if there is none use any non-covered constructor
+			final Optional<MethodWithCoverageInfo> firstConstructorCoverage = constructorCoverage.stream()
+					.sorted(Comparator.comparing(MethodWithCoverageInfo::getCoveredInstructionCount).reversed())
+					.findFirst();
+
+			if (firstConstructorCoverage.isPresent()) {
+				final Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
+				initializerMethods.forEach(im -> resolvedInitializers.put(im, firstConstructorCoverage.get()));
+				return new CoverageResult(resolvedInitializers, Collections.emptySet());
+
+			}
 		}
+
+		return new CoverageResult();
+	}
+
+	/**
+	 * All static initializers are concatenated by the Java compiler to a single special static method. Therefore
+	 * all static initializers are resolved to that single static initializer special method.
+	 */
+	private CoverageResult resolveStaticInitializers(final Set<ParsedMethod> methods,
+			final Set<MethodWithCoverageInfo> coverage) {
+		final List<ParsedMethod> staticInitializerMethods = methods.stream().filter(ParsedMethod::isStaticInitializer)
+				.collect(Collectors.toList());
+		final List<MethodWithCoverageInfo> staticInitializerCoverage = coverage.stream()
+				.filter(MethodWithCoverageInfo::isStaticInitializer).collect(Collectors.toList());
+
+		if (!staticInitializerCoverage.isEmpty()) { // make sure that a coverage report is there
+			final Map<ParsedMethod, MethodWithCoverageInfo> resolvedStaticInitializers = new HashMap<>();
+			staticInitializerMethods
+					.forEach(im -> resolvedStaticInitializers.put(im, staticInitializerCoverage.get(0)));
+			return new CoverageResult(resolvedStaticInitializers, Collections.emptySet());
+		}
+
+		return new CoverageResult();
 	}
 
 	CoverageResult resolveLine(final Set<ParsedMethod> methods, final Set<MethodWithCoverageInfo> coverage) {
@@ -124,7 +161,8 @@ public class CoverageResolver {
 				unresolved.addAll(lambdaMethods);
 			}
 		} else {
-			// resolve constructors that lost there line number in case of initializers present
+			// resolve constructors that lost there line number (could be cause by a initializer or a member variable
+			// that is initialized)
 			for (final ParsedMethod constructor : methods.stream().filter(ParsedMethod::isConstructor)
 					.collect(Collectors.toSet())) {
 				resolveConstructor(constructor).ifPresent(constructorCoverage -> {
@@ -176,7 +214,12 @@ public class CoverageResolver {
 
 	private static <T> Map<Integer, Set<T>> toLineMapping(final Set<T> items,
 			final Function<T, Integer> lineExtractor) {
-		return items.stream().collect(
+		return toLineMapping(items, lineExtractor, item -> true);
+	}
+
+	private static <T> Map<Integer, Set<T>> toLineMapping(final Set<T> items, final Function<T, Integer> lineExtractor,
+			final Predicate<T> predicate) {
+		return items.stream().filter(predicate).collect(
 				Collectors.groupingBy(lineExtractor, Collectors.mapping(Function.identity(), Collectors.toSet())));
 	}
 }

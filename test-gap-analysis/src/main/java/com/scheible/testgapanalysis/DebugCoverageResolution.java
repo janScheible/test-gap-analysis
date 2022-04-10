@@ -40,7 +40,7 @@ public class DebugCoverageResolution {
 		final Set<MethodWithCoverageInfo> coverageInfo = JaCoCoHelper.getMethodCoverage(jaCoCoReportFiles);
 		final ParseResult parseResult = parseMethods(sourceDir);
 
-		final CoverageResolver resolver = CoverageResolver.with(parseResult.methods, coverageInfo);
+		final CoverageResolver resolver = CoverageResolver.with(coverageInfo);
 		final CoverageResult result = resolver.resolve(parseResult.methods);
 
 		return new DebugCoverageResolutionReport(coverageInfo.size(), Files2.toRelative(workDir, jaCoCoReportFiles),

@@ -98,6 +98,10 @@ public class MethodWithCoverageInfo {
 		}
 	}
 
+	public boolean isStaticInitializer() {
+		return "<clinit>".equals(name);
+	}
+
 	public boolean isConstructor() {
 		return "<init>".equals(name);
 	}

@@ -62,9 +62,7 @@ public class Analysis {
 		final Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(newContentMethods);
 		newOrChangedMethods.removeAll(unchangedMethods);
 
-		final CoverageResolver coverageResolver = CoverageResolver.with(
-				newContentMethods.stream().map(MethodCompareWrapper::getParsedMethod).collect(Collectors.toSet()),
-				coverageInfo);
+		final CoverageResolver coverageResolver = CoverageResolver.with(coverageInfo);
 
 		final CoverageResult coverageResult = coverageResolver
 				.resolve(MethodCompareWrapper.unwrap(newOrChangedMethods));
