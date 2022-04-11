@@ -10,6 +10,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -58,7 +59,7 @@ public class ParserUtils {
 	}
 
 	static String getTopLevelFqn(final Node node) {
-		return ((ClassOrInterfaceDeclaration) getParents(node).get(0)).getFullyQualifiedName().get();
+		return ((TypeDeclaration<?>) getParents(node).get(0)).getFullyQualifiedName().get();
 	}
 
 	static List<String> getScope(final Node node) {
