@@ -14,6 +14,7 @@ import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 /**
@@ -23,7 +24,8 @@ import com.github.javaparser.ast.stmt.TryStmt;
 public class ParserUtils {
 
 	static int getFirstCodeLine(final Node node) {
-		return node.getChildNodes().stream().filter(c -> c instanceof BlockStmt && c.getRange().isPresent())
+		return node.getChildNodes().stream()
+				.filter(c -> (c instanceof BlockStmt || c instanceof ExpressionStmt) && c.getRange().isPresent())
 				.flatMap(bs -> flatMapToCodeNodes(bs).stream().filter(cn -> cn.getRange().isPresent())
 						.map(cn -> cn.getRange().get().begin.line))
 				.sorted().findFirst().orElse(node.getRange().get().begin.line);

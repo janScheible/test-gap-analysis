@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -68,6 +69,21 @@ public class JavaParserHelperTest {
 	public void testLambdaParsing() throws IOException {
 		assertThat(parseMethods(LambdaParsing.class, LAMBDA_METHOD))
 				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda", 3));
+	}
+
+	public static class LambdaParsingMultiLineParametersParsing {
+
+		public void doItLambda() {
+			BiFunction<String, String, Integer> ss = (first, //
+					second) -> 42;
+			ss.apply("a", "b");
+		}
+	}
+
+	@Test
+	public void testLambdaParsingMultiLineParametersParsing() throws IOException {
+		assertThat(parseMethods(LambdaParsingMultiLineParametersParsing.class, LAMBDA_METHOD))
+				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda", 4));
 	}
 
 	public static class MethodMasking { // #debug
