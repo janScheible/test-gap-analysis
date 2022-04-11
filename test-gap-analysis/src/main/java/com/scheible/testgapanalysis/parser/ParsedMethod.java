@@ -13,7 +13,7 @@ import com.scheible.testgapanalysis.common.JavaMethodUtil;
 public class ParsedMethod {
 
 	public enum MethodType {
-		INITIALIZER, STATIC_INITIALIZER, CONSTRUCTOR, METHOD, STATIC_METHOD, LAMBDA_METHOD;
+		INITIALIZER, STATIC_INITIALIZER, CONSTRUCTOR, ENUM_CONSTRUCTOR, METHOD, STATIC_METHOD, LAMBDA_METHOD;
 	}
 
 	private final MethodType methodType;
@@ -64,6 +64,10 @@ public class ParsedMethod {
 
 	public boolean isConstructor() {
 		return methodType == MethodType.CONSTRUCTOR;
+	}
+
+	public boolean isEnumConstructor() {
+		return methodType == MethodType.ENUM_CONSTRUCTOR;
 	}
 
 	public boolean isMethod() {

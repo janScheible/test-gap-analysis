@@ -3,6 +3,7 @@ package com.scheible.testgapanalysis.jacoco.resolver;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -163,8 +164,8 @@ public class CoverageResolver {
 		} else {
 			// resolve constructors that lost there line number (could be cause by a initializer or a member variable
 			// that is initialized)
-			for (final ParsedMethod constructor : methods.stream().filter(ParsedMethod::isConstructor)
-					.collect(Collectors.toSet())) {
+			for (final ParsedMethod constructor : methods.stream()
+					.filter(pm -> pm.isConstructor() || pm.isEnumConstructor()).collect(Collectors.toSet())) {
 				resolveConstructor(constructor).ifPresent(constructorCoverage -> {
 					methods.remove(constructor);
 					resolved.put(constructor, constructorCoverage);
@@ -183,14 +184,25 @@ public class CoverageResolver {
 	 * Normally constructors are resolved via line (of first code) as well. But in case of one or more initializer
 	 * blocks the line number of the constructors in the JaCoCo report is not correct anymore. It is always the
 	 * first line of code of the static initalizer instead of the real constructor position. Fallback to argument
-	 * matching in such a case.
+	 * matching in such a case. Enum constructors are also a special case, they have tow special first arguments
+	 * of type 'String' and 'int'.
 	 */
 	private Optional<MethodWithCoverageInfo> resolveConstructor(final ParsedMethod constructor) {
+		final List<String> normalizedConstructorArguments = new ArrayList<>(
+				normalizeMethodArguments(constructor.getArgumentTypes().get()));
+
+		// The constructors of enums have two additional parameter of type String and int. Most likely the name and
+		// index of the enum const is passed via this parameter.
+		if (constructor.isEnumConstructor()) {
+			normalizedConstructorArguments.add(0, "int");
+			normalizedConstructorArguments.add(0, "String");
+		}
+
 		final Set<MethodWithCoverageInfo> coveredConstructors = coverageReport
 				.getOrDefault(TopLevelType.of(constructor), Collections.emptySet()).stream()
 				.filter(MethodWithCoverageInfo::isConstructor)
 				.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
-				.filter(mwci -> normalizeMethodArguments(constructor.getArgumentTypes().get())
+				.filter(mwci -> normalizedConstructorArguments
 						.equals(normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()))))
 				.collect(Collectors.toSet());
 

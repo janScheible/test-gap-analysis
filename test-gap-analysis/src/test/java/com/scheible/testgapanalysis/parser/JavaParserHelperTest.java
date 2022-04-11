@@ -2,6 +2,7 @@ package com.scheible.testgapanalysis.parser;
 
 import static com.scheible.testgapanalysis.parser.JavaParserHelper.getClassBeginLine;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
+import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.ENUM_CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA_METHOD;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.getTestClassBeginLine;
@@ -55,6 +56,23 @@ public class JavaParserHelperTest {
 	public void testConstructorParsing() throws IOException {
 		assertThat(parseMethods(ConstructorParsing.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 5));
+	}
+
+	public static enum EnumConstructorParsing {
+
+		TEST(42);
+
+		private final int value;
+
+		EnumConstructorParsing(int value) {
+			this.value = value;
+		}
+	}
+
+	@Test
+	public void testEnumConstructorParsing() throws IOException {
+		assertThat(parseMethods(EnumConstructorParsing.class, ENUM_CONSTRUCTOR))
+				.containsOnly(new AssertableMethod(ENUM_CONSTRUCTOR, "<init>", 7));
 	}
 
 	public static class LambdaParsing {

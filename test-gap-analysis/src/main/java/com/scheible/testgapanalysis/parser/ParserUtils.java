@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
@@ -65,8 +66,8 @@ public class ParserUtils {
 	static List<String> getScope(final Node node) {
 		final List<Node> parents = getParents(node);
 
-		return parents
-				.subList(1, parents.size()).stream().filter(pn -> pn instanceof ClassOrInterfaceDeclaration
+		return parents.subList(1, parents.size()).stream()
+				.filter(pn -> pn instanceof ClassOrInterfaceDeclaration || pn instanceof EnumDeclaration
 						|| pn instanceof MethodDeclaration || isObjectCreationExprWithAnonymousClassBody(pn))
 				.map(pn -> {
 					return pn instanceof NodeWithSimpleName
