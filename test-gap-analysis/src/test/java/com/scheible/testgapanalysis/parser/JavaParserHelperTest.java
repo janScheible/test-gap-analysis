@@ -90,6 +90,21 @@ public class JavaParserHelperTest {
 				.first()
 				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
 	}
+	
+	public static class ConstructorWithGenericArgumentExtendingType<T extends Runnable> {
+
+		public ConstructorWithGenericArgumentExtendingType(T arg) {
+			"".trim();
+		}
+	}
+
+	@Test
+	public void testConstructorWithGenericArgumentExtendingType() throws IOException {
+		assertThat(parseMethods(ConstructorWithGenericArgumentExtendingType.class, CONSTRUCTOR))
+				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
+				.first()
+				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
+	}
 
 	public static class LambdaParsing {
 
