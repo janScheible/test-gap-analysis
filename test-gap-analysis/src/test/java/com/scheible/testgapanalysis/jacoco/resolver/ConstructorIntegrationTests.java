@@ -52,4 +52,16 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 	public void testConstructorWithInitializer() throws Exception {
 		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
+
+	public static class ConstructorWithGenericArgument<T> {
+
+		public ConstructorWithGenericArgument(T arg) {
+			"".trim();
+		}
+	}
+
+	@Test
+	public void testConstructorWithGenericArgument() throws Exception {
+		assertThat(resolve(ConstructorWithGenericArgument.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+	}
 }

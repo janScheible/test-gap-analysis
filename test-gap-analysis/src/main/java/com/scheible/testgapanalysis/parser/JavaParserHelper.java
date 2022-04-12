@@ -17,6 +17,7 @@ import com.github.javaparser.Range;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -29,6 +30,7 @@ import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.LambdaExpr;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
 
@@ -63,12 +65,22 @@ public class JavaParserHelper {
 					final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
 							.map(Type::asString).collect(Collectors.toList());
 
+					final List<String> typeParameters = node.getParentNode()
+							.filter(pn -> pn instanceof ClassOrInterfaceDeclaration)
+							.map(pn -> (ClassOrInterfaceDeclaration) pn)
+							.map(ClassOrInterfaceDeclaration::getTypeParameters).orElseGet(() -> new NodeList<>())
+							.stream().map(TypeParameter::getNameAsString).collect(Collectors.toList());
+
+					// replace all matching generic types with Object
+					final List<String> argumentTypesWithoutGenerics = argumentTypes.stream()
+							.map(at -> typeParameters.contains(at) ? "Object" : at).collect(Collectors.toList());
+
 					final boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration)
 							.isPresent();
 
 					result.add(new ParsedMethod(enumConstructor ? MethodType.ENUM_CONSTRUCTOR : MethodType.CONSTRUCTOR,
 							getTopLevelFqn(node), getScope(node), "<init>", relevantCode, range.begin.line,
-							getFirstCodeLine(node), range.begin.column, argumentTypes));
+							getFirstCodeLine(node), range.begin.column, argumentTypesWithoutGenerics));
 				}
 
 				super.visit(node, arg);

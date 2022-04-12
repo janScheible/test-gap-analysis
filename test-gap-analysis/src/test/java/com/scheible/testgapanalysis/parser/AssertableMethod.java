@@ -10,14 +10,27 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  */
 class AssertableMethod {
 
+	final transient ParsedMethod parsedMethod;
+
 	final MethodType type;
 	final String name;
 	final int firstCodeLine;
 
 	AssertableMethod(final MethodType type, final String name, final int firstCodeLine) {
+		this(null, type, name, firstCodeLine);
+	}
+
+	AssertableMethod(final ParsedMethod parsedMethod, final MethodType type, final String name,
+			final int firstCodeLine) {
+		this.parsedMethod = parsedMethod;
+
 		this.type = type;
 		this.name = name;
 		this.firstCodeLine = firstCodeLine;
+	}
+
+	public ParsedMethod getParsedMethod() {
+		return parsedMethod;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.pars
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -75,6 +76,21 @@ public class JavaParserHelperTest {
 				.containsOnly(new AssertableMethod(ENUM_CONSTRUCTOR, "<init>", 7));
 	}
 
+	public static class ConstructorWithGenericArgument<T> {
+
+		public ConstructorWithGenericArgument(T arg) {
+			"".trim();
+		}
+	}
+
+	@Test
+	public void testConstructorWithGenericArgument() throws IOException {
+		assertThat(parseMethods(ConstructorWithGenericArgument.class, CONSTRUCTOR))
+				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
+				.first()
+				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
+	}
+
 	public static class LambdaParsing {
 
 		public void doItLambda() {
@@ -126,7 +142,7 @@ public class JavaParserHelperTest {
 	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
 			throws IOException {
 		final int classBeginLine = getTestClassBeginLine(clazz);
-		return parseJavaTestSource(clazz, filterTypes).stream()
-				.map(m -> new AssertableMethod(m.getMethodType(), m.getName(), m.getFirstCodeLine() - classBeginLine));
+		return parseJavaTestSource(clazz, filterTypes).stream().map(
+				m -> new AssertableMethod(m, m.getMethodType(), m.getName(), m.getFirstCodeLine() - classBeginLine));
 	}
 }
