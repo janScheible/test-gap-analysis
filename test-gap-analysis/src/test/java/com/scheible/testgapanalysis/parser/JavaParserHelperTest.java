@@ -90,7 +90,7 @@ public class JavaParserHelperTest {
 				.first()
 				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
 	}
-	
+
 	public static class ConstructorWithGenericArgumentExtendingType<T extends Runnable> {
 
 		public ConstructorWithGenericArgumentExtendingType(T arg) {
