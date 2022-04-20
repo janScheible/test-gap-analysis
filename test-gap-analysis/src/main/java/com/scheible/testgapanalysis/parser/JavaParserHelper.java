@@ -65,22 +65,18 @@ public class JavaParserHelper {
 					final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
 							.map(Type::asString).collect(Collectors.toList());
 
-					final List<String> typeParameters = node.getParentNode()
+					final List<String> parentTypeParameters = node.getParentNode()
 							.filter(pn -> pn instanceof ClassOrInterfaceDeclaration)
 							.map(pn -> (ClassOrInterfaceDeclaration) pn)
 							.map(ClassOrInterfaceDeclaration::getTypeParameters).orElseGet(() -> new NodeList<>())
 							.stream().map(TypeParameter::getNameAsString).collect(Collectors.toList());
-
-					// replace all matching generic types with Object
-					final List<String> argumentTypesWithoutGenerics = argumentTypes.stream()
-							.map(at -> typeParameters.contains(at) ? "Object" : at).collect(Collectors.toList());
 
 					final boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration)
 							.isPresent();
 
 					result.add(new ParsedMethod(enumConstructor ? MethodType.ENUM_CONSTRUCTOR : MethodType.CONSTRUCTOR,
 							getTopLevelFqn(node), getScope(node), "<init>", relevantCode, range.begin.line,
-							getFirstCodeLine(node), range.begin.column, argumentTypesWithoutGenerics));
+							getFirstCodeLine(node), range.begin.column, argumentTypes, parentTypeParameters));
 				}
 
 				super.visit(node, arg);

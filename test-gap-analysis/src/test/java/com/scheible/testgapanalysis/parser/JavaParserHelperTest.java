@@ -87,8 +87,8 @@ public class JavaParserHelperTest {
 	public void testConstructorWithGenericArgument() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgument.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
-				.first()
-				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
+				.first().matches(am -> am.getParsedMethod().getParentTypeParameters().equals(Arrays.asList("T")),
+						"has parent type parameters");
 	}
 
 	public static class ConstructorWithGenericArgumentExtendingType<T extends Runnable> {
@@ -102,8 +102,8 @@ public class JavaParserHelperTest {
 	public void testConstructorWithGenericArgumentExtendingType() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgumentExtendingType.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
-				.first()
-				.matches(am -> am.getParsedMethod().getArgumentTypes().equals(Optional.of(Arrays.asList("Object"))));
+				.first().matches(am -> am.getParsedMethod().getParentTypeParameters().equals(Arrays.asList("T")),
+						"has parent type parameters");
 	}
 
 	public static class LambdaParsing {

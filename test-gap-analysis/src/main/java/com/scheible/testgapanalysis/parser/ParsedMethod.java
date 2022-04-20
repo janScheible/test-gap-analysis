@@ -1,8 +1,10 @@
 package com.scheible.testgapanalysis.parser;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtil;
 
@@ -27,27 +29,30 @@ public class ParsedMethod {
 	private final int firstCodeLine; // the first line with real code
 	private final int codeColumn;
 	private final List<String> argumentTypes;
+	private final List<String> parentTypeParameters;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
 			final int codeColumn) {
-		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, null);
+		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, emptyList(),
+				emptyList());
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
-			final int codeColumn, final List<String> argumentTypes) {
+			final int codeColumn, final List<String> argumentTypes, final List<String> parentTypeParameters) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtil.getSimpleName(topLevelTypeFqn, ".");
-		this.scope = scope;
+		this.scope = unmodifiableList(scope);
 		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : scope.get(scope.size() - 1);
 		this.name = name;
 		this.relevantCode = relevantCode;
 		this.codeLine = codeLine;
 		this.firstCodeLine = firstCodeLine;
 		this.codeColumn = codeColumn;
-		this.argumentTypes = argumentTypes;
+		this.argumentTypes = unmodifiableList(argumentTypes);
+		this.parentTypeParameters = unmodifiableList(parentTypeParameters);
 	}
 
 	public MethodType getMethodType() {
@@ -118,8 +123,12 @@ public class ParsedMethod {
 		return codeColumn;
 	}
 
-	public Optional<List<String>> getArgumentTypes() {
-		return Optional.ofNullable(argumentTypes);
+	public List<String> getArgumentTypes() {
+		return argumentTypes;
+	}
+
+	public List<String> getParentTypeParameters() {
+		return parentTypeParameters;
 	}
 
 	public String getDescription() {
@@ -130,7 +139,7 @@ public class ParsedMethod {
 		} else if (isStaticMethod()) {
 			description = "." + getName() + "(...)";
 		} else if (isConstructor()) {
-			description = " constructor with " + getArgumentTypes().get().size() + " arguments";
+			description = " constructor with " + getArgumentTypes().size() + " arguments";
 		} else if (isInitializer()) {
 			description = " initializer";
 		} else if (isStaticInitializer()) {
@@ -159,7 +168,8 @@ public class ParsedMethod {
 					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
 					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
-					&& Objects.equals(argumentTypes, other.argumentTypes);
+					&& Objects.equals(argumentTypes, other.argumentTypes)
+					&& Objects.equals(parentTypeParameters, other.parentTypeParameters);
 		} else {
 			return false;
 		}
@@ -168,7 +178,7 @@ public class ParsedMethod {
 	@Override
 	public int hashCode() {
 		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
-				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes);
+				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, parentTypeParameters);
 	}
 
 	@Override
@@ -177,6 +187,7 @@ public class ParsedMethod {
 				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', enclosingSimpleName='"
 				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
 				+ firstCodeLine + ", codeColumn=" + codeColumn
-				+ (argumentTypes != null ? ", argumentTypes=" + argumentTypes : "") + "]";
+				+ (!argumentTypes.isEmpty() ? ", argumentTypes=" + argumentTypes : "")
+				+ (!parentTypeParameters.isEmpty() ? ", parentTypeParameters=" + parentTypeParameters : "") + "]";
 	}
 }

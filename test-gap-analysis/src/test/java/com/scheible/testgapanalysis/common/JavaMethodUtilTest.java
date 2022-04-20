@@ -1,5 +1,7 @@
 package com.scheible.testgapanalysis.common;
 
+import static java.util.Collections.emptyList;
+
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextClassPart;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextPrimitivePart;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
@@ -92,21 +94,29 @@ public class JavaMethodUtilTest {
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedClass() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"))).containsExactly("Entry");
+		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"), emptyList())).containsExactly("Entry");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"))).containsExactly("Map");
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"), emptyList())).containsExactly("Map");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"))).containsExactly("List");
+		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"), emptyList()))
+				.containsExactly("List");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedClassAndNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"))).containsExactly("Map");
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"), emptyList()))
+				.containsExactly("Map");
+	}
+
+	@Test
+	public void testNormalizeMethodArgumentsWithGenerics() {
+		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry", "Object", "T", "K"), Arrays.asList("T", "K")))
+				.containsExactly("Entry", "Object", "Object", "Object");
 	}
 }

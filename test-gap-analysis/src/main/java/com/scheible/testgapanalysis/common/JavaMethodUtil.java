@@ -120,9 +120,16 @@ public class JavaMethodUtil {
 
 	/**
 	 * Normalizing means in that context that in case of nested classes only the class on the deepest level is
-	 * returned and generic type parameters are stripped of.
+	 * returned and generic type parameters (enclosed by '<' and '>') are stripped of. If the remaining type is
+	 * one of the passed type parameters it is replaced with 'Object'.
 	 */
-	public static List<String> normalizeMethodArguments(final Collection<String> arguments) {
+	public static List<String> normalizeMethodArguments(final Collection<String> arguments,
+			final Collection<String> typeParameters) {
+		return normalizeMethodArguments(arguments).stream().map(at -> typeParameters.contains(at) ? "Object" : at)
+				.collect(Collectors.toList());
+	}
+
+	private static List<String> normalizeMethodArguments(final Collection<String> arguments) {
 		return arguments.stream().map(t -> t.contains("<") ? t.substring(0, t.indexOf('<')) : t)
 				.map(t -> t.contains(".") ? t.substring(t.lastIndexOf('.') + 1) : t).collect(Collectors.toList());
 	}

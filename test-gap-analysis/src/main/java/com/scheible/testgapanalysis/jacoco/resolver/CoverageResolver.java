@@ -1,5 +1,7 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
+import static java.util.Collections.emptyList;
+
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
 
@@ -62,6 +64,7 @@ public class CoverageResolver {
 		// first deal with the special cases
 		result.add(resolveInitializers(methods, coverage));
 		result.add(resolveStaticInitializers(methods, coverage));
+		result.add(resolveConstructor(methods, coverage));
 
 		// then resolve the rest based on line numbers
 		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods, ParsedMethod::getFirstCodeLine,
@@ -130,6 +133,46 @@ public class CoverageResolver {
 		return new CoverageResult();
 	}
 
+	/**
+	 * Constructors might loose there line number in the JaCoCo report. Could be caused by a initializer or a
+	 * member variable that is initialized. In JaCoCo line of the constructor is always the first line of code of
+	 * the initalizer or member variable that is initialized instead of the real constructor code line. Therefore
+	 * argument matching is performed instead. Enum constructors are also a special case, they have two special
+	 * first arguments of type 'String' and 'int'.
+	 */
+	private CoverageResult resolveConstructor(final Set<ParsedMethod> methods,
+			final Set<MethodWithCoverageInfo> coverage) {
+		final Map<ParsedMethod, MethodWithCoverageInfo> resolved = new HashMap<>();
+		final Set<ParsedMethod> unresolved = new HashSet<>();
+
+		for (final ParsedMethod constructor : methods.stream()
+				.filter(pm -> pm.isConstructor() || pm.isEnumConstructor()).collect(Collectors.toList())) {
+			final List<String> normalizedConstructorArguments = new ArrayList<>(
+					normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getParentTypeParameters()));
+
+			// The constructors of enums have two additional parameter of type String and int. Most likely the name and
+			// index of the enum const is passed via this parameter.
+			if (constructor.isEnumConstructor()) {
+				normalizedConstructorArguments.add(0, "int");
+				normalizedConstructorArguments.add(0, "String");
+			}
+
+			final List<MethodWithCoverageInfo> coveredConstructors = coverage.stream()
+					.filter(MethodWithCoverageInfo::isConstructor)
+					.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
+					.filter(mwci -> normalizedConstructorArguments.equals(
+							normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()), emptyList())))
+					.collect(Collectors.toList());
+			if (coveredConstructors.size() == 1) {
+				resolved.put(constructor, coveredConstructors.get(0));
+			} else {
+				unresolved.add(constructor);
+			}
+		}
+
+		return new CoverageResult(resolved, unresolved);
+	}
+
 	CoverageResult resolveLine(final Set<ParsedMethod> methods, final Set<MethodWithCoverageInfo> coverage) {
 		final Map<ParsedMethod, MethodWithCoverageInfo> resolved = new HashMap<>();
 		final Set<ParsedMethod> unresolved = new HashSet<>();
@@ -162,55 +205,10 @@ public class CoverageResolver {
 				unresolved.addAll(lambdaMethods);
 			}
 		} else {
-			// resolve constructors that lost there line number (could be cause by a initializer or a member variable
-			// that is initialized)
-			for (final ParsedMethod constructor : methods.stream()
-					.filter(pm -> pm.isConstructor() || pm.isEnumConstructor()).collect(Collectors.toSet())) {
-				resolveConstructor(constructor).ifPresent(constructorCoverage -> {
-					methods.remove(constructor);
-					resolved.put(constructor, constructorCoverage);
-				});
-			}
-
-			if (!methods.isEmpty()) {
-				unresolved.addAll(methods);
-			}
+			unresolved.addAll(methods);
 		}
 
 		return new CoverageResult(resolved, unresolved);
-	}
-
-	/**
-	 * Normally constructors are resolved via line (of first code) as well. But in case of one or more initializer
-	 * blocks the line number of the constructors in the JaCoCo report is not correct anymore. It is always the
-	 * first line of code of the static initalizer instead of the real constructor position. Fallback to argument
-	 * matching in such a case. Enum constructors are also a special case, they have tow special first arguments
-	 * of type 'String' and 'int'.
-	 */
-	private Optional<MethodWithCoverageInfo> resolveConstructor(final ParsedMethod constructor) {
-		final List<String> normalizedConstructorArguments = new ArrayList<>(
-				normalizeMethodArguments(constructor.getArgumentTypes().get()));
-
-		// The constructors of enums have two additional parameter of type String and int. Most likely the name and
-		// index of the enum const is passed via this parameter.
-		if (constructor.isEnumConstructor()) {
-			normalizedConstructorArguments.add(0, "int");
-			normalizedConstructorArguments.add(0, "String");
-		}
-
-		final Set<MethodWithCoverageInfo> coveredConstructors = coverageReport
-				.getOrDefault(TopLevelType.of(constructor), Collections.emptySet()).stream()
-				.filter(MethodWithCoverageInfo::isConstructor)
-				.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
-				.filter(mwci -> normalizedConstructorArguments
-						.equals(normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()))))
-				.collect(Collectors.toSet());
-
-		if (coveredConstructors.size() == 1) {
-			return Optional.of(coveredConstructors.iterator().next());
-		} else {
-			return Optional.empty();
-		}
 	}
 
 	private static Map<TopLevelType, Set<ParsedMethod>> groupMethodsByType(final Set<ParsedMethod> methods) {
