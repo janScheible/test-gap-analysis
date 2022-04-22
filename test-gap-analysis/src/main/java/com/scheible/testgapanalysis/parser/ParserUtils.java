@@ -3,6 +3,7 @@ package com.scheible.testgapanalysis.parser;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -92,5 +93,15 @@ public class ParserUtils {
 		}
 
 		return parents;
+	}
+
+	/**
+	 * For example for a inner class constructor it is the outer class name.
+	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	static Optional<String> getOuterDeclaringType(final Node node) {
+		final Optional<TypeDeclaration> outerDeclaringType = node.findAncestor(TypeDeclaration.class)
+				.flatMap(p -> p.findAncestor(TypeDeclaration.class));
+		return outerDeclaringType.map(TypeDeclaration::getNameAsString);
 	}
 }

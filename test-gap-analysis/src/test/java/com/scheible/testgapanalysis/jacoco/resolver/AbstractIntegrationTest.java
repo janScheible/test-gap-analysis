@@ -51,7 +51,10 @@ public abstract class AbstractIntegrationTest {
 		}
 
 		public CoverageResolutionAssert isUnambiguouslyResolved() {
-			if (!actual.result.getUnresolvedMethods().isEmpty() || !actual.result.getAmbiguousCoverage().isEmpty()) {
+			if (actual.result.isEmpty()) {
+				failWithMessage("Expected some unambiguously resolved coverage result but was empty!");
+			} else if (!actual.result.getUnresolvedMethods().isEmpty()
+					|| !actual.result.getAmbiguousCoverage().isEmpty()) {
 				failWithMessage(
 						"Expected unambiguously resolved coverage result but unresolved methods is %s and "
 								+ "ambiguous coverage is %s",
@@ -73,6 +76,21 @@ public abstract class AbstractIntegrationTest {
 				Assertions.assertThat(actual.result.getUnresolvedMethods()).containsOnly(expectedUnreseolved);
 			} catch (final AssertionError ae) {
 				failWithMessage("Expected only the following unresolved parsed methods: %s", ae.getMessage());
+			}
+
+			return this;
+		}
+
+		public CoverageResolutionAssert isEmpty() {
+			if (!actual.result.getAmbiguousCoverage().isEmpty()) {
+				failWithMessage("Expected empty coverage result but ambiguous coverage is %s.",
+						actual.result.getAmbiguousCoverage());
+			} else if (!actual.result.getResolvedMethods().isEmpty()) {
+				failWithMessage("Expected empty coverage result but resolved methods is %s.",
+						actual.result.getResolvedMethods());
+			} else if (!actual.result.getUnresolvedMethods().isEmpty()) {
+				failWithMessage("Expected empty coverage result but unresolved methods is %s.",
+						actual.result.getUnresolvedMethods());
 			}
 
 			return this;

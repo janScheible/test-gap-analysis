@@ -137,8 +137,8 @@ public class CoverageResolver {
 	 * Constructors might loose there line number in the JaCoCo report. Could be caused by a initializer or a
 	 * member variable that is initialized. In JaCoCo line of the constructor is always the first line of code of
 	 * the initalizer or member variable that is initialized instead of the real constructor code line. Therefore
-	 * argument matching is performed instead. Enum constructors are also a special case, they have two special
-	 * first arguments of type 'String' and 'int'.
+	 * argument matching is performed instead. Enum constructors and inner class constructors are also special
+	 * cases.
 	 */
 	private CoverageResult resolveConstructor(final Set<ParsedMethod> methods,
 			final Set<MethodWithCoverageInfo> coverage) {
@@ -146,7 +146,8 @@ public class CoverageResolver {
 		final Set<ParsedMethod> unresolved = new HashSet<>();
 
 		for (final ParsedMethod constructor : methods.stream()
-				.filter(pm -> pm.isConstructor() || pm.isEnumConstructor()).collect(Collectors.toList())) {
+				.filter(pm -> pm.isConstructor() || pm.isEnumConstructor() || pm.isInnerClassConstructor())
+				.collect(Collectors.toList())) {
 			final List<String> normalizedConstructorArguments = new ArrayList<>(
 					normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getParentTypeParameters()));
 
@@ -155,6 +156,11 @@ public class CoverageResolver {
 			if (constructor.isEnumConstructor()) {
 				normalizedConstructorArguments.add(0, "int");
 				normalizedConstructorArguments.add(0, "String");
+			} else // Non-static nested classes (called inner classes) have and addition first constructor parameter.
+			if (constructor.isInnerClassConstructor()) {
+				normalizedConstructorArguments.add(0,
+						constructor.getOuterDeclaringType().orElseThrow(() -> new IllegalStateException(
+								"Inner class constructor " + constructor + " has no outer declaring type!")));
 			}
 
 			final List<MethodWithCoverageInfo> coveredConstructors = coverage.stream()

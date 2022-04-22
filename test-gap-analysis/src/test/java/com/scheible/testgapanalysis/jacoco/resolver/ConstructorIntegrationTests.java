@@ -2,6 +2,7 @@ package com.scheible.testgapanalysis.jacoco.resolver;
 
 import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResolutionAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
+import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR;
 
 import java.util.Set;
 
@@ -63,5 +64,17 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 	@Test
 	public void testConstructorWithGenericArgument() throws Exception {
 		assertThat(resolve(ConstructorWithGenericArgument.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+	}
+
+	class ConstructorOfNonStaticInnerClass {
+
+		ConstructorOfNonStaticInnerClass() {
+
+		}
+	}
+
+	@Test
+	public void testConstructorOfNonStaticInnerClass() throws Exception {
+		assertThat(resolve(ConstructorOfNonStaticInnerClass.class, INNER_CLASS_CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 }

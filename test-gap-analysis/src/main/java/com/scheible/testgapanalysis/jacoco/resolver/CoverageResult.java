@@ -77,4 +77,8 @@ public class CoverageResult {
 		return resolvedMethods.containsKey(method) || unresolvedMethods.contains(method)
 				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
 	}
+
+	public boolean isEmpty() {
+		return resolvedMethods.isEmpty() && unresolvedMethods.isEmpty() && ambiguousCoverage.isEmpty();
+	}
 }

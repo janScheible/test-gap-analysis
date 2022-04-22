@@ -38,6 +38,8 @@ public class InitializerIntegrationTests extends AbstractIntegrationTest {
 
 	public static class MultipleInitializerWithMultipleConstructorsWithAtLeastOneCovered implements Serializable {
 
+		private static final long serialVersionUID = 1L;
+
 		{
 			"".trim();
 		}

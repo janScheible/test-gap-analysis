@@ -1,7 +1,6 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
 import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResolutionAssert.assertThat;
-import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.ENUM_CONSTRUCTOR;
 
 import org.junit.Test;
@@ -14,7 +13,7 @@ public class EnumIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testTopLevelEnum() throws Exception {
-		assertThat(resolve(TopLevelEnum.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+		assertThat(resolve(TopLevelEnum.class, ENUM_CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 
 	public static enum SimpleEnum {
@@ -24,7 +23,7 @@ public class EnumIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSimpleEnum() throws Exception {
-		assertThat(resolve(SimpleEnum.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+		assertThat(resolve(SimpleEnum.class)).isEmpty();
 	}
 
 	public static enum SimpleEnumWithNoArgsConstructor {

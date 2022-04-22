@@ -9,5 +9,6 @@ enum TopLevelEnum {
 	TEST;
 
 	private TopLevelEnum() {
+		"".trim();
 	}
 }

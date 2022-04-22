@@ -22,6 +22,19 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  */
 public class TestClassSourceJavaParser {
 
+	private static class ClassWithSource {
+
+		private final Class<?> testClass;
+		private final Class<?> topLevelClass;
+		private final String source;
+
+		private ClassWithSource(Class<?> testClass, Class<?> topLevelClass, String source) {
+			this.testClass = testClass;
+			this.topLevelClass = topLevelClass;
+			this.source = source;
+		}
+	}
+
 	/**
 	 * Resolves the passed Java class to the test sources ('src/test/java') for Java source parsing. Returns only
 	 * methods of the tpye passed as filter.
@@ -30,13 +43,15 @@ public class TestClassSourceJavaParser {
 			throws IOException {
 		final Set<MethodType> filterTypesSet = new HashSet<>(Arrays.asList(filterTypes));
 
-		final Set<ParsedMethod> parsedMethods = JavaParserHelper.getMethods(readJavaTestSource(testClass)).stream()
-				.filter(m -> !m.getScope().isEmpty() && m.getScope().get(0).equals(testClass.getSimpleName()))
+		final ClassWithSource classWithSource = readJavaTestSource(testClass);
+		final Set<ParsedMethod> parsedMethods = JavaParserHelper.getMethods(classWithSource.source).stream()
+				.filter(m -> (!m.getScope().isEmpty() && m.getScope().get(0).equals(testClass.getSimpleName()))
+						|| classWithSource.testClass.equals(classWithSource.topLevelClass))
 				.filter(m -> filterTypesSet.contains(m.getMethodType())).collect(Collectors.toSet());
 		return parsedMethods;
 	}
 
-	private static String readJavaTestSource(final Class<?> testClass) throws IOException {
+	private static ClassWithSource readJavaTestSource(final Class<?> testClass) throws IOException {
 		Class<?> topLevelClass = testClass;
 		while (topLevelClass.getEnclosingClass() != null) {
 			topLevelClass = topLevelClass.getEnclosingClass();
@@ -45,10 +60,11 @@ public class TestClassSourceJavaParser {
 		final Path path = Paths.get(".", "src", "test", "java",
 				topLevelClass.getName().replaceAll(quote("."), quoteReplacement(File.separator)) + ".java");
 
-		return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+		return new ClassWithSource(testClass, topLevelClass,
+				new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
 	}
 
 	public static int getTestClassBeginLine(final Class<?> testClass) throws IOException {
-		return JavaParserHelper.getClassBeginLine(readJavaTestSource(testClass), testClass.getSimpleName());
+		return JavaParserHelper.getClassBeginLine(readJavaTestSource(testClass).source, testClass.getSimpleName());
 	}
 }

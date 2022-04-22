@@ -1,8 +1,6 @@
 package com.scheible.testgapanalysis.parser;
 
-import static com.scheible.testgapanalysis.parser.ParserUtils.getFirstCodeLine;
-import static com.scheible.testgapanalysis.parser.ParserUtils.getScope;
-import static com.scheible.testgapanalysis.parser.ParserUtils.getTopLevelFqn;
+import static java.lang.Boolean.FALSE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,10 +71,19 @@ public class JavaParserHelper {
 
 					final boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration)
 							.isPresent();
+					final boolean innerClassConstructor = node.getParentNode()
+							.filter(pn -> pn instanceof ClassOrInterfaceDeclaration)
+							.map(pn -> (ClassOrInterfaceDeclaration) pn).map(pn -> pn.isInnerClass() && !pn.isStatic())
+							.orElse(FALSE);
 
-					result.add(new ParsedMethod(enumConstructor ? MethodType.ENUM_CONSTRUCTOR : MethodType.CONSTRUCTOR,
-							getTopLevelFqn(node), getScope(node), "<init>", relevantCode, range.begin.line,
-							getFirstCodeLine(node), range.begin.column, argumentTypes, parentTypeParameters));
+					final MethodType type = enumConstructor
+							? MethodType.ENUM_CONSTRUCTOR
+							: innerClassConstructor ? MethodType.INNER_CLASS_CONSTRUCTOR : MethodType.CONSTRUCTOR;
+
+					result.add(new ParsedMethod(type, ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
+							"<init>", relevantCode, range.begin.line, ParserUtils.getFirstCodeLine(node),
+							range.begin.column, argumentTypes, parentTypeParameters,
+							ParserUtils.getOuterDeclaringType(node)));
 				}
 
 				super.visit(node, arg);
@@ -90,8 +97,9 @@ public class JavaParserHelper {
 
 					result.add(
 							new ParsedMethod(node.isStatic() ? MethodType.STATIC_INITIALIZER : MethodType.INITIALIZER,
-									getTopLevelFqn(node), getScope(node), node.isStatic() ? "<clinit>" : "<initbl>",
-									relevantCode, range.begin.line, getFirstCodeLine(node), range.begin.column));
+									ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
+									node.isStatic() ? "<clinit>" : "<initbl>", relevantCode, range.begin.line,
+									ParserUtils.getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);
@@ -104,8 +112,8 @@ public class JavaParserHelper {
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(node.isStatic() ? MethodType.STATIC_METHOD : MethodType.METHOD,
-							getTopLevelFqn(node), getScope(node), node.getNameAsString(), relevantCode,
-							range.begin.line, getFirstCodeLine(node), range.begin.column));
+							ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node), node.getNameAsString(),
+							relevantCode, range.begin.line, ParserUtils.getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);
@@ -117,8 +125,9 @@ public class JavaParserHelper {
 					final Range range = node.getRange().get();
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 
-					result.add(new ParsedMethod(MethodType.LAMBDA_METHOD, getTopLevelFqn(node), getScope(node),
-							"lambda", relevantCode, range.begin.line, getFirstCodeLine(node), range.begin.column));
+					result.add(new ParsedMethod(MethodType.LAMBDA_METHOD, ParserUtils.getTopLevelFqn(node),
+							ParserUtils.getScope(node), "lambda", relevantCode, range.begin.line,
+							ParserUtils.getFirstCodeLine(node), range.begin.column));
 				}
 
 				super.visit(node, arg);

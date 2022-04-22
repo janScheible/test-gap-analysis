@@ -3,6 +3,7 @@ package com.scheible.testgapanalysis.parser;
 import static com.scheible.testgapanalysis.parser.JavaParserHelper.getClassBeginLine;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.ENUM_CONSTRUCTOR;
+import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA_METHOD;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.getTestClassBeginLine;
@@ -104,6 +105,22 @@ public class JavaParserHelperTest {
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
 				.first().matches(am -> am.getParsedMethod().getParentTypeParameters().equals(Arrays.asList("T")),
 						"has parent type parameters");
+	}
+
+	public class InnerClassConstructor {
+
+		public InnerClassConstructor(Object arg) {
+			"".trim();
+		}
+	}
+
+	@Test
+	public void testInnerClassConstructor() throws IOException {
+		assertThat(parseMethods(InnerClassConstructor.class, INNER_CLASS_CONSTRUCTOR))
+				.containsOnly(new AssertableMethod(INNER_CLASS_CONSTRUCTOR, "<init>", 3)) //
+				.first()
+				.matches(am -> am.getParsedMethod().getOuterDeclaringType().equals(Optional.of("JavaParserHelperTest")),
+						"has outer declaring type");
 	}
 
 	public static class LambdaParsing {

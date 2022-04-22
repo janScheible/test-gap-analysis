@@ -5,6 +5,7 @@ import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtil;
 
@@ -15,7 +16,7 @@ import com.scheible.testgapanalysis.common.JavaMethodUtil;
 public class ParsedMethod {
 
 	public enum MethodType {
-		INITIALIZER, STATIC_INITIALIZER, CONSTRUCTOR, ENUM_CONSTRUCTOR, METHOD, STATIC_METHOD, LAMBDA_METHOD;
+		INITIALIZER, STATIC_INITIALIZER, CONSTRUCTOR, ENUM_CONSTRUCTOR, INNER_CLASS_CONSTRUCTOR, METHOD, STATIC_METHOD, LAMBDA_METHOD;
 	}
 
 	private final MethodType methodType;
@@ -30,17 +31,19 @@ public class ParsedMethod {
 	private final int codeColumn;
 	private final List<String> argumentTypes;
 	private final List<String> parentTypeParameters;
+	private final String outerDeclaringType;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
 			final int codeColumn) {
 		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, emptyList(),
-				emptyList());
+				emptyList(), Optional.empty());
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
-			final int codeColumn, final List<String> argumentTypes, final List<String> parentTypeParameters) {
+			final int codeColumn, final List<String> argumentTypes, final List<String> parentTypeParameters,
+			final Optional<String> outerDeclaringType) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtil.getSimpleName(topLevelTypeFqn, ".");
@@ -53,6 +56,7 @@ public class ParsedMethod {
 		this.codeColumn = codeColumn;
 		this.argumentTypes = unmodifiableList(argumentTypes);
 		this.parentTypeParameters = unmodifiableList(parentTypeParameters);
+		this.outerDeclaringType = outerDeclaringType.orElse(null);
 	}
 
 	public MethodType getMethodType() {
@@ -73,6 +77,10 @@ public class ParsedMethod {
 
 	public boolean isEnumConstructor() {
 		return methodType == MethodType.ENUM_CONSTRUCTOR;
+	}
+
+	public boolean isInnerClassConstructor() {
+		return methodType == MethodType.INNER_CLASS_CONSTRUCTOR;
 	}
 
 	public boolean isMethod() {
@@ -131,6 +139,10 @@ public class ParsedMethod {
 		return parentTypeParameters;
 	}
 
+	public Optional<String> getOuterDeclaringType() {
+		return Optional.of(outerDeclaringType);
+	}
+
 	public String getDescription() {
 		String description = null;
 
@@ -169,7 +181,8 @@ public class ParsedMethod {
 					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes)
-					&& Objects.equals(parentTypeParameters, other.parentTypeParameters);
+					&& Objects.equals(parentTypeParameters, other.parentTypeParameters)
+					&& Objects.equals(outerDeclaringType, other.outerDeclaringType);
 		} else {
 			return false;
 		}
@@ -178,7 +191,8 @@ public class ParsedMethod {
 	@Override
 	public int hashCode() {
 		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
-				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, parentTypeParameters);
+				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, parentTypeParameters,
+				outerDeclaringType);
 	}
 
 	@Override
@@ -188,6 +202,7 @@ public class ParsedMethod {
 				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
 				+ firstCodeLine + ", codeColumn=" + codeColumn
 				+ (!argumentTypes.isEmpty() ? ", argumentTypes=" + argumentTypes : "")
-				+ (!parentTypeParameters.isEmpty() ? ", parentTypeParameters=" + parentTypeParameters : "") + "]";
+				+ (!parentTypeParameters.isEmpty() ? ", parentTypeParameters=" + parentTypeParameters : "")
+				+ (outerDeclaringType != null ? ", outerDeclaringType=" + outerDeclaringType : "") + "]";
 	}
 }
