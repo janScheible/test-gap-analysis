@@ -27,21 +27,21 @@ public class ParsedMethod {
 	private final String name;
 	private final String relevantCode;
 	private final int codeLine; // the line where the node of the methods starts
-	private final int firstCodeLine; // the first line with real code
+	private final Integer firstCodeLine; // the first line with real code
 	private final int codeColumn;
 	private final List<String> argumentTypes;
 	private final List<String> parentTypeParameters;
 	private final String outerDeclaringType;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
+			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
 			final int codeColumn) {
 		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, emptyList(),
 				emptyList(), Optional.empty());
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int codeLine, final int firstCodeLine,
+			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
 			final int codeColumn, final List<String> argumentTypes, final List<String> parentTypeParameters,
 			final Optional<String> outerDeclaringType) {
 		this.methodType = methodType;
@@ -52,7 +52,7 @@ public class ParsedMethod {
 		this.name = name;
 		this.relevantCode = relevantCode;
 		this.codeLine = codeLine;
-		this.firstCodeLine = firstCodeLine;
+		this.firstCodeLine = firstCodeLine.orElse(null);
 		this.codeColumn = codeColumn;
 		this.argumentTypes = unmodifiableList(argumentTypes);
 		this.parentTypeParameters = unmodifiableList(parentTypeParameters);
@@ -123,8 +123,16 @@ public class ParsedMethod {
 		return codeLine;
 	}
 
-	public int getFirstCodeLine() {
-		return firstCodeLine;
+	public Optional<Integer> getFirstCodeLine() {
+		return Optional.ofNullable(firstCodeLine);
+	}
+
+	public Optional<Integer> getFirstCodeLineOffset() {
+		return firstCodeLine != null ? Optional.of(firstCodeLine - codeLine) : Optional.empty();
+	}
+
+	public boolean isEmpty() {
+		return firstCodeLine == null;
 	}
 
 	public int getCodeColumn() {
@@ -200,7 +208,7 @@ public class ParsedMethod {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
 				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', enclosingSimpleName='"
 				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
-				+ firstCodeLine + ", codeColumn=" + codeColumn
+				+ firstCodeLine + ", firstCodeLineOffset=" + getFirstCodeLineOffset() + ", codeColumn=" + codeColumn
 				+ (!argumentTypes.isEmpty() ? ", argumentTypes=" + argumentTypes : "")
 				+ (!parentTypeParameters.isEmpty() ? ", parentTypeParameters=" + parentTypeParameters : "")
 				+ (outerDeclaringType != null ? ", outerDeclaringType=" + outerDeclaringType : "") + "]";

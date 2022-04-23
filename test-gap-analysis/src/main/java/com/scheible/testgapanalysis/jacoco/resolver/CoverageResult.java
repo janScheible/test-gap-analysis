@@ -1,6 +1,8 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
-import java.util.Collections;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,6 +20,7 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
 public class CoverageResult {
 
 	private final Map<ParsedMethod, MethodWithCoverageInfo> resolvedMethods = new HashMap<>();
+	private final Set<ParsedMethod> emptyMethods = new HashSet<>();
 	private final Set<ParsedMethod> unresolvedMethods = new HashSet<>();
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage = new HashMap<>();
 
@@ -27,6 +30,12 @@ public class CoverageResult {
 	public CoverageResult(final Map<ParsedMethod, MethodWithCoverageInfo> resolved,
 			final Set<ParsedMethod> unresolved) {
 		add(resolved, unresolved);
+	}
+
+	public static CoverageResult ofEmptyMethods(final Set<ParsedMethod> allMethods) {
+		final CoverageResult result = new CoverageResult();
+		allMethods.stream().filter(ParsedMethod::isEmpty).forEach(result.emptyMethods::add);
+		return result;
 	}
 
 	private void add(final Map<ParsedMethod, MethodWithCoverageInfo> resolved, final Set<ParsedMethod> unresolved) {
@@ -62,23 +71,29 @@ public class CoverageResult {
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedMethods() {
-		return Collections.unmodifiableMap(resolvedMethods);
+		return unmodifiableMap(resolvedMethods);
+	}
+
+	public Set<ParsedMethod> getEmptyMethods() {
+		return unmodifiableSet(emptyMethods);
 	}
 
 	public Set<ParsedMethod> getUnresolvedMethods() {
-		return Collections.unmodifiableSet(unresolvedMethods);
+		return unmodifiableSet(unresolvedMethods);
 	}
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
-		return Collections.unmodifiableMap(ambiguousCoverage);
+		return unmodifiableMap(ambiguousCoverage);
 	}
 
 	public boolean contains(final ParsedMethod method) {
-		return resolvedMethods.containsKey(method) || unresolvedMethods.contains(method)
+		return emptyMethods.contains(method) || resolvedMethods.containsKey(method)
+				|| unresolvedMethods.contains(method)
 				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
 	}
 
 	public boolean isEmpty() {
-		return resolvedMethods.isEmpty() && unresolvedMethods.isEmpty() && ambiguousCoverage.isEmpty();
+		return emptyMethods.isEmpty() && resolvedMethods.isEmpty() && unresolvedMethods.isEmpty()
+				&& ambiguousCoverage.isEmpty();
 	}
 }

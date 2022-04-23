@@ -47,15 +47,17 @@ public class TestGapAnalysis {
 		private final Set<TestGapMethod> coveredMethods;
 		private final Set<TestGapMethod> uncoveredMethods;
 
+		private final Set<TestGapMethod> emptyMethods;
 		private final Set<TestGapMethod> unresolvableMethods;
 		private final Map<TestGapReport.CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
 		private CoverageResult(final Set<TestGapMethod> coveredMethods, final Set<TestGapMethod> uncoveredMethods,
-				final Set<TestGapMethod> unresolvableMethods,
+				final Set<TestGapMethod> emptyMethods, final Set<TestGapMethod> unresolvableMethods,
 				final Map<TestGapReport.CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 			this.coveredMethods = coveredMethods;
 			this.uncoveredMethods = uncoveredMethods;
 
+			this.emptyMethods = emptyMethods;
 			this.unresolvableMethods = unresolvableMethods;
 			this.ambiguouslyResolvedCoverage = ambiguouslyResolvedCoverage;
 		}
@@ -73,7 +75,7 @@ public class TestGapAnalysis {
 		return new TestGapReport(workDir.getAbsolutePath(), repositoryResult.repositoryStatus.getOldCommitHash(),
 				repositoryResult.repositoryStatus.getNewCommitHash(), Files2.toRelative(workDir, jaCoCoReportFiles),
 				coverageInfo.size(), repositoryResult.newOrChangedFiles, coverageResult.coveredMethods,
-				coverageResult.uncoveredMethods, coverageResult.unresolvableMethods,
+				coverageResult.uncoveredMethods, coverageResult.emptyMethods, coverageResult.unresolvableMethods,
 				coverageResult.ambiguouslyResolvedCoverage);
 	}
 
@@ -102,7 +104,8 @@ public class TestGapAnalysis {
 		final AnalysisResult result = Analysis.perform(status, NON_TEST_JAVA_FILE, coverageInfo);
 
 		return new CoverageResult(toTestGapMethods(result.getCoveredMethods()),
-				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getUnresolvableMethods()),
+				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getEmptyMethods()),
+				toTestGapMethods(result.getUnresolvableMethods()),
 				toAmbigouslyResolvedTestGapMethod(result.getAmbiguouslyResolvedCoverage()));
 	}
 

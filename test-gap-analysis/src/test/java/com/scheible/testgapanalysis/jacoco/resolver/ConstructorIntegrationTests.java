@@ -69,7 +69,7 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 	class ConstructorOfNonStaticInnerClass {
 
 		ConstructorOfNonStaticInnerClass() {
-
+			"".trim();
 		}
 	}
 

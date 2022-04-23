@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -137,21 +136,6 @@ public class JavaParserHelperTest {
 				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda", 3));
 	}
 
-	public static class LambdaParsingMultiLineParametersParsing {
-
-		public void doItLambda() {
-			BiFunction<String, String, Integer> ss = (first, //
-					second) -> 42;
-			ss.apply("a", "b");
-		}
-	}
-
-	@Test
-	public void testLambdaParsingMultiLineParametersParsing() throws IOException {
-		assertThat(parseMethods(LambdaParsingMultiLineParametersParsing.class, LAMBDA_METHOD))
-				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda", 4));
-	}
-
 	public static class MethodMasking { // #debug
 
 		public String doIt(String arg1, final boolean isDebugMode) {
@@ -174,7 +158,9 @@ public class JavaParserHelperTest {
 	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
 			throws IOException {
 		final int classBeginLine = getTestClassBeginLine(clazz);
-		return parseJavaTestSource(clazz, filterTypes).stream().map(
-				m -> new AssertableMethod(m, m.getMethodType(), m.getName(), m.getFirstCodeLine() - classBeginLine));
+		return parseJavaTestSource(clazz, filterTypes).stream()
+				.map(m -> new AssertableMethod(m, m.getMethodType(), m.getName(),
+						m.getFirstCodeLine().orElseThrow(() -> new IllegalStateException("Method must not be empty!"))
+								- classBeginLine));
 	}
 }

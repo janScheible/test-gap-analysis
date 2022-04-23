@@ -1,6 +1,8 @@
 package com.scheible.testgapanalysis;
 
-import java.util.Collections;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -18,22 +20,24 @@ public class DebugCoverageResolutionReport {
 	private final int javaFileCount;
 
 	private final Map<ParsedMethod, MethodWithCoverageInfo> resolved;
-	private final Set<ParsedMethod> unresolved;
+	private final Set<ParsedMethod> empty;
 
+	private final Set<ParsedMethod> unresolved;
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
 
 	public DebugCoverageResolutionReport(final int coverageInfoCount, final Set<String> jaCoCoReportFiles,
 			final int javaFileCount, final Map<ParsedMethod, MethodWithCoverageInfo> resolved,
-			final Set<ParsedMethod> unresolved,
+			final Set<ParsedMethod> empty, final Set<ParsedMethod> unresolved,
 			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage) {
 		this.coverageInfoCount = coverageInfoCount;
-		this.jaCoCoReportFiles = Collections.unmodifiableSet(jaCoCoReportFiles);
+		this.jaCoCoReportFiles = unmodifiableSet(jaCoCoReportFiles);
 		this.javaFileCount = javaFileCount;
 
-		this.resolved = Collections.unmodifiableMap(resolved);
-		this.unresolved = Collections.unmodifiableSet(unresolved);
+		this.resolved = unmodifiableMap(resolved);
+		this.empty = unmodifiableSet(empty);
 
-		this.ambiguousCoverage = Collections.unmodifiableMap(ambiguousCoverage);
+		this.unresolved = unmodifiableSet(unresolved);
+		this.ambiguousCoverage = unmodifiableMap(ambiguousCoverage);
 	}
 
 	public int getCoverageInfoCount() {
@@ -50,6 +54,10 @@ public class DebugCoverageResolutionReport {
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolved() {
 		return resolved;
+	}
+
+	public Set<ParsedMethod> getEmpty() {
+		return empty;
 	}
 
 	public Set<ParsedMethod> getUnresolved() {

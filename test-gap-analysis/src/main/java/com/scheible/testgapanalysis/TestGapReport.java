@@ -152,19 +152,24 @@ public class TestGapReport {
 
 	private final int coveredMethodsCount;
 	private final int uncoveredMethodsCount;
+	private final double coverageRatio;
+	private final int emptyMethodsCount;
+
 	private final int unresolvableMethodsCount;
 	private final int ambiguouslyResolvedCount;
 
 	private final Set<TestGapMethod> coveredMethods;
 	private final Set<TestGapMethod> uncoveredMethods;
 
+	private final Set<TestGapMethod> emptyMethods;
 	private final Set<TestGapMethod> unresolvableMethods;
 	private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
 	public TestGapReport(final String workDir, final String oldCommitHash, final Optional<String> newCommitHash,
 			final Set<String> jaCoCoReportFiles, final int jaCoCoCoverageCount,
 			final Set<NewOrChangedFile> newOrChangedFiles, final Set<TestGapMethod> coveredMethods,
-			final Set<TestGapMethod> uncoveredMethods, final Set<TestGapMethod> unresolvableMethods,
+			final Set<TestGapMethod> uncoveredMethods, final Set<TestGapMethod> emptyMethods,
+			final Set<TestGapMethod> unresolvableMethods,
 			final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 		this.workDir = workDir;
 
@@ -182,6 +187,9 @@ public class TestGapReport {
 		this.coveredMethods = unmodifiableSet(coveredMethods);
 		uncoveredMethodsCount = uncoveredMethods.size();
 		this.uncoveredMethods = unmodifiableSet(uncoveredMethods);
+		coverageRatio = (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount);
+		emptyMethodsCount = emptyMethods.size();
+		this.emptyMethods = unmodifiableSet(emptyMethods);
 		unresolvableMethodsCount = unresolvableMethods.size();
 		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
 		ambiguouslyResolvedCount = ambiguouslyResolvedCoverage.size();
@@ -224,12 +232,24 @@ public class TestGapReport {
 		return coveredMethodsCount;
 	}
 
+	public int getEmptyMethodsCount() {
+		return emptyMethodsCount;
+	}
+
+	public Set<TestGapMethod> getEmptyMethods() {
+		return emptyMethods;
+	}
+
 	public int getUncoveredMethodsCount() {
 		return uncoveredMethodsCount;
 	}
 
 	public int getUnresolvableMethodsCount() {
 		return unresolvableMethodsCount;
+	}
+
+	public double getCoverageRatio() {
+		return coverageRatio;
 	}
 
 	public int getAmbiguouslyResolvedCount() {

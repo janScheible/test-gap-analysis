@@ -44,18 +44,26 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 		getLog().info(String.format("Found %d Java files with %d methods in '%s'.", report.getJavaFileCount(),
 				report.getResolved().size() + report.getUnresolved().size(), sourceDir));
 
-		getLog().info("Resolved methods:");
-		report.getResolved().entrySet()
-				.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
+		if (!report.getResolved().isEmpty()) {
+			getLog().info("Resolved methods:");
+			report.getResolved().entrySet()
+					.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
+		}
+		
+		if (!report.getEmpty().isEmpty()) {
+			getLog().info("Empty methods (no coverage information available):");
+			report.getEmpty()
+					.forEach(u -> getLog().info(String.format(" - %s", u)));
+		}
 
 		if (!report.getAmbiguousCoverage().isEmpty()) {
-			getLog().info("Ambiguously resolved methods:");
+			getLog().info("Ambiguously resolved methods (multiple methods were resolved to a single coverage information):");
 			report.getAmbiguousCoverage().entrySet()
 					.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
 		}
 
 		if (!report.getUnresolved().isEmpty()) {
-			getLog().info("Unresolvable methods (no coverage information available):");
+			getLog().info("Unresolvable methods (coverage information couldn't be found):");
 			report.getUnresolved()
 					.forEach(u -> getLog().info(String.format(" - %s", u)));
 		}

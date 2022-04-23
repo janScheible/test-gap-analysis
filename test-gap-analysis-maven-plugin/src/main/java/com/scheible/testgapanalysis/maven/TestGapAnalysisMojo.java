@@ -66,15 +66,35 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 		getLog().info("Method blacklist (excluded from coverage check): all getter and setter");
 
-		getLog().info("Covered methods:");
-		report.getCoveredMethods().stream().map(Object::toString).sorted()
-				.forEach(coveredMethod -> getLog().info(" - " + coveredMethod));
-		getLog().info("Uncovered methods:");
-		report.getUncoveredMethods().stream().map(Object::toString).sorted()
-				.forEach(uncoveredMethod -> getLog().info(" - " + uncoveredMethod));
-		getLog().info("Unresolvable methods (no coverage information available):");
-		report.getUnresolvableMethods().stream().map(Object::toString).sorted()
-				.forEach(unresolvableMethod -> getLog().info(" - " + unresolvableMethod));
+		if (!report.getCoveredMethods().isEmpty()) {
+			getLog().info("Covered methods:");
+			report.getCoveredMethods().stream().map(Object::toString).sorted()
+					.forEach(coveredMethod -> getLog().info(" - " + coveredMethod));
+		}
+
+		if (!report.getUncoveredMethods().isEmpty()) {
+			getLog().info("Uncovered methods:");
+			report.getUncoveredMethods().stream().map(Object::toString).sorted()
+					.forEach(uncoveredMethod -> getLog().info(" - " + uncoveredMethod));
+		}
+
+		if (!report.getEmptyMethods().isEmpty()) {
+			getLog().info("Empty methods (no coverage information available):");
+			report.getEmptyMethods().stream().map(Object::toString).sorted()
+					.forEach(emptyMethod -> getLog().info(" - " + emptyMethod));
+		}
+
+		if (!report.getAmbiguouslyResolvedCoverage().isEmpty()) {
+			getLog().info("Ambiguously resolved methods (multiple methods were resolved to a single coverage information):");
+			report.getAmbiguouslyResolvedCoverage().entrySet().stream()
+					.forEach(e -> getLog().info(String.format(" - %s -> %s", e.getKey(), e.getValue())));
+		}
+
+		if (!report.getUnresolvableMethods().isEmpty()) {
+			getLog().info("Unresolvable methods (coverage information couldn't be found):");
+			report.getUnresolvableMethods().stream().map(Object::toString).sorted()
+					.forEach(unresolvableMethod -> getLog().info(" - " + unresolvableMethod));
+		}
 	}
 
 	private void writeJsonReport(final TestGapReport report) throws MojoExecutionException {

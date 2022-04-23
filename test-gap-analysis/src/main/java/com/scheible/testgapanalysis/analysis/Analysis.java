@@ -76,6 +76,7 @@ public class Analysis {
 		uncoveredNewOrChangedMethods.forEach(coveredNewOrChangedMethods::remove);
 
 		return new AnalysisResult(coveredNewOrChangedMethods, uncoveredNewOrChangedMethods,
-				coverageResult.getUnresolvedMethods(), coverageResult.getAmbiguousCoverage());
+				coverageResult.getEmptyMethods(), coverageResult.getUnresolvedMethods(),
+				coverageResult.getAmbiguousCoverage());
 	}
 }

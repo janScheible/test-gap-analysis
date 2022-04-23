@@ -18,16 +18,18 @@ public class AnalysisResult {
 	private final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods;
 	private final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods;
 
+	private final Set<ParsedMethod> emptyMethods;
 	private final Set<ParsedMethod> unresolvableMethods;
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage;
 
 	public AnalysisResult(final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods,
-			final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods,
+			final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods, final Set<ParsedMethod> emptyMethods,
 			final Set<ParsedMethod> unresolvableMethods,
 			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		this.coveredMethods = unmodifiableMap(coveredMethods);
 		this.uncoveredMethods = unmodifiableMap(uncoveredMethods);
 
+		this.emptyMethods = unmodifiableSet(emptyMethods);
 		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
 		this.ambiguouslyResolvedCoverage = unmodifiableMap(ambiguouslyResolvedCoverage);
 	}
@@ -38,6 +40,10 @@ public class AnalysisResult {
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getUncoveredMethods() {
 		return uncoveredMethods;
+	}
+
+	public Set<ParsedMethod> getEmptyMethods() {
+		return emptyMethods;
 	}
 
 	public Set<ParsedMethod> getUnresolvableMethods() {

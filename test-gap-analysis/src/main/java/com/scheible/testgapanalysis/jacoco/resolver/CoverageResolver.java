@@ -47,9 +47,10 @@ public class CoverageResolver {
 	 * cases like initializers.
 	 */
 	public CoverageResult resolve(final Set<ParsedMethod> methods) {
-		final CoverageResult result = new CoverageResult();
+		final CoverageResult result = CoverageResult.ofEmptyMethods(methods);
 
-		for (final Entry<TopLevelType, Set<ParsedMethod>> typeMethodsEntry : groupMethodsByType(methods).entrySet()) {
+		for (final Entry<TopLevelType, Set<ParsedMethod>> typeMethodsEntry : groupMethodsByType(
+				methods.stream().filter(m -> !m.isEmpty()).collect(Collectors.toSet())).entrySet()) {
 			result.add(resolveType(typeMethodsEntry.getKey(), typeMethodsEntry.getValue()));
 		}
 
@@ -67,8 +68,11 @@ public class CoverageResolver {
 		result.add(resolveConstructor(methods, coverage));
 
 		// then resolve the rest based on line numbers
-		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods, ParsedMethod::getFirstCodeLine,
+		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods,
+				m -> m.getFirstCodeLine()
+						.orElseThrow(() -> new IllegalStateException("Can't happen, empty methods were filtered out!")),
 				m -> !result.contains(m));
+
 		final Map<Integer, Set<MethodWithCoverageInfo>> lineCoverageMapping = toLineMapping(coverage,
 				MethodWithCoverageInfo::getLine);
 
@@ -105,7 +109,6 @@ public class CoverageResolver {
 				final Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
 				initializerMethods.forEach(im -> resolvedInitializers.put(im, firstConstructorCoverage.get()));
 				return new CoverageResult(resolvedInitializers, Collections.emptySet());
-
 			}
 		}
 
