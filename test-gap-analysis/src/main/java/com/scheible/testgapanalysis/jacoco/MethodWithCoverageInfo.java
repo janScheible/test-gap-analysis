@@ -142,7 +142,7 @@ public class MethodWithCoverageInfo {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[className='" + className + "simpleClassName='" + simpleClassName
+		return getClass().getSimpleName() + "[className='" + className + "', simpleClassName='" + simpleClassName
 				+ "', enclosingSimpleName='" + enclosingSimpleName + "', name='" + name + "', line=" + line
 				+ ", description='" + description + "', coveredInstructionCount=" + coveredInstructionCount + "]";
 	}
