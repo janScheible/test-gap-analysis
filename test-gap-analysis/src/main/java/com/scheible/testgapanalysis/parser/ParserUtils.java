@@ -13,7 +13,10 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.DoStmt;
@@ -51,11 +54,12 @@ public class ParserUtils {
 	 * Skip block, try and do statements (because they don't contain code) by recusring to their children.
 	 */
 	static void findCodeNodes(final Node node, final Set<Node> childrenWithCode) {
-		if (node instanceof BlockStmt || node instanceof TryStmt || node instanceof DoStmt) {
+		if (node instanceof BlockStmt || node instanceof TryStmt || node instanceof DoStmt
+				|| node instanceof ExpressionStmt || node instanceof VariableDeclarationExpr) {
 			for (final Node child : node.getChildNodes()) {
 				findCodeNodes(child, childrenWithCode);
 			}
-		} else {
+		} else if (!(node instanceof Comment || node instanceof AnnotationExpr)) {
 			childrenWithCode.add(node);
 		}
 	}

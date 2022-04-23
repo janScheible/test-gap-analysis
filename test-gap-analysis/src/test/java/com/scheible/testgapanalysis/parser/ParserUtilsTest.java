@@ -2,10 +2,12 @@ package com.scheible.testgapanalysis.parser;
 
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA_METHOD;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
+import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.STATIC_METHOD;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.parseJavaTestSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.function.BiFunction;
 
 import org.assertj.core.api.Condition;
@@ -61,6 +63,37 @@ public class ParserUtilsTest {
 	public void testLambdaMultiLineParametersFirstCodeLine() throws IOException {
 		assertThat(parseJavaTestSource(LambdaMultiLineParametersFirstCodeLine.class, LAMBDA_METHOD)) //
 				.first().satisfies(hasFirstCodeLineOffset(1));
+	}
+
+	public static class CommentAtMethodStartFirstCodeLine {
+
+		public void doIt() {
+			// asdf
+			// asdf
+			// asdf
+			"".trim();
+		}
+	}
+
+	@Test
+	public void testCommentAtMethodStartFirstCodeLine() throws IOException {
+		assertThat(parseJavaTestSource(CommentAtMethodStartFirstCodeLine.class, METHOD)) //
+				.first().satisfies(hasFirstCodeLineOffset(4));
+	}
+
+	public static class AnnotationAtMethodStartFirstCodeLine {
+
+		private static <T> T[] doIt() {
+			@SuppressWarnings("unchecked")
+			final T[] array = (T[]) Array.newInstance(Object.class, 1);
+			return array;
+		}
+	}
+
+	@Test
+	public void testAnnotationAtMethodStartFirstCodeLine() throws IOException {
+		assertThat(parseJavaTestSource(AnnotationAtMethodStartFirstCodeLine.class, STATIC_METHOD)) //
+				.first().satisfies(hasFirstCodeLineOffset(2));
 	}
 
 	public static class EmptyMethodFirstCodeLine {
