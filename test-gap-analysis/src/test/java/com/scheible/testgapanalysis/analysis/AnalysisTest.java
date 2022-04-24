@@ -50,7 +50,7 @@ public class AnalysisTest {
 
 		final Set<MethodWithCoverageInfo> coverageInfo = new HashSet<>(
 				Arrays.asList(new MethodWithCoverageInfo("test.Added", "doIt", "", 1, 1),
-						new MethodWithCoverageInfo("test.Changed", "covered", "", 1, 0)));
+						new MethodWithCoverageInfo("test.Changed", "doAction", "", 1, 0)));
 
 		final AnalysisResult result = Analysis.perform(repositoryStatus, TestGapAnalysis.NON_TEST_JAVA_FILE,
 				coverageInfo);

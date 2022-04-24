@@ -5,6 +5,7 @@ import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.pars
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Comparator;
@@ -13,8 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
@@ -152,21 +155,26 @@ public abstract class AbstractIntegrationTest {
 		final IRuntime runtime = new LoggerRuntime();
 
 		final Instrumenter instrumenter = new Instrumenter(runtime);
-		final ClassLoader instrumentedClassLoader;
-		try (InputStream original = getTargetClass(testClassName)) {
-			final byte[] instrumented = instrumenter.instrument(original, testClassName);
+		final Map<String, byte[]> instrumentedClasses = new ConcurrentHashMap<>();
 
-			instrumentedClassLoader = new ClassLoader() {
-				@Override
-				public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-					if (name.equals(testClassName)) {
-						return defineClass(name, instrumented, 0, instrumented.length);
-					} else {
-						return super.loadClass(name, resolve);
-					}
+		final ClassLoader instrumentedClassLoader = new ClassLoader() {
+			@Override
+			public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+				if (name.startsWith(testClassName)) {
+					final byte[] instrumented = instrumentedClasses.computeIfAbsent(name, key -> {
+						try (InputStream original = getTargetClass(name)) {
+							return instrumenter.instrument(original, name);
+						} catch (final IOException ex) {
+							throw new UncheckedIOException(ex);
+						}
+					});
+
+					return defineClass(name, instrumented, 0, instrumented.length);
+				} else {
+					return super.loadClass(name, resolve);
 				}
-			};
-		}
+			}
+		};
 
 		final RuntimeData data = new RuntimeData();
 		runtime.startup(data);
@@ -185,8 +193,13 @@ public abstract class AbstractIntegrationTest {
 		// together with the original class definition we can calculate coverage information
 		final CoverageBuilder coverageBuilder = new CoverageBuilder();
 		final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-		try (InputStream original = getTargetClass(testClassName)) {
-			analyzer.analyzeClass(original, testClassName);
+
+		final Set<String> originalClassNames = Stream
+				.concat(instrumentedClasses.keySet().stream(), Stream.of(testClassName)).collect(Collectors.toSet());
+		for (final String originalClassName : originalClassNames) {
+			try (InputStream original = getTargetClass(originalClassName)) {
+				analyzer.analyzeClass(original, originalClassName);
+			}
 		}
 
 		final Set<ParsedMethod> parsedMethods = parseJavaTestSource(testClass, filterTypes);

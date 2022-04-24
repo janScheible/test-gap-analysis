@@ -67,13 +67,17 @@ public class CoverageResolver {
 		result.add(resolveStaticInitializers(methods, coverage));
 		result.add(resolveConstructor(methods, coverage));
 
+		final Set<ParsedMethod> remainingMethods = methods.stream().filter(m -> !result.contains(m))
+				.collect(Collectors.toSet());
+		final Set<MethodWithCoverageInfo> remainingCoverage = coverage.stream()
+				.filter(mwci -> !mwci.isConstructor() && !mwci.isStaticInitializer()).collect(Collectors.toSet());
+
 		// then resolve the rest based on line numbers
-		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(methods,
+		final Map<Integer, Set<ParsedMethod>> lineMethodMapping = toLineMapping(remainingMethods,
 				m -> m.getFirstCodeLine()
 						.orElseThrow(() -> new IllegalStateException("Can't happen, empty methods were filtered out!")),
 				m -> !result.contains(m));
-
-		final Map<Integer, Set<MethodWithCoverageInfo>> lineCoverageMapping = toLineMapping(coverage,
+		final Map<Integer, Set<MethodWithCoverageInfo>> lineCoverageMapping = toLineMapping(remainingCoverage,
 				MethodWithCoverageInfo::getLine);
 
 		for (final Entry<Integer, Set<ParsedMethod>> lineMethodEntry : lineMethodMapping.entrySet()) {
@@ -193,7 +197,14 @@ public class CoverageResolver {
 					.filter(mwci -> !mwci.isLambdaMethod()).collect(Collectors.toSet());
 
 			if (methodsWithoutLambda.size() == 1 && coverageWithoutLambda.size() == 1) {
-				resolved.put(methodsWithoutLambda.iterator().next(), coverageWithoutLambda.iterator().next());
+				final ParsedMethod foundMethod = methodsWithoutLambda.iterator().next();
+				final MethodWithCoverageInfo foundCoverage = coverageWithoutLambda.iterator().next();
+
+				if (foundMethod.getName().equals(foundCoverage.getName())) {
+					resolved.put(foundMethod, foundCoverage);
+				} else {
+					unresolved.add(foundMethod);
+				}
 			} else if (!methodsWithoutLambda.isEmpty()) {
 				unresolved.addAll(methodsWithoutLambda);
 			}
