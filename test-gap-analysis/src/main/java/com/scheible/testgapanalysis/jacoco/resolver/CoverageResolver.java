@@ -1,6 +1,6 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
@@ -156,7 +156,7 @@ public class CoverageResolver {
 				.filter(pm -> pm.isConstructor() || pm.isEnumConstructor() || pm.isInnerClassConstructor())
 				.collect(Collectors.toList())) {
 			final List<String> normalizedConstructorArguments = new ArrayList<>(
-					normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getParentTypeParameters()));
+					normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getTypeParameters()));
 
 			// The constructors of enums have two additional parameter of type String and int. Most likely the name and
 			// index of the enum const is passed via this parameter.
@@ -174,7 +174,7 @@ public class CoverageResolver {
 					.filter(MethodWithCoverageInfo::isConstructor)
 					.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
 					.filter(mwci -> normalizedConstructorArguments.equals(
-							normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()), emptyList())))
+							normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()), emptyMap())))
 					.collect(Collectors.toList());
 			if (coveredConstructors.size() == 1) {
 				resolved.put(constructor, coveredConstructors.get(0));

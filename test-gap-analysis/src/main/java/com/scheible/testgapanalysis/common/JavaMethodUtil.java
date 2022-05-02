@@ -56,7 +56,7 @@ public class JavaMethodUtil {
 				arguments.add(primitivePart);
 
 				if (primitivePart.length() > 1) {
-					i += primitivePart.length();
+					i += primitivePart.length() - 1;
 				}
 			} else if (classPart != null) {
 				arguments.add(classPart);
@@ -124,14 +124,29 @@ public class JavaMethodUtil {
 	 * one of the passed type parameters it is replaced with 'Object'.
 	 */
 	public static List<String> normalizeMethodArguments(final Collection<String> arguments,
-			final Collection<String> typeParameters) {
-		return normalizeMethodArguments(arguments).stream().map(at -> typeParameters.contains(at) ? "Object" : at)
-				.collect(Collectors.toList());
+			final Map<String, String> typeParameters) {
+		return normalizeMethodArguments(arguments).stream().map(at -> {
+			final String name = removeArrayBrackets(at);
+			final String type = typeParameters.get(name);
+			return type != null ? type + (at.contains("[") ? at.substring(at.indexOf('[')) : "") : at;
+		}).collect(Collectors.toList());
+	}
+
+	private static String removeArrayBrackets(final String type) {
+		return type.replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
 	private static List<String> normalizeMethodArguments(final Collection<String> arguments) {
-		return arguments.stream().map(t -> t.contains("<") ? t.substring(0, t.indexOf('<')) : t)
-				.map(t -> t.contains(".") ? t.substring(t.lastIndexOf('.') + 1) : t).collect(Collectors.toList());
+		return arguments.stream().map(JavaMethodUtil::normalizeArgument).collect(Collectors.toList());
+	}
+
+	private static String normalizeArgument(final String argument) {
+		final String withoutGenerics = argument.contains("<")
+				? argument.substring(0, argument.indexOf('<')) + argument.substring(argument.lastIndexOf('>') + 1)
+				: argument;
+		return withoutGenerics.contains(".")
+				? withoutGenerics.substring(withoutGenerics.lastIndexOf('.') + 1)
+				: withoutGenerics;
 	}
 
 	public static String getSimpleName(final String fqn, final String separator) {

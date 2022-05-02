@@ -1,8 +1,10 @@
 package com.scheible.testgapanalysis.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -97,6 +100,28 @@ public class ParserUtils {
 		}
 
 		return parents;
+	}
+
+	static Map<String, String> getTypeParameters(final ConstructorDeclaration node) {
+		final List<Node> parents = ParserUtils.getParents(node);
+		final Map<String, String> typeParameters = new HashMap<>();
+
+		for (int i = parents.size() - 1; i >= 0; i--) {
+			if (parents.get(i) instanceof ClassOrInterfaceDeclaration) {
+				final ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parents
+						.get(i);
+				classOrInterfaceDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(
+						tp.getNameAsString(),
+						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
+
+				if (classOrInterfaceDeclaration.isStatic()) {
+					break;
+				}
+			}
+		}
+		node.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
+				tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
+		return typeParameters;
 	}
 
 	/**

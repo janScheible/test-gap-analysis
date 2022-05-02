@@ -1,9 +1,12 @@
 package com.scheible.testgapanalysis.parser;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,19 +33,19 @@ public class ParsedMethod {
 	private final Integer firstCodeLine; // the first line with real code
 	private final int codeColumn;
 	private final List<String> argumentTypes;
-	private final List<String> parentTypeParameters;
+	private final Map<String, String> typeParameters;
 	private final String outerDeclaringType;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
 			final int codeColumn) {
 		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, emptyList(),
-				emptyList(), Optional.empty());
+				emptyMap(), Optional.empty());
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
 			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
-			final int codeColumn, final List<String> argumentTypes, final List<String> parentTypeParameters,
+			final int codeColumn, final List<String> argumentTypes, final Map<String, String> typeParameters,
 			final Optional<String> outerDeclaringType) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
@@ -55,7 +58,7 @@ public class ParsedMethod {
 		this.firstCodeLine = firstCodeLine.orElse(null);
 		this.codeColumn = codeColumn;
 		this.argumentTypes = unmodifiableList(argumentTypes);
-		this.parentTypeParameters = unmodifiableList(parentTypeParameters);
+		this.typeParameters = unmodifiableMap(typeParameters);
 		this.outerDeclaringType = outerDeclaringType.orElse(null);
 	}
 
@@ -143,8 +146,8 @@ public class ParsedMethod {
 		return argumentTypes;
 	}
 
-	public List<String> getParentTypeParameters() {
-		return parentTypeParameters;
+	public Map<String, String> getTypeParameters() {
+		return typeParameters;
 	}
 
 	public Optional<String> getOuterDeclaringType() {
@@ -189,7 +192,7 @@ public class ParsedMethod {
 					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
 					&& Objects.equals(codeColumn, other.codeColumn)
 					&& Objects.equals(argumentTypes, other.argumentTypes)
-					&& Objects.equals(parentTypeParameters, other.parentTypeParameters)
+					&& Objects.equals(typeParameters, other.typeParameters)
 					&& Objects.equals(outerDeclaringType, other.outerDeclaringType);
 		} else {
 			return false;
@@ -199,8 +202,7 @@ public class ParsedMethod {
 	@Override
 	public int hashCode() {
 		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
-				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, parentTypeParameters,
-				outerDeclaringType);
+				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, typeParameters, outerDeclaringType);
 	}
 
 	@Override
@@ -210,7 +212,7 @@ public class ParsedMethod {
 				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
 				+ firstCodeLine + ", firstCodeLineOffset=" + getFirstCodeLineOffset() + ", codeColumn=" + codeColumn
 				+ (!argumentTypes.isEmpty() ? ", argumentTypes=" + argumentTypes : "")
-				+ (!parentTypeParameters.isEmpty() ? ", parentTypeParameters=" + parentTypeParameters : "")
+				+ (!typeParameters.isEmpty() ? ", typeParameters=" + typeParameters : "")
 				+ (outerDeclaringType != null ? ", outerDeclaringType=" + outerDeclaringType : "") + "]";
 	}
 }

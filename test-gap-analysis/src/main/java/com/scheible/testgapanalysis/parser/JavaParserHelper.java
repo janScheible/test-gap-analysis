@@ -15,7 +15,6 @@ import com.github.javaparser.Range;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -27,8 +26,6 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.LambdaExpr;
-import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
 
@@ -61,13 +58,8 @@ public class JavaParserHelper {
 					final Range range = node.getRange().get();
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 					final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
-							.map(Type::asString).collect(Collectors.toList());
-
-					final List<String> parentTypeParameters = node.getParentNode()
-							.filter(pn -> pn instanceof ClassOrInterfaceDeclaration)
-							.map(pn -> (ClassOrInterfaceDeclaration) pn)
-							.map(ClassOrInterfaceDeclaration::getTypeParameters).orElseGet(() -> new NodeList<>())
-							.stream().map(TypeParameter::getNameAsString).collect(Collectors.toList());
+							.map(t -> t.asString() + (((Parameter) t.getParentNode().get()).isVarArgs() ? "[]" : ""))
+							.collect(Collectors.toList());
 
 					final boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration)
 							.isPresent();
@@ -82,7 +74,7 @@ public class JavaParserHelper {
 
 					result.add(new ParsedMethod(type, ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
 							"<init>", relevantCode, range.begin.line, ParserUtils.getFirstCodeLine(node),
-							range.begin.column, argumentTypes, parentTypeParameters,
+							range.begin.column, argumentTypes, ParserUtils.getTypeParameters(node),
 							ParserUtils.getOuterDeclaringType(node)));
 				}
 

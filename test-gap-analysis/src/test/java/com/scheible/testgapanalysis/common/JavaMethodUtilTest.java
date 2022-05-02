@@ -1,6 +1,6 @@
 package com.scheible.testgapanalysis.common;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextClassPart;
 import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextPrimitivePart;
@@ -9,6 +9,8 @@ import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptor
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -26,6 +28,7 @@ public class JavaMethodUtilTest {
 	@Test
 	public void testMiltiplePrimitiveTypes() {
 		assertThat(parseDescriptorArguments("(CZ)V")).containsExactly("char", "boolean");
+		assertThat(parseDescriptorArguments("([BI)J")).containsExactly("byte[]", "int");
 	}
 
 	@Test
@@ -60,6 +63,10 @@ public class JavaMethodUtilTest {
 
 		assertThat(parseDescriptorArguments("(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;II)V"))
 				.containsExactly("String", "String", "String", "int", "int");
+
+		assertThat(parseDescriptorArguments(
+				"([Lorg/apache/commons/collections4/Predicate;[Lorg/apache/commons/collections4/Closure;Lorg/apache/commons/collections4/Closure;)V"))
+						.containsExactly("Predicate[]", "Closure[]", "Closure");
 	}
 
 	@Test
@@ -94,29 +101,39 @@ public class JavaMethodUtilTest {
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedClass() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"), emptyList())).containsExactly("Entry");
+		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"), emptyMap())).containsExactly("Entry");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"), emptyList())).containsExactly("Map");
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"), emptyMap())).containsExactly("Map");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"), emptyList()))
+		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"), emptyMap()))
 				.containsExactly("List");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsNestedClassAndNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"), emptyList()))
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"), emptyMap()))
 				.containsExactly("Map");
 	}
 
 	@Test
 	public void testNormalizeMethodArgumentsWithGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry", "Object", "T", "K"), Arrays.asList("T", "K")))
-				.containsExactly("Entry", "Object", "Object", "Object");
+		final Map<String, String> typeParameters = new HashMap<>();
+		typeParameters.put("T", "Object");
+		typeParameters.put("K", "Serializable");
+
+		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry", "Object", "T", "K[]"), typeParameters))
+				.containsExactly("Entry", "Object", "Object", "Serializable[]");
+	}
+
+	@Test
+	public void testNormalizeMethodArgumentsWithGenericsArray() {
+		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>[]"), emptyMap()))
+				.containsExactly("Map[]");
 	}
 }

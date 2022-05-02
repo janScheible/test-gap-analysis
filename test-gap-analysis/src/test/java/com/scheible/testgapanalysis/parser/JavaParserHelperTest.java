@@ -9,9 +9,9 @@ import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.getTestClassBeginLine;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.parseJavaTestSource;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Maps.newHashMap;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -87,7 +87,7 @@ public class JavaParserHelperTest {
 	public void testConstructorWithGenericArgument() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgument.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
-				.first().matches(am -> am.getParsedMethod().getParentTypeParameters().equals(Arrays.asList("T")),
+				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Object")),
 						"has parent type parameters");
 	}
 
@@ -102,7 +102,7 @@ public class JavaParserHelperTest {
 	public void testConstructorWithGenericArgumentExtendingType() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgumentExtendingType.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
-				.first().matches(am -> am.getParsedMethod().getParentTypeParameters().equals(Arrays.asList("T")),
+				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Runnable")),
 						"has parent type parameters");
 	}
 
