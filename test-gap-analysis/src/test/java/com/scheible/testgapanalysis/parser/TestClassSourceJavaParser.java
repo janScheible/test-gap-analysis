@@ -63,8 +63,4 @@ public class TestClassSourceJavaParser {
 		return new ClassWithSource(testClass, topLevelClass,
 				new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
 	}
-
-	public static int getTestClassBeginLine(final Class<?> testClass) throws IOException {
-		return JavaParserHelper.getClassBeginLine(readJavaTestSource(testClass).source, testClass.getSimpleName());
-	}
 }

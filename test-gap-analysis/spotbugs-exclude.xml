@@ -10,24 +10,31 @@
 		<Method name="parseMethods" />
 		<Bug pattern="PATH_TRAVERSAL_IN" />
 	</Match>	
-	
+
 	<!-- Original JacoCo information should be preserved whilst a parsed representation for comparison is needed. -->
 	<Match>
 		<Class name="com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo" />
 		<Method name="getLambdaIndex" />
 		<Bug pattern="STT_STRING_PARSING_A_FIELD" />
 	</Match>
-	
+
+	<!-- List is much better than Collection because we want to express that parameters are ordered. -->
+	<Match>
+		<Class name="com.scheible.testgapanalysis.parser.ParsedMethod"/>
+		<Method name="&lt;init&gt;"/>
+		<Bug pattern="OCP_OVERLY_CONCRETE_PARAMETER" />
+	</Match>
+
 	<!-- Usage of e.g. UncheckedIOException is fine. -->
 	<Match>
 		<Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
 	</Match>
-	
+
 	<!-- Nice hint but seems to be too restrictive. -->
 	<Match>
 		<Bug pattern="SLF4J_SIGN_ONLY_FORMAT" />
 	</Match>
-	
+
 	<!-- Seems to trigger a false positive with Java 11: https://github.com/spotbugs/spotbugs/issues/756. -->
 	<Match>
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />

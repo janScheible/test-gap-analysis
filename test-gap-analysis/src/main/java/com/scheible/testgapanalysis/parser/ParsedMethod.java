@@ -1,6 +1,5 @@
 package com.scheible.testgapanalysis.parser;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -9,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtil;
 
@@ -29,23 +30,25 @@ public class ParsedMethod {
 	private final String enclosingSimpleName;
 	private final String name;
 	private final String relevantCode;
-	private final int codeLine; // the line where the node of the methods starts
-	private final Integer firstCodeLine; // the first line with real code
+	private final List<Integer> codeLines;
 	private final int codeColumn;
+	private final boolean empty;
+	private final int argumentCount;
 	private final List<String> argumentTypes;
 	private final Map<String, String> typeParameters;
 	private final String outerDeclaringType;
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
-			final int codeColumn) {
-		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLine, firstCodeLine, codeColumn, emptyList(),
-				emptyMap(), Optional.empty());
+			final String name, final String relevantCode, final List<Integer> codeLines, final int codeColumn,
+			final boolean empty, final int argumentCount) {
+		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLines, codeColumn, empty,
+				IntStream.range(0, argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()), emptyMap(),
+				Optional.empty());
 	}
 
 	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final int codeLine, final Optional<Integer> firstCodeLine,
-			final int codeColumn, final List<String> argumentTypes, final Map<String, String> typeParameters,
+			final String name, final String relevantCode, final List<Integer> codeLines, final int codeColumn,
+			final boolean empty, final List<String> argumentTypes, final Map<String, String> typeParameters,
 			final Optional<String> outerDeclaringType) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
@@ -54,10 +57,11 @@ public class ParsedMethod {
 		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : scope.get(scope.size() - 1);
 		this.name = name;
 		this.relevantCode = relevantCode;
-		this.codeLine = codeLine;
-		this.firstCodeLine = firstCodeLine.orElse(null);
+		this.codeLines = unmodifiableList(codeLines.stream().sorted().collect(Collectors.toList()));
 		this.codeColumn = codeColumn;
+		this.empty = empty;
 		this.argumentTypes = unmodifiableList(argumentTypes);
+		argumentCount = argumentTypes.size();
 		this.typeParameters = unmodifiableMap(typeParameters);
 		this.outerDeclaringType = outerDeclaringType.orElse(null);
 	}
@@ -86,12 +90,20 @@ public class ParsedMethod {
 		return methodType == MethodType.INNER_CLASS_CONSTRUCTOR;
 	}
 
+	public boolean isAnyConstructor() {
+		return isConstructor() || isEnumConstructor() || isInnerClassConstructor();
+	}
+
 	public boolean isMethod() {
 		return methodType == MethodType.METHOD;
 	}
 
 	public boolean isStaticMethod() {
 		return methodType == MethodType.STATIC_METHOD;
+	}
+
+	public boolean isAnyNonLambdaMethod() {
+		return isMethod() || isStaticMethod();
 	}
 
 	public boolean isLambdaMethod() {
@@ -122,20 +134,26 @@ public class ParsedMethod {
 		return relevantCode;
 	}
 
-	public int getCodeLine() {
-		return codeLine;
+	public List<Integer> getCodeLines() {
+		return codeLines;
 	}
 
-	public Optional<Integer> getFirstCodeLine() {
-		return Optional.ofNullable(firstCodeLine);
+	public boolean containsLine(final int line) {
+		for (final int current : codeLines) {
+			if (current == line) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	public Optional<Integer> getFirstCodeLineOffset() {
-		return firstCodeLine != null ? Optional.of(firstCodeLine - codeLine) : Optional.empty();
+	public int getFirstCodeLine() {
+		return codeLines.get(0);
 	}
 
 	public boolean isEmpty() {
-		return firstCodeLine == null;
+		return empty;
 	}
 
 	public int getCodeColumn() {
@@ -144,6 +162,10 @@ public class ParsedMethod {
 
 	public List<String> getArgumentTypes() {
 		return argumentTypes;
+	}
+
+	public int getArgumentCount() {
+		return argumentCount;
 	}
 
 	public Map<String, String> getTypeParameters() {
@@ -189,9 +211,9 @@ public class ParsedMethod {
 					&& Objects.equals(scope, other.scope)
 					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
 					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
-					&& Objects.equals(codeLine, other.codeLine) && Objects.equals(firstCodeLine, other.firstCodeLine)
-					&& Objects.equals(codeColumn, other.codeColumn)
-					&& Objects.equals(argumentTypes, other.argumentTypes)
+					&& Objects.equals(codeLines, other.codeLines) && Objects.equals(codeColumn, other.codeColumn)
+					&& Objects.equals(empty, other.empty) && Objects.equals(argumentTypes, other.argumentTypes)
+					&& Objects.equals(argumentCount, other.argumentCount)
 					&& Objects.equals(typeParameters, other.typeParameters)
 					&& Objects.equals(outerDeclaringType, other.outerDeclaringType);
 		} else {
@@ -202,16 +224,17 @@ public class ParsedMethod {
 	@Override
 	public int hashCode() {
 		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
-				relevantCode, codeLine, firstCodeLine, codeColumn, argumentTypes, typeParameters, outerDeclaringType);
+				relevantCode, codeLines, codeColumn, empty, argumentTypes, argumentCount, typeParameters,
+				outerDeclaringType);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
 				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', enclosingSimpleName='"
-				+ enclosingSimpleName + "', name='" + name + "', codeLine=" + codeLine + ", firstCodeLine="
-				+ firstCodeLine + ", firstCodeLineOffset=" + getFirstCodeLineOffset() + ", codeColumn=" + codeColumn
-				+ (!argumentTypes.isEmpty() ? ", argumentTypes=" + argumentTypes : "")
+				+ enclosingSimpleName + "', name='" + name + "', codeLines=" + codeLines + ", codeColumn=" + codeColumn
+				+ ", empty=" + empty + (!argumentTypes.isEmpty() ? ", parameterTypes=" + argumentTypes : "")
+				+ ", argumentCount=" + argumentCount
 				+ (!typeParameters.isEmpty() ? ", typeParameters=" + typeParameters : "")
 				+ (outerDeclaringType != null ? ", outerDeclaringType=" + outerDeclaringType : "") + "]";
 	}

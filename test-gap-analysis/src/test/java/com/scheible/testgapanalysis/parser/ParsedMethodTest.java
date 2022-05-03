@@ -3,7 +3,6 @@ package com.scheible.testgapanalysis.parser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class ParsedMethodTest {
 	}
 
 	private static ParsedMethod withTopLevelTypeFqn(final String topLevelTypeFqn, final String... scope) {
-		return new ParsedMethod(MethodType.CONSTRUCTOR, topLevelTypeFqn, Arrays.asList(scope), "", "", 0,
-				Optional.of(0), 0);
+		return new ParsedMethod(MethodType.CONSTRUCTOR, topLevelTypeFqn, Arrays.asList(scope), "", "",
+				Arrays.asList(42), 0, false, 0);
 	}
 }

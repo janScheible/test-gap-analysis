@@ -61,4 +61,22 @@ public class LambdaIntegrationTests extends AbstractIntegrationTest {
 	public void testMultipleLambdaSingleLineMultiLine() throws Exception {
 		assertThat(resolve(MultipleLambdaSingleLineMultiLine.class, LAMBDA_METHOD)).isUnambiguouslyResolved();
 	}
+
+	public static class MultipleMethodsWithLambdas {
+
+		public void doItLambda() {
+			Predicate<String> ss = value -> value.isEmpty();
+			ss.test("");
+		}
+
+		public void performLambda() {
+			Predicate<String> bb = container -> container.isEmpty();
+			bb.test("");
+		}
+	}
+
+	@Test
+	public void testMultipleMethodsWithLambdas() throws Exception {
+		assertThat(resolve(MultipleMethodsWithLambdas.class, LAMBDA_METHOD)).isUnambiguouslyResolved();
+	}
 }

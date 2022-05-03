@@ -2,12 +2,11 @@ package com.scheible.testgapanalysis.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -17,14 +16,8 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
-import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.DoStmt;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.TryStmt;
 
 /**
  *
@@ -32,39 +25,19 @@ import com.github.javaparser.ast.stmt.TryStmt;
  */
 public class ParserUtils {
 
-	static Optional<Integer> getFirstCodeLine(final Node node) {
-		return node.getChildNodes().stream()
-				.filter(c -> (c instanceof BlockStmt || c instanceof ExpressionStmt) && c.getRange().isPresent())
-				.flatMap(bs -> flatMapToCodeNodes(bs).stream().filter(cn -> cn.getRange().isPresent())
-						.map(cn -> cn.getRange().get().begin.line))
-				.sorted().findFirst();
+	/**
+	 * Checks for any child nodes that are not comments.
+	 */
+	static boolean containsCode(final Node node) {
+		final List<Node> codeNodes = node.stream(Node.TreeTraversal.PREORDER).filter(n -> !(n instanceof Comment))
+				.collect(Collectors.toList());
+		codeNodes.remove(node);
+		return !codeNodes.isEmpty();
 	}
 
-	/**
-	 * Flat map a node to all direct children containing code.
-	 */
-	static Set<Node> flatMapToCodeNodes(final Node node) {
-		final Set<Node> childrenWithCode = new HashSet<>();
-
-		for (final Node child : node.getChildNodes()) {
-			findCodeNodes(child, childrenWithCode);
-		}
-
-		return childrenWithCode;
-	}
-
-	/**
-	 * Skip block, try and do statements (because they don't contain code) by recusring to their children.
-	 */
-	static void findCodeNodes(final Node node, final Set<Node> childrenWithCode) {
-		if (node instanceof BlockStmt || node instanceof TryStmt || node instanceof DoStmt
-				|| node instanceof ExpressionStmt || node instanceof VariableDeclarationExpr) {
-			for (final Node child : node.getChildNodes()) {
-				findCodeNodes(child, childrenWithCode);
-			}
-		} else if (!(node instanceof Comment || node instanceof AnnotationExpr)) {
-			childrenWithCode.add(node);
-		}
+	static List<Integer> getCodeLines(final Node node) {
+		return IntStream.rangeClosed(node.getRange().get().begin.line, node.getRange().get().end.line).boxed()
+				.collect(Collectors.toList());
 	}
 
 	static String getTopLevelFqn(final Node node) {

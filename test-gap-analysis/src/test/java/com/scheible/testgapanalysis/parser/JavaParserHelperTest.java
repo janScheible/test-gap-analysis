@@ -1,12 +1,10 @@
 package com.scheible.testgapanalysis.parser;
 
-import static com.scheible.testgapanalysis.parser.JavaParserHelper.getClassBeginLine;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.ENUM_CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA_METHOD;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
-import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.getTestClassBeginLine;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.parseJavaTestSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Maps.newHashMap;
@@ -27,11 +25,6 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  */
 public class JavaParserHelperTest {
 
-	@Test
-	public void testClassBeginLine() {
-		assertThat(getClassBeginLine("package test;\n" + "\n" + "public class Foo {\n" + "}", "Foo")).isEqualTo(3);
-	}
-
 	public static class MethodParsing {
 
 		public void doIt() {
@@ -41,7 +34,7 @@ public class JavaParserHelperTest {
 
 	@Test
 	public void testMethodParsing() throws IOException {
-		assertThat(parseMethods(MethodParsing.class, METHOD)).containsOnly(new AssertableMethod(METHOD, "doIt", 3));
+		assertThat(parseMethods(MethodParsing.class, METHOD)).containsOnly(new AssertableMethod(METHOD, "doIt"));
 	}
 
 	public static class ConstructorParsing {
@@ -56,7 +49,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testConstructorParsing() throws IOException {
 		assertThat(parseMethods(ConstructorParsing.class, CONSTRUCTOR))
-				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 5));
+				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>"));
 	}
 
 	public static enum EnumConstructorParsing {
@@ -73,7 +66,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testEnumConstructorParsing() throws IOException {
 		assertThat(parseMethods(EnumConstructorParsing.class, ENUM_CONSTRUCTOR))
-				.containsOnly(new AssertableMethod(ENUM_CONSTRUCTOR, "<init>", 7));
+				.containsOnly(new AssertableMethod(ENUM_CONSTRUCTOR, "<init>"));
 	}
 
 	public static class ConstructorWithGenericArgument<T> {
@@ -86,7 +79,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testConstructorWithGenericArgument() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgument.class, CONSTRUCTOR))
-				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
+				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>")) //
 				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Object")),
 						"has parent type parameters");
 	}
@@ -101,7 +94,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testConstructorWithGenericArgumentExtendingType() throws IOException {
 		assertThat(parseMethods(ConstructorWithGenericArgumentExtendingType.class, CONSTRUCTOR))
-				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>", 3)) //
+				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>")) //
 				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Runnable")),
 						"has parent type parameters");
 	}
@@ -116,7 +109,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testInnerClassConstructor() throws IOException {
 		assertThat(parseMethods(InnerClassConstructor.class, INNER_CLASS_CONSTRUCTOR))
-				.containsOnly(new AssertableMethod(INNER_CLASS_CONSTRUCTOR, "<init>", 3)) //
+				.containsOnly(new AssertableMethod(INNER_CLASS_CONSTRUCTOR, "<init>")) //
 				.first()
 				.matches(am -> am.getParsedMethod().getOuterDeclaringType().equals(Optional.of("JavaParserHelperTest")),
 						"has outer declaring type");
@@ -133,7 +126,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testLambdaParsing() throws IOException {
 		assertThat(parseMethods(LambdaParsing.class, LAMBDA_METHOD))
-				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda", 3));
+				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda"));
 	}
 
 	public static class MethodMasking { // #debug
@@ -157,10 +150,7 @@ public class JavaParserHelperTest {
 
 	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
 			throws IOException {
-		final int classBeginLine = getTestClassBeginLine(clazz);
 		return parseJavaTestSource(clazz, filterTypes).stream()
-				.map(m -> new AssertableMethod(m, m.getMethodType(), m.getName(),
-						m.getFirstCodeLine().orElseThrow(() -> new IllegalStateException("Method must not be empty!"))
-								- classBeginLine));
+				.map(m -> new AssertableMethod(m, m.getMethodType(), m.getName()));
 	}
 }

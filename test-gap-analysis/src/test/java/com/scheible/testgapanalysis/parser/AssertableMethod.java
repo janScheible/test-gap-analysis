@@ -14,19 +14,16 @@ class AssertableMethod {
 
 	final MethodType type;
 	final String name;
-	final int firstCodeLine;
 
-	AssertableMethod(final MethodType type, final String name, final int firstCodeLine) {
-		this(null, type, name, firstCodeLine);
+	AssertableMethod(final MethodType type, final String name) {
+		this(null, type, name);
 	}
 
-	AssertableMethod(final ParsedMethod parsedMethod, final MethodType type, final String name,
-			final int firstCodeLine) {
+	AssertableMethod(final ParsedMethod parsedMethod, final MethodType type, final String name) {
 		this.parsedMethod = parsedMethod;
 
 		this.type = type;
 		this.name = name;
-		this.firstCodeLine = firstCodeLine;
 	}
 
 	public ParsedMethod getParsedMethod() {
@@ -39,8 +36,7 @@ class AssertableMethod {
 			return true;
 		} else if (obj instanceof AssertableMethod) {
 			final AssertableMethod other = (AssertableMethod) obj;
-			return Objects.equals(this.type, other.type) && Objects.equals(this.name, other.name)
-					&& Objects.equals(this.firstCodeLine, other.firstCodeLine);
+			return Objects.equals(this.type, other.type) && Objects.equals(this.name, other.name);
 		} else {
 			return false;
 		}
@@ -48,12 +44,11 @@ class AssertableMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(type, name, firstCodeLine);
+		return Objects.hash(type, name);
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[type='" + type + "', name='" + name + "', firstCodeLine=" + firstCodeLine
-				+ "]";
+		return getClass().getSimpleName() + "[type='" + type + "', name='" + name + "']";
 	}
 }

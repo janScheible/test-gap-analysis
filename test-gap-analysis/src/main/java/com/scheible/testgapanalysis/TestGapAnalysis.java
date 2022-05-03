@@ -122,9 +122,9 @@ public class TestGapAnalysis {
 	private static TestGapMethod toTestGapMethod(final ParsedMethod method, final MethodWithCoverageInfo coverage) {
 		return coverage == null
 				? new TestGapReport.TestGapMethod(method.getTopLevelTypeFqn(), method.getDescription(),
-						method.getCodeLine(), method.getCodeColumn())
+						method.getFirstCodeLine(), method.getCodeColumn())
 				: new TestGapReport.TestGapMethod(method.getTopLevelTypeFqn(), method.getDescription(),
-						method.getCodeLine(), method.getCodeColumn(), coverage.getName(), coverage.getLine());
+						method.getFirstCodeLine(), method.getCodeColumn(), coverage.getName(), coverage.getLine());
 	}
 
 	private static Map<CoverageReportMethod, Set<TestGapMethod>> toAmbigouslyResolvedTestGapMethod(

@@ -106,6 +106,10 @@ public class MethodWithCoverageInfo {
 		return "<init>".equals(name);
 	}
 
+	public boolean isNonLambdaMethod() {
+		return !isLambdaMethod() && !isStaticInitializer() && !isConstructor();
+	}
+
 	public String getDescription() {
 		return description;
 	}

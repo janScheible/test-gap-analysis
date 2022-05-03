@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.Range;
@@ -21,7 +20,6 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
@@ -73,9 +71,9 @@ public class JavaParserHelper {
 							: innerClassConstructor ? MethodType.INNER_CLASS_CONSTRUCTOR : MethodType.CONSTRUCTOR;
 
 					result.add(new ParsedMethod(type, ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
-							"<init>", relevantCode, range.begin.line, ParserUtils.getFirstCodeLine(node),
-							range.begin.column, argumentTypes, ParserUtils.getTypeParameters(node),
-							ParserUtils.getOuterDeclaringType(node)));
+							"<init>", relevantCode, ParserUtils.getCodeLines(node), range.begin.column,
+							!ParserUtils.containsCode(node.getBody()), argumentTypes,
+							ParserUtils.getTypeParameters(node), ParserUtils.getOuterDeclaringType(node)));
 				}
 
 				super.visit(node, arg);
@@ -87,11 +85,11 @@ public class JavaParserHelper {
 					final Range range = node.getRange().get();
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 
-					result.add(
-							new ParsedMethod(node.isStatic() ? MethodType.STATIC_INITIALIZER : MethodType.INITIALIZER,
-									ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
-									node.isStatic() ? "<clinit>" : "<initbl>", relevantCode, range.begin.line,
-									ParserUtils.getFirstCodeLine(node), range.begin.column));
+					result.add(new ParsedMethod(
+							node.isStatic() ? MethodType.STATIC_INITIALIZER : MethodType.INITIALIZER,
+							ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
+							node.isStatic() ? "<clinit>" : "<initbl>", relevantCode, ParserUtils.getCodeLines(node),
+							range.begin.column, !ParserUtils.containsCode(node.getBody()), 0));
 				}
 
 				super.visit(node, arg);
@@ -105,7 +103,8 @@ public class JavaParserHelper {
 
 					result.add(new ParsedMethod(node.isStatic() ? MethodType.STATIC_METHOD : MethodType.METHOD,
 							ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node), node.getNameAsString(),
-							relevantCode, range.begin.line, ParserUtils.getFirstCodeLine(node), range.begin.column));
+							relevantCode, ParserUtils.getCodeLines(node), range.begin.column,
+							!ParserUtils.containsCode(node.getBody().get()), node.getParameters().size()));
 				}
 
 				super.visit(node, arg);
@@ -118,8 +117,9 @@ public class JavaParserHelper {
 					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(MethodType.LAMBDA_METHOD, ParserUtils.getTopLevelFqn(node),
-							ParserUtils.getScope(node), "lambda", relevantCode, range.begin.line,
-							ParserUtils.getFirstCodeLine(node), range.begin.column));
+							ParserUtils.getScope(node), "lambda", relevantCode, ParserUtils.getCodeLines(node),
+							range.begin.column, !ParserUtils.containsCode(node.getBody()),
+							node.getParameters().size()));
 				}
 
 				super.visit(node, arg);
@@ -127,38 +127,6 @@ public class JavaParserHelper {
 		}, null);
 
 		return result;
-	}
-
-	static int getClassBeginLine(final String code, final String className) {
-		final AtomicInteger beginLine = new AtomicInteger(-1);
-
-		final CompilationUnit compilationUnit = StaticJavaParser.parse(code);
-		compilationUnit.accept(new VoidVisitorAdapter<Void>() {
-
-			@Override
-			public void visit(final ClassOrInterfaceDeclaration node, final Void arg) {
-				setBeginLineIfNameMatches(node);
-				super.visit(node, arg);
-			}
-
-			@Override
-			public void visit(final EnumDeclaration node, final Void arg) {
-				setBeginLineIfNameMatches(node);
-				super.visit(node, arg);
-			}
-
-			private void setBeginLineIfNameMatches(final TypeDeclaration<?> node) {
-				if (node.getNameAsString().equals(className)) {
-					node.getRange().map(r -> r.begin.line).ifPresent(beginLine::set);
-				}
-			}
-		}, null);
-
-		if (beginLine.get() >= 0) {
-			return beginLine.get();
-		} else {
-			throw new IllegalStateException("Did not find the begin line of '" + className + "' in '" + code + "'!");
-		}
 	}
 
 	private static boolean isMethod(final Node node) {
