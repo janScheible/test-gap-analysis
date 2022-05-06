@@ -9,7 +9,7 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
 /**
  * Wrapper for identifying unchanged methods in different states of the codebase. For example source code
  * positions are ignored because line numbers might have shifted, due to changes before or after the method.
- * 
+ *
  * @author sj
  */
 public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {

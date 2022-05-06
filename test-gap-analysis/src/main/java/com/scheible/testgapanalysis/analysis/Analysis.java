@@ -42,7 +42,7 @@ public class Analysis {
 		//  previous methods
 		// |----------------|
 		// |                |
-		// 
+		//
 		// +----------------+
 		// | deleted        |
 		// |    +----------------+
@@ -50,7 +50,7 @@ public class Analysis {
 		// +----|-----------+    |
 		//      |    new/changed |
 		//      +----------------+
-		// 
+		//
 		//      |                |
 		//      |----------------|
 		//       current methods

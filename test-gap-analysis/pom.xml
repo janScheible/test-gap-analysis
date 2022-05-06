@@ -21,40 +21,41 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<fast-classpath-scanner.version>2.21</fast-classpath-scanner.version>
-		<pocketsaw.version>1.3.2</pocketsaw.version>
-		<archunit.version>0.11.0</archunit.version>
-		<findsecbugs-plugin.version>1.8.0</findsecbugs-plugin.version>
-		<sb-contrib.version>7.4.6</sb-contrib.version>
+		<pocketsaw.version>1.5.0</pocketsaw.version>
+		<archunit.version>0.23.1</archunit.version>
+		<findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
+		<sb-contrib.version>7.4.7</sb-contrib.version>
 		<slf4j.bug-pattern.version>1.5.0</slf4j.bug-pattern.version>
+		<checkstyle.version>9.3</checkstyle.version>
 
-		<jgit.version>5.10.0.202012080955-r</jgit.version>
-		<javaparser.version>3.18.0</javaparser.version>
-		<jaCoCo.version>0.8.7</jaCoCo.version>
+		<jgit.version>5.13.0.202109080827-r</jgit.version>
+		<javaparser.version>3.24.2</javaparser.version>
+		<jaCoCo.version>0.8.8</jaCoCo.version>
 
-		<!-- NOTE Dependency versions alligned with Spring Boot 2.1.7.RELEASE (as well spring-boot-maven-plugin version). -->
-		<slf4j-api.version>1.7.25</slf4j-api.version>
-		<logback-classic.version>1.2.3</logback-classic.version>
-		<junit.version>4.13.1</junit.version>
-		<assertj-core.version>3.11.1</assertj-core.version>
-		<mockito-core.version>2.23.4</mockito-core.version>
+		<!-- NOTE Dependency versions alligned with Spring Boot 2.6.7 (as well spring-boot-maven-plugin version). -->
+		<slf4j-api.version>1.7.36</slf4j-api.version>
+		<logback-classic.version>1.2.11</logback-classic.version>
+		<junit.version>4.13.2</junit.version>
+		<assertj-core.version>3.21.0</assertj-core.version>
+		<mockito-core.version>4.0.0</mockito-core.version>
 
-		<maven-compiler-plugin>3.8.1</maven-compiler-plugin>
-		<maven-failsafe-plugin.verion>3.0.0-M3</maven-failsafe-plugin.verion>
-		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
-		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
-		<flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
-		<spring-boot-maven-plugin.version>2.1.7.RELEASE</spring-boot-maven-plugin.version>
-		<git-commit-id-plugin.version>3.0.1</git-commit-id-plugin.version>
-		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-		<jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
-		<sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
-		<formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
-		<impsort-maven-plugin.version>1.3.0</impsort-maven-plugin.version>
-		<spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
-		<maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
-		<maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-		<arch-unit-maven-plugin.version>2.2.0</arch-unit-maven-plugin.version>
+		<maven-compiler-plugin>3.10.1</maven-compiler-plugin>
+		<maven-failsafe-plugin.verion>3.0.0-M6</maven-failsafe-plugin.verion>
+		<maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+		<spring-boot-maven-plugin.version>2.6.7</spring-boot-maven-plugin.version>
+		<git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
+		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+		<sortpom-maven-plugin.version>3.0.1</sortpom-maven-plugin.version>
+		<formatter-maven-plugin.version>2.16.0</formatter-maven-plugin.version>
+		<impsort-maven-plugin.version>1.6.2</impsort-maven-plugin.version>
+		<spotbugs-maven-plugin.version>4.6.0.0</spotbugs-maven-plugin.version>
+		<maven-pmd-plugin.version>3.16.0</maven-pmd-plugin.version>
+		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+		<arch-unit-maven-plugin.version>2.9.2</arch-unit-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -286,7 +287,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -305,12 +306,15 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>process-resources</phase>
 						<goals>
 							<goal>flatten</goal>
 						</goals>
+						<phase>process-resources</phase>
 						<configuration>
 							<outputDirectory>${project.build.directory}</outputDirectory>
 							<updatePomFile>true</updatePomFile>
@@ -318,20 +322,10 @@
 						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<updatePomFile>true</updatePomFile>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<offline>true</offline>
 					<verbose>true</verbose>
@@ -339,10 +333,23 @@
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
 					<generateGitPropertiesFilename>${project.build.outputDirectory}/META-INF/${project.artifactId}-git.properties</generateGitPropertiesFilename>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.github.ekryd.sortpom</groupId>
 				<artifactId>sortpom-maven-plugin</artifactId>
+				<configuration>
+					<keepBlankLines>true</keepBlankLines>
+					<nrOfIndentSpace>-1</nrOfIndentSpace>
+					<createBackupFile>false</createBackupFile>
+					<verifyFail>Stop</verifyFail>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -350,16 +357,14 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<keepBlankLines>true</keepBlankLines>
-					<nrOfIndentSpace>-1</nrOfIndentSpace>
-					<createBackupFile>false</createBackupFile>
-					<verifyFail>Stop</verifyFail>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
+				<configuration>
+					<configFile>${project.basedir}/eclipse-formatter-config.xml</configFile>
+					<LineEnding>KEEP</LineEnding>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -367,30 +372,15 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<configFile>${project.basedir}/eclipse-formatter-config.xml</configFile>
-					<LineEnding>KEEP</LineEnding>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>net.revelc.code</groupId>
 				<artifactId>impsort-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<removeUnused>true</removeUnused>
 					<groups>java.,javax.,org.,com.</groups>
 					<staticGroups>java,*</staticGroups>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
 				<executions>
 					<execution>
 						<goals>
@@ -398,6 +388,10 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
 				<configuration>
 					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
 					<plugins>
@@ -418,10 +412,6 @@
 						</plugin>
 					</plugins>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
 				<executions>
 					<execution>
 						<goals>
@@ -429,9 +419,27 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<configLocation>${project.basedir}/checkstyle.xml</configLocation>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>${checkstyle.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -449,6 +457,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<trimStackTrace>false</trimStackTrace>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -457,9 +468,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<trimStackTrace>false</trimStackTrace>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -479,14 +487,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-							<goal>cpd-check</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<rulesets>
 						<ruleset>/rulesets/java/maven-pmd-plugin-default.xml</ruleset>
@@ -495,10 +495,21 @@
 					<printFailingErrors>true</printFailingErrors>
 					<linkXRef>false</linkXRef>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+							<goal>cpd-check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<outputFile>${project.build.outputDirectory}/META-INF/${project.artifactId}-build-info.properties</outputFile>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -506,22 +517,10 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<outputFile>${project.build.outputDirectory}/META-INF/${project.artifactId}-build-info.properties</outputFile>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>com.societegenerale.commons</groupId>
 				<artifactId>arch-unit-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default</id>
-						<phase>test</phase>
-						<goals>
-							<goal>arch-test</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<projectPath>${project.build.directory}</projectPath>
 					<rules>
@@ -539,6 +538,15 @@
 						</preConfiguredRules>
 					</rules>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>arch-test</goal>
+						</goals>
+						<phase>test</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

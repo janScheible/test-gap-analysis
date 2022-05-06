@@ -10,7 +10,7 @@ import org.junit.Test;
 
 /**
  * Pretty weak tests... just executes the git code on the git repository of the project.
- * 
+ *
  * @author sj
  */
 public class GitHelperTest {

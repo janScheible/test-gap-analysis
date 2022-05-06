@@ -4,7 +4,7 @@
 		<actionName>CUSTOM-Sortpom</actionName>
 		<displayName>Sortpom</displayName>
 		<goals>
-			<goal>com.github.ekryd.sortpom:sortpom-maven-plugin:sort</goal>
+			<goal>com.github.ekryd.sortpom:sortpom-maven-plugin:3.0.1:sort</goal>
 		</goals>
 		<properties>
 			<sort.keepBlankLines>true</sort.keepBlankLines>
