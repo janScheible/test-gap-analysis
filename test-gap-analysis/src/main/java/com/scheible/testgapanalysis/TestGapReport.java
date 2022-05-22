@@ -187,7 +187,9 @@ public class TestGapReport {
 		this.coveredMethods = unmodifiableSet(coveredMethods);
 		uncoveredMethodsCount = uncoveredMethods.size();
 		this.uncoveredMethods = unmodifiableSet(uncoveredMethods);
-		coverageRatio = (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount);
+		coverageRatio = coveredMethodsCount + uncoveredMethodsCount > 0
+				? (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount)
+				: 1.0;
 		emptyMethodsCount = emptyMethods.size();
 		this.emptyMethods = unmodifiableSet(emptyMethods);
 		unresolvableMethodsCount = unresolvableMethods.size();
