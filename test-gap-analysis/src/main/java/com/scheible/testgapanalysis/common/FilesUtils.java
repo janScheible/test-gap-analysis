@@ -17,11 +17,14 @@ import java.util.stream.Collectors;
  *
  * @author sj
  */
-public class Files2 {
+public abstract class FilesUtils {
 
 	private static final String UTF_8_CHARSET = StandardCharsets.UTF_8.name();
 
 	private static final String BACKSLASH_PATTERN = "\\\\";
+
+	private FilesUtils() {
+	}
 
 	public static String readUtf8(final Class<?> anchor, final String name) {
 		return readUtf8(anchor.getResourceAsStream(name));

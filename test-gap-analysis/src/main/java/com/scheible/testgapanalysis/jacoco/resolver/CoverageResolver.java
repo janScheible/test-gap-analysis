@@ -3,8 +3,8 @@ package com.scheible.testgapanalysis.jacoco.resolver;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.normalizeMethodArguments;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.parseDescriptorArguments;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,7 +1,6 @@
 package com.scheible.testgapanalysis.jacoco;
 
-import static com.scheible.testgapanalysis.jacoco.JaCoCoHelper.getIsNotChildOfSubDirsPredicate;
-import static com.scheible.testgapanalysis.jacoco.JaCoCoHelper.getMethodCoverage;
+import static com.scheible.testgapanalysis.jacoco.JaCoCoReportParser.getIsNotChildOfSubDirsPredicate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Sets.newLinkedHashSet;
 
@@ -13,7 +12,7 @@ import org.junit.Test;
  *
  * @author sj
  */
-public class JaCoCoHelperTest {
+public class JaCoCoReportParserTest {
 
 	private static final String REPORT = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" //
 			+ "<!DOCTYPE report PUBLIC \"-//JACOCO//DTD Report 1.1//EN\" \"report.dtd\">\n" //
@@ -38,7 +37,8 @@ public class JaCoCoHelperTest {
 
 	@Test
 	public void testMethodCoverage() {
-		assertThat(getMethodCoverage(REPORT)).containsOnly( //
+		final JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
+		assertThat(jaCoCoReportParser.getMethodCoverage(REPORT)).containsOnly( //
 				new MethodWithCoverageInfo("com/scheible/testgapanalysis/git/GitHelper", "<init>", "()V", 37, 0),
 				new MethodWithCoverageInfo("com/scheible/testgapanalysis/git/GitHelper", "open",
 						"(Ljava/io/File;)Lorg/eclipse/jgit/lib/Repository;", 42, 12));

@@ -12,7 +12,7 @@ import com.scheible.testgapanalysis.git.RepositoryStatus;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResult;
-import com.scheible.testgapanalysis.parser.JavaParserHelper;
+import com.scheible.testgapanalysis.parser.JavaParser;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -24,18 +24,23 @@ public class Analysis {
 	static final Predicate<MethodCompareWrapper> NON_GETTER_OR_SETTER_METHOD = mcw -> !mcw.getParsedMethod().getName()
 			.startsWith("get") && !mcw.getParsedMethod().getName().startsWith("set");
 
-	public static AnalysisResult perform(final RepositoryStatus status, final Predicate<String> fileFilter,
-			final Set<MethodWithCoverageInfo> coverageInfo) {
-		final Map<String, String> newOrChangedFilesWithContent = status.getNewContents(fileFilter);
+	private final JavaParser javaParser;
+
+	public Analysis(final JavaParser javaParser) {
+		this.javaParser = javaParser;
+	}
+
+	public AnalysisResult perform(final RepositoryStatus status, final Set<MethodWithCoverageInfo> coverageInfo) {
+		final Map<String, String> newOrChangedFilesWithContent = status.getNewContents();
 
 		// all methods of new or changed files in the new state compared to the old state
 		final Set<MethodCompareWrapper> newContentMethods = newOrChangedFilesWithContent.entrySet().stream()
-				.flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
+				.flatMap(e -> javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// all methods of changed files in the new state that already existed in the old state
-		final Set<MethodCompareWrapper> oldContentMethods = status.getOldContents(fileFilter).entrySet().stream()
-				.flatMap(e -> JavaParserHelper.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
+		final Set<MethodCompareWrapper> oldContentMethods = status.getOldContents().entrySet().stream()
+				.flatMap(e -> javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// @formatter:off

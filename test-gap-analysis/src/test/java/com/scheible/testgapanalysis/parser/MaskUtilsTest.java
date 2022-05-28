@@ -15,7 +15,7 @@ import com.github.javaparser.Range;
  *
  * @author sj
  */
-public class MaskerTest {
+public class MaskUtilsTest {
 
 	private static final String TEST_CLASS = "" //
 			+ "class TestClass {\n" + "	\n" //
@@ -30,19 +30,20 @@ public class MaskerTest {
 
 	@Test
 	public void testNoMasks() {
-		assertThat(Masker.apply(TEST_CLASS, TEST_METHOD_RANGE, emptyList())).startsWith("void test()").endsWith("}\n");
+		assertThat(MaskUtils.apply(TEST_CLASS, TEST_METHOD_RANGE, emptyList())).startsWith("void test()")
+				.endsWith("}\n");
 	}
 
 	@Test
 	public void testSingleMask() {
-		assertThat(Masker.apply(TEST_CLASS, TEST_METHOD_RANGE,
+		assertThat(MaskUtils.apply(TEST_CLASS, TEST_METHOD_RANGE,
 				Arrays.asList(new Range(new Position(3, 8), new Position(3, 11))), true)).startsWith("void ####()")
 						.endsWith("}\n");
 	}
 
 	@Test
 	public void testTwoOverlappingMasks() {
-		assertThat(Masker.apply(TEST_CLASS, TEST_METHOD_RANGE,
+		assertThat(MaskUtils.apply(TEST_CLASS, TEST_METHOD_RANGE,
 				Arrays.asList(new Range(new Position(3, 8), new Position(3, 10)),
 						new Range(new Position(3, 9), new Position(3, 11))),
 				true)).startsWith("void ####()").endsWith("}\n");
@@ -50,7 +51,7 @@ public class MaskerTest {
 
 	@Test
 	public void testMultilineMask() {
-		assertThat(Masker.apply(TEST_CLASS, TEST_METHOD_RANGE,
+		assertThat(MaskUtils.apply(TEST_CLASS, TEST_METHOD_RANGE,
 				Arrays.asList(new Range(new Position(3, 8), new Position(4, 5))), true))
 						.startsWith("void ########\n" + "#####/ comment").endsWith("}\n");
 	}

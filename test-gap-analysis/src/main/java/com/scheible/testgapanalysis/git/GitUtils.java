@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -19,7 +18,6 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.internal.WorkQueue;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -27,16 +25,15 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author sj
  */
-public class GitHelper {
+public abstract class GitUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(GitHelper.class);
+	private GitUtils() {
+	}
 
 	static Repository open(final File currentDir) throws IOException {
 		return new FileRepositoryBuilder().findGitDir(currentDir.getAbsoluteFile()).setMustExist(true).build();
@@ -46,7 +43,7 @@ public class GitHelper {
 			final Set<String> files) {
 		final Map<String, String> fileLastCommitContentMapping = new HashMap<>();
 
-		try (Repository repository = GitHelper.open(currentDir)) {
+		try (Repository repository = GitUtils.open(currentDir)) {
 			try (Git git = new Git(repository)) {
 
 				try (RevWalk walk = new RevWalk(repository)) {
@@ -95,7 +92,7 @@ public class GitHelper {
 	}
 
 	static List<String> getCommitHashes(final File currentDir, final int count) {
-		try (Repository repository = GitHelper.open(currentDir)) {
+		try (Repository repository = GitUtils.open(currentDir)) {
 			try (Git git = new Git(repository)) {
 				final Iterator<RevCommit> logs = git.log().call().iterator();
 				final List<String> result = new ArrayList<>(count);
@@ -115,17 +112,6 @@ public class GitHelper {
 			}
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
-		}
-	}
-
-	public static void shutdownWorkerQueue() {
-		WorkQueue.getExecutor().shutdown();
-		try {
-			while (!WorkQueue.getExecutor().awaitTermination(500, TimeUnit.MILLISECONDS)) {
-				logger.info("Awaiting completion of git worker threads.");
-			}
-		} catch (InterruptedException ex) {
-			throw new IllegalStateException(ex);
 		}
 	}
 }

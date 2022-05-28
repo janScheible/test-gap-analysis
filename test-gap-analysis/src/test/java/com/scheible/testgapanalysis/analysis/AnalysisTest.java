@@ -1,7 +1,6 @@
 package com.scheible.testgapanalysis.analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -16,9 +15,9 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.scheible.testgapanalysis.TestGapAnalysis;
 import com.scheible.testgapanalysis.git.RepositoryStatus;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.parser.JavaParser;
 
 /**
  *
@@ -38,7 +37,7 @@ public class AnalysisTest {
 			fileContentMapping.put("Changed.java",
 					"package test; public class Changed { private void doAction() { \"\".trim(); }}");
 			return fileContentMapping;
-		}).when(repositoryStatus).getOldContents(any());
+		}).when(repositoryStatus).getOldContents();
 
 		doAnswer((Answer<Map<String, String>>) (InvocationOnMock iom) -> {
 			final Map<String, String> fileContentMapping = new HashMap<>();
@@ -46,14 +45,14 @@ public class AnalysisTest {
 			fileContentMapping.put("Changed.java",
 					"package test; public class Changed { private void doAction() { \"\".size(); }}");
 			return fileContentMapping;
-		}).when(repositoryStatus).getNewContents(any());
+		}).when(repositoryStatus).getNewContents();
 
 		final Set<MethodWithCoverageInfo> coverageInfo = new HashSet<>(
 				Arrays.asList(new MethodWithCoverageInfo("test.Added", "doIt", "", 1, 1),
 						new MethodWithCoverageInfo("test.Changed", "doAction", "", 1, 0)));
 
-		final AnalysisResult result = Analysis.perform(repositoryStatus, TestGapAnalysis.NON_TEST_JAVA_FILE,
-				coverageInfo);
+		final Analysis analysis = new Analysis(new JavaParser());
+		final AnalysisResult result = analysis.perform(repositoryStatus, coverageInfo);
 		assertThat(
 				result.getUncoveredMethods().keySet().stream().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName()))
 						.containsOnly("test.Changed#doAction");

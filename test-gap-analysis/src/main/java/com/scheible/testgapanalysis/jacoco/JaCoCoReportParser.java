@@ -36,13 +36,13 @@ import org.xml.sax.SAXException;
  *
  * @author sj
  */
-public class JaCoCoHelper {
+public class JaCoCoReportParser {
 
-	public static Set<MethodWithCoverageInfo> getMethodCoverage(final String reportXmlContent) {
+	public Set<MethodWithCoverageInfo> getMethodCoverage(final String reportXmlContent) {
 		return getMethodCoverage(new InputSource(new StringReader(reportXmlContent)));
 	}
 
-	public static Set<MethodWithCoverageInfo> getMethodCoverage(final File reportXmlFile) {
+	public Set<MethodWithCoverageInfo> getMethodCoverage(final File reportXmlFile) {
 		try (InputStream input = Files.newInputStream(reportXmlFile.toPath())) {
 			return getMethodCoverage(new InputSource(input));
 		} catch (final IOException ex) {
@@ -50,7 +50,7 @@ public class JaCoCoHelper {
 		}
 	}
 
-	private static Set<MethodWithCoverageInfo> getMethodCoverage(final InputSource inputSource) {
+	private Set<MethodWithCoverageInfo> getMethodCoverage(final InputSource inputSource) {
 		try {
 			final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setFeature(FEATURE_SECURE_PROCESSING, true);
@@ -93,11 +93,11 @@ public class JaCoCoHelper {
 	 * report for unit and integration tests). This methods takes care of merging multiple entries for the same
 	 * method.
 	 */
-	public static Set<MethodWithCoverageInfo> getMethodCoverage(final Set<File> reportFiles) {
+	public Set<MethodWithCoverageInfo> getMethodCoverage(final Set<File> reportFiles) {
 		final Map<String, Set<MethodWithCoverageInfo>> methods = new HashMap<>();
 
 		for (final File reportFile : reportFiles) {
-			for (final MethodWithCoverageInfo method : JaCoCoHelper.getMethodCoverage(reportFile)) {
+			for (final MethodWithCoverageInfo method : getMethodCoverage(reportFile)) {
 				final String key = method.getClassName() + method.getName() + method.getDescription()
 						+ method.getLine();
 				methods.computeIfAbsent(key, k -> new HashSet<>()).add(method);

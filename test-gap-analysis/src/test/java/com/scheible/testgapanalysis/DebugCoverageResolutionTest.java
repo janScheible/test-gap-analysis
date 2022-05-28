@@ -6,7 +6,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.scheible.testgapanalysis.jacoco.JaCoCoHelper;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
+import com.scheible.testgapanalysis.parser.JavaParser;
 
 /**
  *
@@ -18,7 +19,14 @@ public class DebugCoverageResolutionTest {
 	public void testRun() {
 		// There are no (real) JaCoCo reports available at this time --> use the testing ones and just make sure that
 		// it reads the methods correctly.
-		assertThat(DebugCoverageResolution.run(new File("."), new File("./src/main/java"),
-				JaCoCoHelper.findJaCoCoReportFiles(new File("./target/test-classes")))).isNotNull();
+		final DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(),
+				new JaCoCoReportParser());
+		DebugCoverageResolutionReport xxx;
+		assertThat(xxx = debugCoverageResolution.run(new File("D:\\third-party\\commons-collections"),
+				new File("D:\\third-party\\commons-collections\\src\\main\\java"),
+				JaCoCoReportParser
+						.findJaCoCoReportFiles(new File("D:\\third-party\\commons-collections\\target\\site"))))
+								.isNotNull();
+		"".trim();
 	}
 }

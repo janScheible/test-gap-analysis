@@ -10,12 +10,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import com.scheible.testgapanalysis.common.Files2;
-import com.scheible.testgapanalysis.jacoco.JaCoCoHelper;
+import com.scheible.testgapanalysis.common.FilesUtils;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResult;
-import com.scheible.testgapanalysis.parser.JavaParserHelper;
+import com.scheible.testgapanalysis.parser.JavaParser;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -35,20 +35,28 @@ public class DebugCoverageResolution {
 		}
 	}
 
-	public static DebugCoverageResolutionReport run(final File workDir, final File sourceDir,
+	private final JavaParser javaParser;
+	private final JaCoCoReportParser jaCoCoReportParser;
+
+	public DebugCoverageResolution(final JavaParser javaParser, final JaCoCoReportParser jaCoCoReportParser) {
+		this.javaParser = javaParser;
+		this.jaCoCoReportParser = jaCoCoReportParser;
+	}
+
+	public DebugCoverageResolutionReport run(final File workDir, final File sourceDir,
 			final Set<File> jaCoCoReportFiles) {
-		final Set<MethodWithCoverageInfo> coverageInfo = JaCoCoHelper.getMethodCoverage(jaCoCoReportFiles);
+		final Set<MethodWithCoverageInfo> coverageInfo = jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
 		final ParseResult parseResult = parseMethods(sourceDir);
 
 		final CoverageResolver resolver = CoverageResolver.with(coverageInfo);
 		final CoverageResult result = resolver.resolve(parseResult.methods);
 
-		return new DebugCoverageResolutionReport(coverageInfo.size(), Files2.toRelative(workDir, jaCoCoReportFiles),
+		return new DebugCoverageResolutionReport(coverageInfo.size(), FilesUtils.toRelative(workDir, jaCoCoReportFiles),
 				parseResult.javaFileCount, result.getResolvedMethods(), result.getEmptyMethods(),
 				result.getUnresolvedMethods(), result.getAmbiguousCoverage());
 	}
 
-	private static ParseResult parseMethods(final File workingDir) throws UncheckedIOException {
+	private ParseResult parseMethods(final File workingDir) throws UncheckedIOException {
 		final AtomicInteger javaFileCount = new AtomicInteger(0);
 		final Set<ParsedMethod> methods = new HashSet<>();
 
@@ -56,7 +64,7 @@ public class DebugCoverageResolution {
 			walkStream.filter(p -> p.toFile().isFile()).forEach(file -> {
 				if (file.toString().endsWith(".java")) {
 					javaFileCount.incrementAndGet();
-					methods.addAll(JavaParserHelper.getMethods(Files2.readUtf8(file.toFile())));
+					methods.addAll(javaParser.getMethods(FilesUtils.readUtf8(file.toFile())));
 				}
 			});
 		} catch (IOException ex) {

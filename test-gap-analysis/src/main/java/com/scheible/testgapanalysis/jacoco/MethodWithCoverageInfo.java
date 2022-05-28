@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.scheible.testgapanalysis.common.JavaMethodUtil;
+import com.scheible.testgapanalysis.common.JavaMethodUtils;
 
 /**
  *
@@ -23,8 +23,8 @@ public class MethodWithCoverageInfo {
 	public MethodWithCoverageInfo(final String className, final String name, final String description, final int line,
 			final int coveredInstructionCount) {
 		this.className = className;
-		this.simpleClassName = JavaMethodUtil.getSimpleName(className, "/");
-		this.enclosingSimpleName = JavaMethodUtil.getSimpleName(simpleClassName, "$");
+		this.simpleClassName = JavaMethodUtils.getSimpleName(className, "/");
+		this.enclosingSimpleName = JavaMethodUtils.getSimpleName(simpleClassName, "$");
 		this.name = name;
 		this.description = description;
 		this.line = line;

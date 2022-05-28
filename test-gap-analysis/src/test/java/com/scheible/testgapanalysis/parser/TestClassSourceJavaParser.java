@@ -44,7 +44,8 @@ public class TestClassSourceJavaParser {
 		final Set<MethodType> filterTypesSet = new HashSet<>(Arrays.asList(filterTypes));
 
 		final ClassWithSource classWithSource = readJavaTestSource(testClass);
-		final Set<ParsedMethod> parsedMethods = JavaParserHelper.getMethods(classWithSource.source).stream()
+		final JavaParser javaParser = new JavaParser();
+		final Set<ParsedMethod> parsedMethods = javaParser.getMethods(classWithSource.source).stream()
 				.filter(m -> (!m.getScope().isEmpty() && m.getScope().get(0).equals(testClass.getSimpleName()))
 						|| classWithSource.testClass.equals(classWithSource.topLevelClass))
 				.filter(m -> filterTypesSet.contains(m.getMethodType())).collect(Collectors.toSet());

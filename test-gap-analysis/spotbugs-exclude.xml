@@ -1,8 +1,8 @@
 <FindBugsFilter>
 	<!-- Path is specified by user, checking therfore impossible. -->
 	<Match>
-		<Class name="com.scheible.testgapanalysis.git.RepositoryStatus" />
-		<Method name="appendChildFile" />
+		<Class name="com.scheible.testgapanalysis.git.GitDiffer" />
+		<Method name="newFile" />
 		<Bug pattern="PATH_TRAVERSAL_IN" />
 	</Match>
 	<Match>

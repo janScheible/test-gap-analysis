@@ -9,7 +9,10 @@ import com.github.javaparser.Range;
  *
  * @author sj
  */
-public class Masker {
+public abstract class MaskUtils {
+
+	private MaskUtils() {
+	}
 
 	/**
 	 * Replaces all masked areas of the code in the passed range with a whitespace.

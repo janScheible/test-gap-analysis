@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
@@ -35,16 +34,16 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  *
  * @author sj
  */
-public class JavaParserHelper {
+public class JavaParser {
 
-	public static Set<ParsedMethod> getMethods(final String code) {
+	public Set<ParsedMethod> getMethods(final String code) {
 		final Set<ParsedMethod> result = new HashSet<>();
 
 		final AtomicBoolean debugMode = new AtomicBoolean(false);
 
 		final ParserConfiguration configuration = new ParserConfiguration();
 		configuration.setLanguageLevel(LanguageLevel.BLEEDING_EDGE);
-		final JavaParser javaParser = new JavaParser(configuration);
+		final com.github.javaparser.JavaParser javaParser = new com.github.javaparser.JavaParser(configuration);
 
 		final ParseResult<CompilationUnit> parserResult = javaParser.parse(code);
 		if (!parserResult.isSuccessful()) {
@@ -66,7 +65,7 @@ public class JavaParserHelper {
 			public void visit(final ConstructorDeclaration node, final Void arg) {
 				if (node.getRange().isPresent()) {
 					final Range range = node.getRange().get();
-					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
+					final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode.get());
 					final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
 							.map(t -> t.asString() + (((Parameter) t.getParentNode().get()).isVarArgs() ? "[]" : ""))
 							.collect(Collectors.toList());
@@ -95,7 +94,7 @@ public class JavaParserHelper {
 			public void visit(final InitializerDeclaration node, final Void arg) {
 				if (node.getRange().isPresent()) {
 					final Range range = node.getRange().get();
-					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
+					final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(
 							node.isStatic() ? MethodType.STATIC_INITIALIZER : MethodType.INITIALIZER,
@@ -111,7 +110,7 @@ public class JavaParserHelper {
 			public void visit(final MethodDeclaration node, final Void arg) {
 				if (node.getRange().isPresent() && node.getBody().isPresent()) {
 					final Range range = node.getRange().get();
-					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
+					final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(node.isStatic() ? MethodType.STATIC_METHOD : MethodType.METHOD,
 							ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node), node.getNameAsString(),
@@ -126,7 +125,7 @@ public class JavaParserHelper {
 			public void visit(final LambdaExpr node, final Void arg) {
 				if (node.getRange().isPresent()) {
 					final Range range = node.getRange().get();
-					final String relevantCode = Masker.apply(code, range, findMasks(node), debugMode.get());
+					final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode.get());
 
 					result.add(new ParsedMethod(MethodType.LAMBDA_METHOD, ParserUtils.getTopLevelFqn(node),
 							ParserUtils.getScope(node), "lambda", relevantCode, ParserUtils.getCodeLines(node),

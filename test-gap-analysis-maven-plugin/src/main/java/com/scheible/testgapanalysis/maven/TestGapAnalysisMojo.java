@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.scheible.testgapanalysis.TestGapAnalysis;
 import com.scheible.testgapanalysis.TestGapReport;
+import com.scheible.testgapanalysis.analysis.Analysis;
+import com.scheible.testgapanalysis.git.GitDiffer;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
+import com.scheible.testgapanalysis.parser.JavaParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +32,9 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (buildDir.exists()) {
-			final TestGapReport report = TestGapAnalysis.run(baseDir, findRelevantJaCoCoReportFiles(),
+			final TestGapAnalysis testGapAnalysis = new TestGapAnalysis(new Analysis(new JavaParser()),
+					new JaCoCoReportParser(), new GitDiffer());
+			final TestGapReport report = testGapAnalysis.run(baseDir, findRelevantJaCoCoReportFiles(),
 					Optional.ofNullable(referenceCommitHash));
 
 			logReport(report);

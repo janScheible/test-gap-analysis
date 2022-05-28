@@ -2,6 +2,8 @@ package com.scheible.testgapanalysis.maven;
 
 import com.scheible.testgapanalysis.DebugCoverageResolution;
 import com.scheible.testgapanalysis.DebugCoverageResolutionReport;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
+import com.scheible.testgapanalysis.parser.JavaParser;
 
 import java.io.File;
 
@@ -23,7 +25,9 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (buildDir.exists()) {
-			final DebugCoverageResolutionReport report = DebugCoverageResolution.run(baseDir, sourceDir,
+			final DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(), 
+					new JaCoCoReportParser());
+			final DebugCoverageResolutionReport report = debugCoverageResolution.run(baseDir, sourceDir,
 					findRelevantJaCoCoReportFiles());
 
 			logReport(report);

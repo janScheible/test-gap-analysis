@@ -2,10 +2,10 @@ package com.scheible.testgapanalysis.common;
 
 import static java.util.Collections.emptyMap;
 
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextClassPart;
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.getNextPrimitivePart;
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.normalizeMethodArguments;
-import static com.scheible.testgapanalysis.common.JavaMethodUtil.parseDescriptorArguments;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.getNextClassPart;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.getNextPrimitivePart;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.normalizeMethodArguments;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.parseDescriptorArguments;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;

@@ -18,9 +18,10 @@ import com.scheible.testgapanalysis.TestGapReport.NewOrChangedFile.State;
 import com.scheible.testgapanalysis.TestGapReport.TestGapMethod;
 import com.scheible.testgapanalysis.analysis.Analysis;
 import com.scheible.testgapanalysis.analysis.AnalysisResult;
-import com.scheible.testgapanalysis.common.Files2;
+import com.scheible.testgapanalysis.common.FilesUtils;
+import com.scheible.testgapanalysis.git.GitDiffer;
 import com.scheible.testgapanalysis.git.RepositoryStatus;
-import com.scheible.testgapanalysis.jacoco.JaCoCoHelper;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
@@ -66,26 +67,36 @@ public class TestGapAnalysis {
 	public static final Predicate<String> NON_TEST_JAVA_FILE = f -> f.endsWith(".java")
 			&& !f.startsWith("src/test/java/") && !f.contains("/src/test/java/");
 
-	public static TestGapReport run(final File workDir, final Set<File> jaCoCoReportFiles,
+	private final Analysis analysis;
+	private final JaCoCoReportParser jaCoCoReportParser;
+	private final GitDiffer gitDiffer;
+
+	public TestGapAnalysis(final Analysis analysis, final JaCoCoReportParser jaCoCoReportParser,
+			final GitDiffer gitDiffer) {
+		this.analysis = analysis;
+		this.jaCoCoReportParser = jaCoCoReportParser;
+		this.gitDiffer = gitDiffer;
+	}
+
+	public TestGapReport run(final File workDir, final Set<File> jaCoCoReportFiles,
 			final Optional<String> referenceCommitHash) {
-		final Set<MethodWithCoverageInfo> coverageInfo = JaCoCoHelper.getMethodCoverage(jaCoCoReportFiles);
+		final Set<MethodWithCoverageInfo> coverageInfo = jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
 		final RepositoryResult repositoryResult = identifyFileChanges(referenceCommitHash, workDir);
 		final CoverageResult coverageResult = performTestGapAnalysis(repositoryResult.repositoryStatus, coverageInfo);
 
 		return new TestGapReport(workDir.getAbsolutePath(), repositoryResult.repositoryStatus.getOldCommitHash(),
-				repositoryResult.repositoryStatus.getNewCommitHash(), Files2.toRelative(workDir, jaCoCoReportFiles),
+				repositoryResult.repositoryStatus.getNewCommitHash(), FilesUtils.toRelative(workDir, jaCoCoReportFiles),
 				coverageInfo.size(), repositoryResult.newOrChangedFiles, coverageResult.coveredMethods,
 				coverageResult.uncoveredMethods, coverageResult.emptyMethods, coverageResult.unresolvableMethods,
 				coverageResult.ambiguouslyResolvedCoverage);
 	}
 
-	private static RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash,
-			final File workDir) {
+	private RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash, final File workDir) {
 		Set<NewOrChangedFile> newOrChangedFiles = emptySet();
 
 		final RepositoryStatus status = referenceCommitHash
-				.map(h -> RepositoryStatus.ofCommitComparedToHead(workDir, h))
-				.orElseGet(() -> RepositoryStatus.ofWorkingCopyChanges(workDir));
+				.map(h -> gitDiffer.ofCommitComparedToHead(workDir, h, NON_TEST_JAVA_FILE))
+				.orElseGet(() -> gitDiffer.ofWorkingCopyChanges(workDir, NON_TEST_JAVA_FILE));
 
 		if (!(status.getAddedFiles().isEmpty() && status.getChangedFiles().isEmpty())) {
 			newOrChangedFiles = Stream.concat(status.getChangedFiles().stream(), status.getAddedFiles().stream())
@@ -99,9 +110,9 @@ public class TestGapAnalysis {
 		return new RepositoryResult(status, newOrChangedFiles);
 	}
 
-	private static CoverageResult performTestGapAnalysis(final RepositoryStatus status,
+	private CoverageResult performTestGapAnalysis(final RepositoryStatus status,
 			final Set<MethodWithCoverageInfo> coverageInfo) {
-		final AnalysisResult result = Analysis.perform(status, NON_TEST_JAVA_FILE, coverageInfo);
+		final AnalysisResult result = analysis.perform(status, coverageInfo);
 
 		return new CoverageResult(toTestGapMethods(result.getCoveredMethods()),
 				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getEmptyMethods()),

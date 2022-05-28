@@ -202,3 +202,12 @@ Uncovered methods:
 Unresolvable methods (no coverage information available):
    ...
 ```
+
+## Source code style
+
+1. avoid static methods for easier testing
+    1. exception: (package) private helper methods in classes that are static to enforce functional purity
+    1. exception: completely stateless `*Utils` classes with static methods only
+        1. utility classes must be `abstract` and have a private default constructor
+    1. exception: real constants with names in upper case delimited by underscores
+1. `logger` has to be protected final but not static: `protected final Logger logger = LoggerFactory.getLogger(getClass());`

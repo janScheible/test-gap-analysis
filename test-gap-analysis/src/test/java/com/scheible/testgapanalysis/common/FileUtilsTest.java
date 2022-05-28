@@ -12,11 +12,11 @@ import com.google.common.collect.Sets;
  *
  * @author sj
  */
-public class Files2Test {
+public class FileUtilsTest {
 
 	@Test
 	public void testToRelative() {
-		assertThat(Files2.toRelative(Paths.get("test", "it").toFile(),
+		assertThat(FilesUtils.toRelative(Paths.get("test", "it").toFile(),
 				Sets.newHashSet(Paths.get("test", "it", "foo.txt").toFile()))).containsOnly("foo.txt");
 	}
 }

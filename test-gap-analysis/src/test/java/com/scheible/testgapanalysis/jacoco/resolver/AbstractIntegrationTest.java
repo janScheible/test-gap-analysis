@@ -32,7 +32,7 @@ import org.jacoco.core.runtime.RuntimeData;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.xml.XMLFormatter;
 
-import com.scheible.testgapanalysis.jacoco.JaCoCoHelper;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
@@ -205,7 +205,8 @@ public abstract class AbstractIntegrationTest {
 		final Set<ParsedMethod> parsedMethods = parseJavaTestSource(testClass, filterTypes);
 
 		final String xmlOutput = getCoverageReportXml(sessionInfos, executionData, coverageBuilder);
-		final Set<MethodWithCoverageInfo> methodCoverage = JaCoCoHelper.getMethodCoverage(xmlOutput);
+		final JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
+		final Set<MethodWithCoverageInfo> methodCoverage = jaCoCoReportParser.getMethodCoverage(xmlOutput);
 
 		return new CoverageResolution(parsedMethods, methodCoverage,
 				CoverageResolver.with(methodCoverage).resolve(parsedMethods));

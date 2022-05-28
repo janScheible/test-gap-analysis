@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.scheible.testgapanalysis.common.JavaMethodUtil;
+import com.scheible.testgapanalysis.common.JavaMethodUtils;
 
 /**
  *
@@ -52,7 +52,7 @@ public class ParsedMethod {
 			final Optional<String> outerDeclaringType) {
 		this.methodType = methodType;
 		this.topLevelTypeFqn = topLevelTypeFqn;
-		this.topLevelSimpleName = JavaMethodUtil.getSimpleName(topLevelTypeFqn, ".");
+		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(topLevelTypeFqn, ".");
 		this.scope = unmodifiableList(scope);
 		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : scope.get(scope.size() - 1);
 		this.name = name;

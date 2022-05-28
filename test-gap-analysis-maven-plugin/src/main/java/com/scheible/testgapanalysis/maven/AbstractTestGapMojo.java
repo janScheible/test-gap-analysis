@@ -1,6 +1,6 @@
 package com.scheible.testgapanalysis.maven;
 
-import com.scheible.testgapanalysis.jacoco.JaCoCoHelper;
+import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public abstract class AbstractTestGapMojo extends AbstractMojo {
 		final Path outputDirAsPath = outputDir.toPath();
 		final Path testOutputDirAsPath = testOutputDir.toPath();
 
-		JaCoCoHelper.findJaCoCoReportFiles(buildDir).forEach(file -> {
+		JaCoCoReportParser.findJaCoCoReportFiles(buildDir).forEach(file -> {
 			final Path fileAsPath = file.toPath();
 			if (!fileAsPath.startsWith(outputDirAsPath) && !fileAsPath.startsWith(testOutputDirAsPath)) {
 				result.add(file);

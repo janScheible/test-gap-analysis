@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author sj
  */
-public class JavaMethodUtil {
+public class JavaMethodUtils {
 
 	private static final Map<String, String> PRIMITIVE_TYPE_MAPPING = new HashMap<>();
 
@@ -33,7 +33,7 @@ public class JavaMethodUtil {
 	 * ed.)") and returns Java notations. Java notations means for example '.' separator between nested classes.
 	 */
 	public static List<String> parseDescriptorArguments(final String descriptor) {
-		return parseArguments(descriptor).stream().map(JavaMethodUtil::convertType).collect(Collectors.toList());
+		return parseArguments(descriptor).stream().map(JavaMethodUtils::convertType).collect(Collectors.toList());
 	}
 
 	static List<String> parseArguments(final String descriptor) {
@@ -137,7 +137,7 @@ public class JavaMethodUtil {
 	}
 
 	private static List<String> normalizeMethodArguments(final Collection<String> arguments) {
-		return arguments.stream().map(JavaMethodUtil::normalizeArgument).collect(Collectors.toList());
+		return arguments.stream().map(JavaMethodUtils::normalizeArgument).collect(Collectors.toList());
 	}
 
 	private static String normalizeArgument(final String argument) {

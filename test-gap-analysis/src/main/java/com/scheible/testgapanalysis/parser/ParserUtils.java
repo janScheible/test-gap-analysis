@@ -24,7 +24,10 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
  *
  * @author sj
  */
-public class ParserUtils {
+public abstract class ParserUtils {
+
+	private ParserUtils() {
+	}
 
 	/**
 	 * Checks for any child nodes that are not comments.

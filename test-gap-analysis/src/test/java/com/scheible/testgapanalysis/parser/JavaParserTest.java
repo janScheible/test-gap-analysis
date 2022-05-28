@@ -24,7 +24,7 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  *
  * @author sj
  */
-public class JavaParserHelperTest {
+public class JavaParserTest {
 
 	public static class MethodParsing {
 
@@ -112,7 +112,7 @@ public class JavaParserHelperTest {
 		assertThat(parseMethods(InnerClassConstructor.class, INNER_CLASS_CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(INNER_CLASS_CONSTRUCTOR, "<init>")) //
 				.first()
-				.matches(am -> am.getParsedMethod().getOuterDeclaringType().equals(Optional.of("JavaParserHelperTest")),
+				.matches(am -> am.getParsedMethod().getOuterDeclaringType().equals(Optional.of("JavaParserTest")),
 						"has outer declaring type");
 	}
 
@@ -133,7 +133,7 @@ public class JavaParserHelperTest {
 	@Test
 	public void testRecordParsing() {
 		// records require Java 16, test-gap source code is Java 8 --> parse from string
-		assertThat(JavaParserHelper.getMethods("class Foo<J> {\n" + //
+		assertThat(new JavaParser().getMethods("class Foo<J> {\n" + //
 				"	record TestRecord<T>(String value) { \n" + //
 				"		TestRecord(T val) {\n" + //
 				"			this(null);\n" + //
@@ -166,7 +166,7 @@ public class JavaParserHelperTest {
 
 	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
 			throws IOException {
-		return parseJavaTestSource(clazz, filterTypes).stream().map(JavaParserHelperTest::toAssertableMethod);
+		return parseJavaTestSource(clazz, filterTypes).stream().map(JavaParserTest::toAssertableMethod);
 	}
 
 	private static AssertableMethod toAssertableMethod(final ParsedMethod parsedMethod) {
