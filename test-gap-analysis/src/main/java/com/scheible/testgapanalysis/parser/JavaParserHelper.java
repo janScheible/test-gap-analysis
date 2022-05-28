@@ -10,8 +10,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.ParserConfiguration.LanguageLevel;
 import com.github.javaparser.Range;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -38,8 +42,16 @@ public class JavaParserHelper {
 
 		final AtomicBoolean debugMode = new AtomicBoolean(false);
 
-		final CompilationUnit compilationUnit = StaticJavaParser.parse(code);
-		compilationUnit.accept(new VoidVisitorAdapter<Void>() {
+		final ParserConfiguration configuration = new ParserConfiguration();
+		configuration.setLanguageLevel(LanguageLevel.BLEEDING_EDGE);
+		final JavaParser javaParser = new JavaParser(configuration);
+
+		final ParseResult<CompilationUnit> parserResult = javaParser.parse(code);
+		if (!parserResult.isSuccessful()) {
+			throw new ParseProblemException(parserResult.getProblems());
+		}
+
+		parserResult.getResult().get().accept(new VoidVisitorAdapter<Void>() {
 			@Override
 			public void visit(final ClassOrInterfaceDeclaration node, final Void arg) {
 				// if class is marked with '//#debug' enable debug mode

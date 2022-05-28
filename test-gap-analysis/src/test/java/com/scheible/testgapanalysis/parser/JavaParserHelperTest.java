@@ -7,6 +7,7 @@ import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.LAMBDA
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
 import static com.scheible.testgapanalysis.parser.TestClassSourceJavaParser.parseJavaTestSource;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.util.Maps.newHashMap;
 
 import java.io.IOException;
@@ -129,6 +130,21 @@ public class JavaParserHelperTest {
 				.containsOnly(new AssertableMethod(LAMBDA_METHOD, "lambda"));
 	}
 
+	@Test
+	public void testRecordParsing() {
+		// records require Java 16, test-gap source code is Java 8 --> parse from string
+		assertThat(JavaParserHelper.getMethods("class Foo<J> {\n" + //
+				"	record TestRecord<T>(String value) { \n" + //
+				"		TestRecord(T val) {\n" + //
+				"			this(null);\n" + //
+				"		}\n" + //
+				"	}\n" + //
+				"}")).first().satisfies(pm -> {
+					assertThat(pm.getScope()).containsOnly("TestRecord");
+					assertThat(pm.getTypeParameters()).contains(entry("T", "Object"));
+				});
+	}
+
 	public static class MethodMasking { // #debug
 
 		public String doIt(String arg1, final boolean isDebugMode) {
@@ -150,7 +166,10 @@ public class JavaParserHelperTest {
 
 	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
 			throws IOException {
-		return parseJavaTestSource(clazz, filterTypes).stream()
-				.map(m -> new AssertableMethod(m, m.getMethodType(), m.getName()));
+		return parseJavaTestSource(clazz, filterTypes).stream().map(JavaParserHelperTest::toAssertableMethod);
+	}
+
+	private static AssertableMethod toAssertableMethod(final ParsedMethod parsedMethod) {
+		return new AssertableMethod(parsedMethod, parsedMethod.getMethodType(), parsedMethod.getName());
 	}
 }

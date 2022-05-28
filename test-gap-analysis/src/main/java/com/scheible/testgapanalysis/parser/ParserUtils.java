@@ -14,6 +14,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.RecordDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
@@ -49,7 +50,8 @@ public class ParserUtils {
 
 		return parents.subList(1, parents.size()).stream()
 				.filter(pn -> pn instanceof ClassOrInterfaceDeclaration || pn instanceof EnumDeclaration
-						|| pn instanceof MethodDeclaration || isObjectCreationExprWithAnonymousClassBody(pn))
+						|| pn instanceof RecordDeclaration || pn instanceof MethodDeclaration
+						|| isObjectCreationExprWithAnonymousClassBody(pn))
 				.map(pn -> {
 					return pn instanceof NodeWithSimpleName
 							? ((NodeWithSimpleName) pn).getNameAsString()
@@ -90,6 +92,12 @@ public class ParserUtils {
 				if (classOrInterfaceDeclaration.isStatic()) {
 					break;
 				}
+			} else if (parents.get(i) instanceof RecordDeclaration) {
+				final RecordDeclaration recordDeclaration = (RecordDeclaration) parents.get(i);
+				recordDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
+						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
+
+				break;
 			}
 		}
 		node.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
