@@ -5,9 +5,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.scheible.testgapanalysis.common.FilesUtils;
@@ -57,20 +56,15 @@ public class DebugCoverageResolution {
 	}
 
 	private ParseResult parseMethods(final File workingDir) throws UncheckedIOException {
-		final AtomicInteger javaFileCount = new AtomicInteger(0);
-		final Set<ParsedMethod> methods = new HashSet<>();
-
 		try (Stream<Path> walkStream = Files.walk(workingDir.toPath())) {
-			walkStream.filter(p -> p.toFile().isFile()).forEach(file -> {
-				if (file.toString().endsWith(".java")) {
-					javaFileCount.incrementAndGet();
-					methods.addAll(javaParser.getMethods(FilesUtils.readUtf8(file.toFile())));
-				}
-			});
+			final Set<File> javaFiles = walkStream.filter(p -> p.toFile().isFile() && p.toString().endsWith(".java"))
+					.map(Path::toFile).collect(Collectors.toSet());
+			final Set<ParsedMethod> methods = javaFiles.stream()
+					.flatMap(f -> javaParser.getMethods(FilesUtils.readUtf8(f)).stream()).collect(Collectors.toSet());
+
+			return new ParseResult(methods, javaFiles.size());
 		} catch (IOException ex) {
 			throw new UncheckedIOException("Error while reading Java sources.", ex);
 		}
-
-		return new ParseResult(methods, javaFileCount.get());
 	}
 }
