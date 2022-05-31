@@ -21,12 +21,7 @@ public class DebugCoverageResolutionTest {
 		// it reads the methods correctly.
 		final DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(),
 				new JaCoCoReportParser());
-		DebugCoverageResolutionReport xxx;
-		assertThat(xxx = debugCoverageResolution.run(new File("D:\\third-party\\commons-collections"),
-				new File("D:\\third-party\\commons-collections\\src\\main\\java"),
-				JaCoCoReportParser
-						.findJaCoCoReportFiles(new File("D:\\third-party\\commons-collections\\target\\site"))))
-								.isNotNull();
-		"".trim();
+		assertThat(debugCoverageResolution.run(new File("."), new File("./src/main/java"),
+				JaCoCoReportParser.findJaCoCoReportFiles(new File("./target/test-classes")))).isNotNull();
 	}
 }
