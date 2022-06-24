@@ -1,4 +1,4 @@
-package com.scheible.testgapanalysis;
+package com.scheible.testgapanalysis.analysis.testgap;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;

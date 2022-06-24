@@ -1,7 +1,7 @@
 package com.scheible.testgapanalysis.maven;
 
-import com.scheible.testgapanalysis.DebugCoverageResolution;
-import com.scheible.testgapanalysis.DebugCoverageResolutionReport;
+import com.scheible.testgapanalysis.debug.DebugCoverageResolution;
+import com.scheible.testgapanalysis.debug.DebugCoverageResolutionReport;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 import com.scheible.testgapanalysis.parser.JavaParser;
 

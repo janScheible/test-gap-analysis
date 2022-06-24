@@ -1,4 +1,4 @@
-package com.scheible.testgapanalysis;
+package com.scheible.testgapanalysis.analysis.testgap;
 
 import static java.util.Collections.emptySet;
 
@@ -12,12 +12,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.scheible.testgapanalysis.TestGapReport.CoverageReportMethod;
-import com.scheible.testgapanalysis.TestGapReport.NewOrChangedFile;
-import com.scheible.testgapanalysis.TestGapReport.NewOrChangedFile.State;
-import com.scheible.testgapanalysis.TestGapReport.TestGapMethod;
 import com.scheible.testgapanalysis.analysis.Analysis;
 import com.scheible.testgapanalysis.analysis.AnalysisResult;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.CoverageReportMethod;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.NewOrChangedFile;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.NewOrChangedFile.State;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.TestGapMethod;
 import com.scheible.testgapanalysis.common.FilesUtils;
 import com.scheible.testgapanalysis.git.GitDiffer;
 import com.scheible.testgapanalysis.git.RepositoryStatus;

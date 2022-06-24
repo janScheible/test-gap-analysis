@@ -210,5 +210,8 @@ Unresolvable methods (no coverage information available):
     1. exception: completely stateless `*Utils` classes with static methods only
         1. utility classes must be `abstract` and have a private default constructor
     1. exception: real constants with names in upper case delimited by underscores
-1. `logger` has to be protected final but not static: `protected final Logger logger = LoggerFactory.getLogger(getClass());`
+1. `logger` has to be protected final but not static: `protected final Logger logger = LoggerFactory.getLogger(getClass());` (see https://www.slf4j.org/faq.html#declared_static)
 1. restrict file, method and lambda lengths to reasonable values
+1. code dependency
+    1. no code cycles on package level
+    1. no dependencies between a package and any of its (sub-)sub-packages (only the other way around)

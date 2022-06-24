@@ -1,4 +1,4 @@
-package com.scheible.testgapanalysis;
+package com.scheible.testgapanalysis.debug;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;

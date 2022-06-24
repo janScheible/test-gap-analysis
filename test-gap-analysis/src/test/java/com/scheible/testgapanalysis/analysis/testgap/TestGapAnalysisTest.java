@@ -1,4 +1,4 @@
-package com.scheible.testgapanalysis;
+package com.scheible.testgapanalysis.analysis.testgap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

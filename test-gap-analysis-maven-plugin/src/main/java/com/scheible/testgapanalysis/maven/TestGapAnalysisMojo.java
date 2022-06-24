@@ -2,8 +2,8 @@ package com.scheible.testgapanalysis.maven;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.scheible.testgapanalysis.TestGapAnalysis;
-import com.scheible.testgapanalysis.TestGapReport;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapAnalysis;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReport;
 import com.scheible.testgapanalysis.analysis.Analysis;
 import com.scheible.testgapanalysis.git.GitDiffer;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
