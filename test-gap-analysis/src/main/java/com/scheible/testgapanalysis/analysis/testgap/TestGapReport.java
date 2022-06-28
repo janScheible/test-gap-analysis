@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReportBuilder.BuilderImpl;
+import com.scheible.testgapanalysis.analysis.testgap.TestGapReportBuilder.WorkDirStep;
+
 /**
  *
  * @author sj
@@ -165,37 +168,36 @@ public class TestGapReport {
 	private final Set<TestGapMethod> unresolvableMethods;
 	private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
-	public TestGapReport(final String workDir, final String oldCommitHash, final Optional<String> newCommitHash,
-			final Set<String> jaCoCoReportFiles, final int jaCoCoCoverageCount,
-			final Set<NewOrChangedFile> newOrChangedFiles, final Set<TestGapMethod> coveredMethods,
-			final Set<TestGapMethod> uncoveredMethods, final Set<TestGapMethod> emptyMethods,
-			final Set<TestGapMethod> unresolvableMethods,
-			final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
-		this.workDir = workDir;
+	public static WorkDirStep builder() {
+		return new BuilderImpl();
+	}
 
-		this.oldCommitHash = oldCommitHash;
-		this.newCommitHash = newCommitHash.orElse(null);
-		compareWithWorkingCopyChanges = newCommitHash.isPresent() ? null : Boolean.TRUE;
+	TestGapReport(final BuilderImpl builder) {
+		this.workDir = builder.workDir;
 
-		this.jaCoCoReportFiles = unmodifiableSet(jaCoCoReportFiles);
-		this.jaCoCoCoverageCount = jaCoCoCoverageCount;
+		this.oldCommitHash = builder.oldCommitHash;
+		this.newCommitHash = builder.newCommitHash.orElse(null);
+		compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
 
-		this.newOrChangedFiles = unmodifiableSet(newOrChangedFiles);
-		consideredNewOrChangedFilesCount = (int) newOrChangedFiles.stream().filter(f -> !f.isSkipped()).count();
+		this.jaCoCoReportFiles = unmodifiableSet(builder.jaCoCoReportFiles);
+		this.jaCoCoCoverageCount = builder.jaCoCoCoverageCount;
 
-		coveredMethodsCount = coveredMethods.size();
-		this.coveredMethods = unmodifiableSet(coveredMethods);
-		uncoveredMethodsCount = uncoveredMethods.size();
-		this.uncoveredMethods = unmodifiableSet(uncoveredMethods);
+		this.newOrChangedFiles = unmodifiableSet(builder.newOrChangedFiles);
+		consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped()).count();
+
+		coveredMethodsCount = builder.coveredMethods.size();
+		this.coveredMethods = unmodifiableSet(builder.coveredMethods);
+		uncoveredMethodsCount = builder.uncoveredMethods.size();
+		this.uncoveredMethods = unmodifiableSet(builder.uncoveredMethods);
 		coverageRatio = coveredMethodsCount + uncoveredMethodsCount > 0
 				? (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount)
 				: 1.0;
-		emptyMethodsCount = emptyMethods.size();
-		this.emptyMethods = unmodifiableSet(emptyMethods);
-		unresolvableMethodsCount = unresolvableMethods.size();
-		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
-		ambiguouslyResolvedCount = ambiguouslyResolvedCoverage.size();
-		this.ambiguouslyResolvedCoverage = unmodifiableMap(ambiguouslyResolvedCoverage);
+		emptyMethodsCount = builder.emptyMethods.size();
+		this.emptyMethods = unmodifiableSet(builder.emptyMethods);
+		unresolvableMethodsCount = builder.unresolvableMethods.size();
+		this.unresolvableMethods = unmodifiableSet(builder.unresolvableMethods);
+		ambiguouslyResolvedCount = builder.ambiguouslyResolvedCoverage.size();
+		this.ambiguouslyResolvedCoverage = unmodifiableMap(builder.ambiguouslyResolvedCoverage);
 	}
 
 	public String getWorkDir() {

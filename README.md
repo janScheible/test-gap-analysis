@@ -215,3 +215,10 @@ Unresolvable methods (no coverage information available):
 1. code dependency
     1. no code cycles on package level
     1. no dependencies between a package and any of its (sub-)sub-packages (only the other way around)
+1. restrict maximal number of parameters to a reasonable value
+    1. in case of model class constructors with too many parameters use a http://rdafbn.blogspot.com/2012/07/step-builder-pattern_28.html
+        1. extra abstract class with `<ModelClassName>Builder` name and private default constructor
+        1. static `builder()` method in model class as only way to instantiate the class
+        1. (package private) constructor in model class with `BuilderImpl` as only parameter
+        1. inner step interfaces in `<ModelClassName>Builder` with `Step` suffix
+        1. inner static class `BuilderImpl` implementing all the steps

@@ -18,8 +18,11 @@ public class TestGapReportTest {
 
 	@Test
 	public void testEmptyReportCoverageRatio() {
-		final TestGapReport report = new TestGapReport(".", "asbc", Optional.empty(), emptySet(), 0, emptySet(),
-				emptySet(), emptySet(), emptySet(), emptySet(), emptyMap());
+		final TestGapReport report = TestGapReport.builder().setWorkDir(".").setOldCommitHash("asbc")
+				.setNewCommitHash(Optional.empty()).setJaCoCoReportFiles(emptySet()).setJaCoCoCoverageCount(0)
+				.setNewOrChangedFiles(emptySet()).setCoveredMethods(emptySet()).setUncoveredMethods(emptySet())
+				.setEmptyMethods(emptySet()).setUnresolvableMethods(emptySet())
+				.setAmbiguouslyResolvedCoverage(emptyMap()).build();
 		assertThat(report.getCoverageRatio()).isNotNaN().isEqualTo(1.0d, offset(0.01));
 	}
 }

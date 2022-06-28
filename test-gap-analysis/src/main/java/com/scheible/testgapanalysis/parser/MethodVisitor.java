@@ -71,10 +71,12 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 							? ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR
 							: ParsedMethod.MethodType.CONSTRUCTOR;
 
-			result.add(new ParsedMethod(type, ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node), "<init>",
-					relevantCode, ParserUtils.getCodeLines(node), range.begin.column,
-					!ParserUtils.containsCode(node.getBody()), argumentTypes, ParserUtils.getTypeParameters(node),
-					ParserUtils.getOuterDeclaringType(node)));
+			result.add(ParsedMethod.builder().setMethodType(type).setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node))
+					.setScope(ParserUtils.getScope(node)).setName("<init>").setRelevantCode(relevantCode)
+					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
+					.setEmpty(!ParserUtils.containsCode(node.getBody())).setArgumentTypes(argumentTypes)
+					.setTypeParameters(ParserUtils.getTypeParameters(node))
+					.setOuterDeclaringType(ParserUtils.getOuterDeclaringType(node)).build());
 		}
 
 		super.visit(node, arg);
@@ -86,11 +88,12 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 			final Range range = node.getRange().get();
 			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
 
-			result.add(new ParsedMethod(
-					node.isStatic() ? ParsedMethod.MethodType.STATIC_INITIALIZER : ParsedMethod.MethodType.INITIALIZER,
-					ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node),
-					node.isStatic() ? "<clinit>" : "<initbl>", relevantCode, ParserUtils.getCodeLines(node),
-					range.begin.column, !ParserUtils.containsCode(node.getBody()), 0));
+			result.add(ParsedMethod.builder().setMethodType(
+					node.isStatic() ? ParsedMethod.MethodType.STATIC_INITIALIZER : ParsedMethod.MethodType.INITIALIZER)
+					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
+					.setName(node.isStatic() ? "<clinit>" : "<initbl>").setRelevantCode(relevantCode)
+					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
+					.setEmpty(!ParserUtils.containsCode(node.getBody())).setArgumentCount(0).build());
 		}
 
 		super.visit(node, arg);
@@ -102,11 +105,14 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 			final Range range = node.getRange().get();
 			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
 
-			result.add(new ParsedMethod(
-					node.isStatic() ? ParsedMethod.MethodType.STATIC_METHOD : ParsedMethod.MethodType.METHOD,
-					ParserUtils.getTopLevelFqn(node), ParserUtils.getScope(node), node.getNameAsString(), relevantCode,
-					ParserUtils.getCodeLines(node), range.begin.column, !ParserUtils.containsCode(node.getBody().get()),
-					node.getParameters().size()));
+			result.add(ParsedMethod.builder()
+					.setMethodType(
+							node.isStatic() ? ParsedMethod.MethodType.STATIC_METHOD : ParsedMethod.MethodType.METHOD)
+					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
+					.setName(node.getNameAsString()).setRelevantCode(relevantCode)
+					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
+					.setEmpty(!ParserUtils.containsCode(node.getBody().get()))
+					.setArgumentCount(node.getParameters().size()).build());
 		}
 
 		super.visit(node, arg);
@@ -118,9 +124,11 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 			final Range range = node.getRange().get();
 			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
 
-			result.add(new ParsedMethod(ParsedMethod.MethodType.LAMBDA_METHOD, ParserUtils.getTopLevelFqn(node),
-					ParserUtils.getScope(node), "lambda", relevantCode, ParserUtils.getCodeLines(node),
-					range.begin.column, !ParserUtils.containsCode(node.getBody()), node.getParameters().size()));
+			result.add(ParsedMethod.builder().setMethodType(ParsedMethod.MethodType.LAMBDA_METHOD)
+					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
+					.setName("lambda").setRelevantCode(relevantCode).setCodeLines(ParserUtils.getCodeLines(node))
+					.setCodeColumn(range.begin.column).setEmpty(!ParserUtils.containsCode(node.getBody()))
+					.setArgumentCount(node.getParameters().size()).build());
 		}
 
 		super.visit(node, arg);

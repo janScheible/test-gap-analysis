@@ -40,9 +40,12 @@
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
 	</Match>
 
-	<!-- For example does not recognize if an List returned in a getter had an Collections.unmodifiableList(...) call
-		in the contructor. -->
+	<!-- Intention of the check is good, but for example does not recognize if an List returned in a getter had an 
+		Collections.unmodifiableList(...) call in the contructor... -->
 	<Match>
 		<Bug pattern="EI_EXPOSE_REP" />
+	</Match>
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP2" />
 	</Match>
 </FindBugsFilter>

@@ -84,11 +84,14 @@ public class TestGapAnalysis {
 		final RepositoryResult repositoryResult = identifyFileChanges(referenceCommitHash, workDir);
 		final CoverageResult coverageResult = performTestGapAnalysis(repositoryResult.repositoryStatus, coverageInfo);
 
-		return new TestGapReport(workDir.getAbsolutePath(), repositoryResult.repositoryStatus.getOldCommitHash(),
-				repositoryResult.repositoryStatus.getNewCommitHash(), FilesUtils.toRelative(workDir, jaCoCoReportFiles),
-				coverageInfo.size(), repositoryResult.newOrChangedFiles, coverageResult.coveredMethods,
-				coverageResult.uncoveredMethods, coverageResult.emptyMethods, coverageResult.unresolvableMethods,
-				coverageResult.ambiguouslyResolvedCoverage);
+		return TestGapReport.builder().setWorkDir(workDir.getAbsolutePath())
+				.setOldCommitHash(repositoryResult.repositoryStatus.getOldCommitHash())
+				.setNewCommitHash(repositoryResult.repositoryStatus.getNewCommitHash())
+				.setJaCoCoReportFiles(FilesUtils.toRelative(workDir, jaCoCoReportFiles))
+				.setJaCoCoCoverageCount(coverageInfo.size()).setNewOrChangedFiles(repositoryResult.newOrChangedFiles)
+				.setCoveredMethods(coverageResult.coveredMethods).setUncoveredMethods(coverageResult.uncoveredMethods)
+				.setEmptyMethods(coverageResult.emptyMethods).setUnresolvableMethods(coverageResult.unresolvableMethods)
+				.setAmbiguouslyResolvedCoverage(coverageResult.ambiguouslyResolvedCoverage).build();
 	}
 
 	private RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash, final File workDir) {

@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtils;
+import com.scheible.testgapanalysis.parser.ParsedMethodBuilder.BuilderImpl;
+import com.scheible.testgapanalysis.parser.ParsedMethodBuilder.MethodTypeStep;
 
 /**
  *
@@ -38,32 +40,29 @@ public class ParsedMethod {
 	private final Map<String, String> typeParameters;
 	private final String outerDeclaringType;
 
-	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final List<Integer> codeLines, final int codeColumn,
-			final boolean empty, final int argumentCount) {
-		this(methodType, topLevelTypeFqn, scope, name, relevantCode, codeLines, codeColumn, empty,
-				IntStream.range(0, argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()), emptyMap(),
-				Optional.empty());
+	public static MethodTypeStep builder() {
+		return new BuilderImpl();
 	}
 
-	public ParsedMethod(final MethodType methodType, final String topLevelTypeFqn, final List<String> scope,
-			final String name, final String relevantCode, final List<Integer> codeLines, final int codeColumn,
-			final boolean empty, final List<String> argumentTypes, final Map<String, String> typeParameters,
-			final Optional<String> outerDeclaringType) {
-		this.methodType = methodType;
-		this.topLevelTypeFqn = topLevelTypeFqn;
-		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(topLevelTypeFqn, ".");
-		this.scope = unmodifiableList(scope);
-		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : scope.get(scope.size() - 1);
-		this.name = name;
-		this.relevantCode = relevantCode;
-		this.codeLines = unmodifiableList(codeLines.stream().sorted().collect(Collectors.toList()));
-		this.codeColumn = codeColumn;
-		this.empty = empty;
-		this.argumentTypes = unmodifiableList(argumentTypes);
+	ParsedMethod(final BuilderImpl builder) {
+		this.methodType = builder.methodType;
+		this.topLevelTypeFqn = builder.topLevelTypeFqn;
+		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(builder.topLevelTypeFqn, ".");
+		this.scope = unmodifiableList(builder.scope);
+		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : builder.scope.get(builder.scope.size() - 1);
+		this.name = builder.name;
+		this.relevantCode = builder.relevantCode;
+		this.codeLines = unmodifiableList(builder.codeLines.stream().sorted().collect(Collectors.toList()));
+		this.codeColumn = builder.codeColumn;
+		this.empty = builder.empty;
+
+		this.argumentTypes = builder.argumentTypes != null
+				? unmodifiableList(builder.argumentTypes)
+				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList());
+
 		argumentCount = argumentTypes.size();
-		this.typeParameters = unmodifiableMap(typeParameters);
-		this.outerDeclaringType = outerDeclaringType.orElse(null);
+		this.typeParameters = builder.typeParameters != null ? unmodifiableMap(builder.typeParameters) : emptyMap();
+		this.outerDeclaringType = builder.outerDeclaringType.orElse(null);
 	}
 
 	public MethodType getMethodType() {

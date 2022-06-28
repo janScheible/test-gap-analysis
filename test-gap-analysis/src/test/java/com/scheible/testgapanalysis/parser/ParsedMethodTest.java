@@ -29,7 +29,8 @@ public class ParsedMethodTest {
 	}
 
 	private static ParsedMethod withTopLevelTypeFqn(final String topLevelTypeFqn, final String... scope) {
-		return new ParsedMethod(MethodType.CONSTRUCTOR, topLevelTypeFqn, Arrays.asList(scope), "", "",
-				Arrays.asList(42), 0, false, 0);
+		return ParsedMethod.builder().setMethodType(MethodType.CONSTRUCTOR).setTopLevelTypeFqn(topLevelTypeFqn)
+				.setScope(Arrays.asList(scope)).setName("").setRelevantCode("").setCodeLines(Arrays.asList(42))
+				.setCodeColumn(0).setEmpty(false).setArgumentCount(0).build();
 	}
 }
