@@ -1,8 +1,8 @@
 package com.scheible.testgapanalysis.analysis.testgap;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -179,25 +179,26 @@ public class TestGapReport {
 		this.newCommitHash = builder.newCommitHash.orElse(null);
 		compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
 
-		this.jaCoCoReportFiles = unmodifiableSet(builder.jaCoCoReportFiles);
+		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
 		this.jaCoCoCoverageCount = builder.jaCoCoCoverageCount;
 
-		this.newOrChangedFiles = unmodifiableSet(builder.newOrChangedFiles);
+		this.newOrChangedFiles = Collections.unmodifiableSet(new HashSet<>(builder.newOrChangedFiles));
 		consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped()).count();
 
 		coveredMethodsCount = builder.coveredMethods.size();
-		this.coveredMethods = unmodifiableSet(builder.coveredMethods);
+		this.coveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.coveredMethods));
 		uncoveredMethodsCount = builder.uncoveredMethods.size();
-		this.uncoveredMethods = unmodifiableSet(builder.uncoveredMethods);
+		this.uncoveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.uncoveredMethods));
 		coverageRatio = coveredMethodsCount + uncoveredMethodsCount > 0
 				? (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount)
 				: 1.0;
 		emptyMethodsCount = builder.emptyMethods.size();
-		this.emptyMethods = unmodifiableSet(builder.emptyMethods);
+		this.emptyMethods = Collections.unmodifiableSet(new HashSet<>(builder.emptyMethods));
 		unresolvableMethodsCount = builder.unresolvableMethods.size();
-		this.unresolvableMethods = unmodifiableSet(builder.unresolvableMethods);
+		this.unresolvableMethods = Collections.unmodifiableSet(new HashSet<>(builder.unresolvableMethods));
 		ambiguouslyResolvedCount = builder.ambiguouslyResolvedCoverage.size();
-		this.ambiguouslyResolvedCoverage = unmodifiableMap(builder.ambiguouslyResolvedCoverage);
+		this.ambiguouslyResolvedCoverage = Collections
+				.unmodifiableMap(new HashMap<>(builder.ambiguouslyResolvedCoverage));
 	}
 
 	public String getWorkDir() {

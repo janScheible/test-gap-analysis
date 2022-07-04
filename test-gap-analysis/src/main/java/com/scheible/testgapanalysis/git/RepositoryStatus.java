@@ -1,6 +1,8 @@
 package com.scheible.testgapanalysis.git;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -26,11 +28,11 @@ public class RepositoryStatus {
 		this.oldCommitHash = oldCommitHash;
 		this.newCommitHash = newCommitHash;
 
-		this.addedFiles = Collections.unmodifiableSet(addedFiles);
-		this.changedFiles = Collections.unmodifiableSet(changedFiles);
+		this.addedFiles = Collections.unmodifiableSet(new HashSet<>(addedFiles));
+		this.changedFiles = Collections.unmodifiableSet(new HashSet<>(changedFiles));
 
-		this.oldContents = Collections.unmodifiableMap(oldContents);
-		this.newContents = Collections.unmodifiableMap(newContents);
+		this.oldContents = Collections.unmodifiableMap(new HashMap<>(oldContents));
+		this.newContents = Collections.unmodifiableMap(new HashMap<>(newContents));
 	}
 
 	public String getOldCommitHash() {

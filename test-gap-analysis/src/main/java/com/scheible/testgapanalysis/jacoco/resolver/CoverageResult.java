@@ -1,8 +1,6 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
-
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -71,19 +69,19 @@ public class CoverageResult {
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedMethods() {
-		return unmodifiableMap(resolvedMethods);
+		return Collections.unmodifiableMap(resolvedMethods);
 	}
 
 	public Set<ParsedMethod> getEmptyMethods() {
-		return unmodifiableSet(emptyMethods);
+		return Collections.unmodifiableSet(emptyMethods);
 	}
 
 	public Set<ParsedMethod> getUnresolvedMethods() {
-		return unmodifiableSet(unresolvedMethods);
+		return Collections.unmodifiableSet(unresolvedMethods);
 	}
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
-		return unmodifiableMap(ambiguousCoverage);
+		return Collections.unmodifiableMap(ambiguousCoverage);
 	}
 
 	public boolean contains(final ParsedMethod method) {

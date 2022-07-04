@@ -205,7 +205,7 @@ Unresolvable methods (no coverage information available):
 
 ## Source code style
 
-1. avoid static methods for easier testing
+1. avoid `static` methods for easier testing
     1. exception: (package) private helper methods in classes that are static to enforce functional purity
     1. exception: completely stateless `*Utils` classes with static methods only
         1. utility classes must be `abstract` and have a private default constructor
@@ -222,3 +222,6 @@ Unresolvable methods (no coverage information available):
         1. (package private) constructor in model class with `BuilderImpl` as only parameter
         1. inner step interfaces in `<ModelClassName>Builder` with `Step` suffix
         1. inner static class `BuilderImpl` implementing all the steps
+1. usage of immutable data structures only
+    1. for collections defensive copies and `Collections.unmodifiableXzy(...)` in constructor
+    1. other fields or elements in collections have to be immutable

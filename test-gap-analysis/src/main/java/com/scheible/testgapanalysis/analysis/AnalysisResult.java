@@ -1,8 +1,8 @@
 package com.scheible.testgapanalysis.analysis;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,12 +26,12 @@ public class AnalysisResult {
 			final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods, final Set<ParsedMethod> emptyMethods,
 			final Set<ParsedMethod> unresolvableMethods,
 			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
-		this.coveredMethods = unmodifiableMap(coveredMethods);
-		this.uncoveredMethods = unmodifiableMap(uncoveredMethods);
+		this.coveredMethods = Collections.unmodifiableMap(new HashMap<>(coveredMethods));
+		this.uncoveredMethods = Collections.unmodifiableMap(new HashMap<>(uncoveredMethods));
 
-		this.emptyMethods = unmodifiableSet(emptyMethods);
-		this.unresolvableMethods = unmodifiableSet(unresolvableMethods);
-		this.ambiguouslyResolvedCoverage = unmodifiableMap(ambiguouslyResolvedCoverage);
+		this.emptyMethods = Collections.unmodifiableSet(new HashSet<>(emptyMethods));
+		this.unresolvableMethods = Collections.unmodifiableSet(new HashSet<>(unresolvableMethods));
+		this.ambiguouslyResolvedCoverage = Collections.unmodifiableMap(new HashMap<>(ambiguouslyResolvedCoverage));
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getCoveredMethods() {

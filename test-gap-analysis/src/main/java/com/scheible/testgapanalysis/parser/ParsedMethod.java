@@ -1,9 +1,10 @@
 package com.scheible.testgapanalysis.parser;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,20 +49,22 @@ public class ParsedMethod {
 		this.methodType = builder.methodType;
 		this.topLevelTypeFqn = builder.topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(builder.topLevelTypeFqn, ".");
-		this.scope = unmodifiableList(builder.scope);
+		this.scope = Collections.unmodifiableList(new ArrayList<>(builder.scope));
 		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : builder.scope.get(builder.scope.size() - 1);
 		this.name = builder.name;
 		this.relevantCode = builder.relevantCode;
-		this.codeLines = unmodifiableList(builder.codeLines.stream().sorted().collect(Collectors.toList()));
+		this.codeLines = Collections
+				.unmodifiableList(new ArrayList<>(builder.codeLines.stream().sorted().collect(Collectors.toList())));
 		this.codeColumn = builder.codeColumn;
 		this.empty = builder.empty;
 
-		this.argumentTypes = builder.argumentTypes != null
-				? unmodifiableList(builder.argumentTypes)
-				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList());
+		this.argumentTypes = Collections.unmodifiableList(builder.argumentTypes != null
+				? new ArrayList<>(builder.argumentTypes)
+				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()));
 
 		argumentCount = argumentTypes.size();
-		this.typeParameters = builder.typeParameters != null ? unmodifiableMap(builder.typeParameters) : emptyMap();
+		this.typeParameters = Collections
+				.unmodifiableMap(builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : emptyMap());
 		this.outerDeclaringType = builder.outerDeclaringType.orElse(null);
 	}
 

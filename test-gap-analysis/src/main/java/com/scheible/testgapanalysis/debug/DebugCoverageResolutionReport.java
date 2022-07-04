@@ -1,8 +1,8 @@
 package com.scheible.testgapanalysis.debug;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,14 +33,14 @@ public class DebugCoverageResolutionReport {
 
 	DebugCoverageResolutionReport(final BuilderImpl builder) {
 		this.coverageInfoCount = builder.coverageInfoCount;
-		this.jaCoCoReportFiles = unmodifiableSet(builder.jaCoCoReportFiles);
+		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
 		this.javaFileCount = builder.javaFileCount;
 
-		this.resolved = unmodifiableMap(builder.resolved);
-		this.empty = unmodifiableSet(builder.empty);
+		this.resolved = Collections.unmodifiableMap(new HashMap<>(builder.resolved));
+		this.empty = Collections.unmodifiableSet(new HashSet<>(builder.empty));
 
-		this.unresolved = unmodifiableSet(builder.unresolved);
-		this.ambiguousCoverage = unmodifiableMap(builder.ambiguousCoverage);
+		this.unresolved = Collections.unmodifiableSet(new HashSet<>(builder.unresolved));
+		this.ambiguousCoverage = Collections.unmodifiableMap(new HashMap<>(builder.ambiguousCoverage));
 	}
 
 	public int getCoverageInfoCount() {
