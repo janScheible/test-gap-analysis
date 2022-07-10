@@ -225,3 +225,7 @@ Unresolvable methods (no coverage information available):
 1. usage of immutable data structures only
     1. for collections defensive copies and `Collections.unmodifiableXzy(...)` in constructor
     1. other fields or elements in collections have to be immutable
+1. usage of `Optional<?>` (was actually designed for method return types only, but is the only JDK built-in way to indicate a nullable value (all `@Nullable` annotations are from third-party libraries))
+    1. never pass or return `null`, use `Optional<?>` instead (this eliminates the need for `null` checks everywhere)
+    1. but prefer method overloading or usage of a builder over `Optional<?>` method parameters
+    1. even use `Optional<?>` for class fields (avoids unnecessary `Optional.ofNullable(...)` calls in getter of immutable objects)

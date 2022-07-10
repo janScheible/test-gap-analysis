@@ -105,7 +105,8 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 	private void writeJsonReport(final TestGapReport report) throws MojoExecutionException {
 		final File reportFile = new File(buildDir, "test-gap-report.json");
-		final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+		final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+				.registerTypeAdapter(Optional.class, new OptionalTypeAdapter()).create();
 
 		try {
 			Files.write(reportFile.toPath(), gson.toJson(report).getBytes());
@@ -114,3 +115,4 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 		}
 	}
 }
+

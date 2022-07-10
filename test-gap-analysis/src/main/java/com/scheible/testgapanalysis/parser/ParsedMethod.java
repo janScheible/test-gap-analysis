@@ -39,7 +39,7 @@ public class ParsedMethod {
 	private final int argumentCount;
 	private final List<String> argumentTypes;
 	private final Map<String, String> typeParameters;
-	private final String outerDeclaringType;
+	private final Optional<String> outerDeclaringType;
 
 	public static MethodTypeStep builder() {
 		return new BuilderImpl();
@@ -65,7 +65,7 @@ public class ParsedMethod {
 		argumentCount = argumentTypes.size();
 		this.typeParameters = Collections
 				.unmodifiableMap(builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : emptyMap());
-		this.outerDeclaringType = builder.outerDeclaringType.orElse(null);
+		this.outerDeclaringType = builder.outerDeclaringType;
 	}
 
 	public MethodType getMethodType() {
@@ -175,7 +175,7 @@ public class ParsedMethod {
 	}
 
 	public Optional<String> getOuterDeclaringType() {
-		return Optional.of(outerDeclaringType);
+		return outerDeclaringType;
 	}
 
 	public String getDescription() {
@@ -238,6 +238,6 @@ public class ParsedMethod {
 				+ ", empty=" + empty + (!argumentTypes.isEmpty() ? ", parameterTypes=" + argumentTypes : "")
 				+ ", argumentCount=" + argumentCount
 				+ (!typeParameters.isEmpty() ? ", typeParameters=" + typeParameters : "")
-				+ (outerDeclaringType != null ? ", outerDeclaringType=" + outerDeclaringType : "") + "]";
+				+ (outerDeclaringType.isPresent() ? ", outerDeclaringType=" + outerDeclaringType.get() : "") + "]";
 	}
 }

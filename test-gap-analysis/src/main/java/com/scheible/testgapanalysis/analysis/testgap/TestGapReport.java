@@ -58,8 +58,8 @@ public class TestGapReport {
 		private final int sourceLine;
 		private final int sourceColumn;
 
-		private final String coveredMethodName;
-		private final Integer coveredMethodLine;
+		private final Optional<String> coveredMethodName;
+		private final Optional<Integer> coveredMethodLine;
 
 		private TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
 				final int sourceColumn, final String coveredMethodName, final Integer coveredMethodLine) {
@@ -68,8 +68,8 @@ public class TestGapReport {
 			this.sourceLine = sourceLine;
 			this.sourceColumn = sourceColumn;
 
-			this.coveredMethodName = coveredMethodName;
-			this.coveredMethodLine = coveredMethodLine;
+			this.coveredMethodName = Optional.ofNullable(coveredMethodName);
+			this.coveredMethodLine = Optional.ofNullable(coveredMethodLine);
 		}
 
 		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
@@ -100,17 +100,17 @@ public class TestGapReport {
 		}
 
 		public Optional<String> getCoveredMethodName() {
-			return Optional.ofNullable(coveredMethodName);
+			return coveredMethodName;
 		}
 
 		public Optional<Integer> getCoveredMethodLine() {
-			return Optional.ofNullable(coveredMethodLine);
+			return coveredMethodLine;
 		}
 
 		@Override
 		public String toString() {
-			final String coverageInfo = coveredMethodName != null && coveredMethodLine != null
-					? String.format(" resolved to '%s' with line %d", coveredMethodName, coveredMethodLine)
+			final String coverageInfo = coveredMethodName.isPresent() && coveredMethodLine.isPresent()
+					? String.format(" resolved to '%s' with line %d", coveredMethodName.get(), coveredMethodLine.get())
 					: "";
 			return String.format("%s%s at %d:%d%s", topLevelTypeFqn, description, sourceLine, sourceColumn,
 					coverageInfo);
@@ -144,7 +144,7 @@ public class TestGapReport {
 	private final String workDir;
 
 	private final String oldCommitHash;
-	private final String newCommitHash;
+	private final Optional<String> newCommitHash;
 	private final Boolean compareWithWorkingCopyChanges;
 
 	private final Set<String> jaCoCoReportFiles;
@@ -176,7 +176,7 @@ public class TestGapReport {
 		this.workDir = builder.workDir;
 
 		this.oldCommitHash = builder.oldCommitHash;
-		this.newCommitHash = builder.newCommitHash.orElse(null);
+		this.newCommitHash = builder.newCommitHash;
 		compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
 
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
@@ -210,7 +210,7 @@ public class TestGapReport {
 	}
 
 	public Optional<String> getNewCommitHash() {
-		return Optional.ofNullable(newCommitHash);
+		return newCommitHash;
 	}
 
 	public Boolean getCompareWithWorkingCopyChanges() {
