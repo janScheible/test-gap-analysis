@@ -123,7 +123,7 @@ public class ParsedMethod {
 	}
 
 	public String getDescription() {
-		String description = null;
+		String description;
 
 		if (isMethod()) {
 			description = "#" + getName() + "(...)";
@@ -131,6 +131,10 @@ public class ParsedMethod {
 			description = "." + getName() + "(...)";
 		} else if (isConstructor()) {
 			description = " constructor with " + getArgumentTypes().size() + " arguments";
+		} else if (isInnerClassConstructor()) {
+			description = " inner class constructor with " + getArgumentTypes().size() + " arguments";
+		} else if (isEnumConstructor()) {
+			description = " enum constructor with " + getArgumentTypes().size() + " arguments";
 		} else if (isInitializer()) {
 			description = " initializer";
 		} else if (isStaticInitializer()) {
@@ -138,7 +142,7 @@ public class ParsedMethod {
 		} else if (isLambdaMethod()) {
 			description = " lambda method";
 		} else {
-			throw new IllegalStateException("Unknown method type!");
+			description = " unknown type '" + methodType + "'";
 		}
 
 		return description;
