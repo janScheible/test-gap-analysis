@@ -4,10 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.CoverageReportMethod;
-import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.NewOrChangedFile;
-import com.scheible.testgapanalysis.analysis.testgap.TestGapReport.TestGapMethod;
-
 /**
  *
  * @author sj

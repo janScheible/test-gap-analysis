@@ -229,3 +229,15 @@ Unresolvable methods (no coverage information available):
     1. never pass or return `null`, use `Optional<?>` instead (this eliminates the need for `null` checks everywhere)
     1. but prefer method overloading or usage of a builder over `Optional<?>` method parameters
     1. even use `Optional<?>` for class fields (avoids unnecessary `Optional.ofNullable(...)` calls in getter of immutable objects)
+1. Java source file organization (derived from https://github.com/spring-projects/spring-framework/wiki/Code-Style#java-source-file-organization)
+    1. `enum` types if simple ones (contains only constants)
+    1. `static` fields and initializers
+    1. normal fields
+    1. constructors (ordering of parameters should be consistent with the order of the corresponding fields)
+    1. `static` factory methods
+    1. all other methods
+        1. overridden methods have to be grouped together
+    1. getters and setters (ordering of fields and getters/setters should be consistent with order of the corresponding fields)
+    1. `equals(...)`, `hashCode()` and `toString()`
+    1. inner types (`static`/inner classes, `interface` and non-simple `enum` types)
+        1. don't overuse inner types, as soon as the type is also useful in some other context it should be a top-level type

@@ -23,17 +23,6 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class DebugCoverageResolution {
 
-	private static class ParseResult {
-
-		private final Set<ParsedMethod> methods;
-		private final int javaFileCount;
-
-		private ParseResult(final Set<ParsedMethod> methods, final int javaFileCount) {
-			this.methods = methods;
-			this.javaFileCount = javaFileCount;
-		}
-	}
-
 	private final JavaParser javaParser;
 	private final JaCoCoReportParser jaCoCoReportParser;
 
@@ -67,6 +56,17 @@ public class DebugCoverageResolution {
 			return new ParseResult(methods, javaFiles.size());
 		} catch (IOException ex) {
 			throw new UncheckedIOException("Error while reading Java sources.", ex);
+		}
+	}
+
+	private static class ParseResult {
+
+		private final Set<ParsedMethod> methods;
+		private final int javaFileCount;
+
+		private ParseResult(final Set<ParsedMethod> methods, final int javaFileCount) {
+			this.methods = methods;
+			this.javaFileCount = javaFileCount;
 		}
 	}
 }

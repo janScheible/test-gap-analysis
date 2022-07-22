@@ -41,10 +41,6 @@ public class ParsedMethod {
 	private final Map<String, String> typeParameters;
 	private final Optional<String> outerDeclaringType;
 
-	public static MethodTypeStep builder() {
-		return new BuilderImpl();
-	}
-
 	ParsedMethod(final BuilderImpl builder) {
 		this.methodType = builder.methodType;
 		this.topLevelTypeFqn = builder.topLevelTypeFqn;
@@ -68,8 +64,8 @@ public class ParsedMethod {
 		this.outerDeclaringType = builder.outerDeclaringType;
 	}
 
-	public MethodType getMethodType() {
-		return methodType;
+	public static MethodTypeStep builder() {
+		return new BuilderImpl();
 	}
 
 	public boolean isInitializer() {
@@ -112,6 +108,46 @@ public class ParsedMethod {
 		return methodType == MethodType.LAMBDA_METHOD;
 	}
 
+	public boolean containsLine(final int line) {
+		for (final int current : codeLines) {
+			if (current == line) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public int getFirstCodeLine() {
+		return codeLines.get(0);
+	}
+
+	public String getDescription() {
+		String description = null;
+
+		if (isMethod()) {
+			description = "#" + getName() + "(...)";
+		} else if (isStaticMethod()) {
+			description = "." + getName() + "(...)";
+		} else if (isConstructor()) {
+			description = " constructor with " + getArgumentTypes().size() + " arguments";
+		} else if (isInitializer()) {
+			description = " initializer";
+		} else if (isStaticInitializer()) {
+			description = " static initializer";
+		} else if (isLambdaMethod()) {
+			description = " lambda method";
+		} else {
+			throw new IllegalStateException("Unknown method type!");
+		}
+
+		return description;
+	}
+
+	public MethodType getMethodType() {
+		return methodType;
+	}
+
 	public String getTopLevelTypeFqn() {
 		return topLevelTypeFqn;
 	}
@@ -140,26 +176,12 @@ public class ParsedMethod {
 		return codeLines;
 	}
 
-	public boolean containsLine(final int line) {
-		for (final int current : codeLines) {
-			if (current == line) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public int getFirstCodeLine() {
-		return codeLines.get(0);
+	public int getCodeColumn() {
+		return codeColumn;
 	}
 
 	public boolean isEmpty() {
 		return empty;
-	}
-
-	public int getCodeColumn() {
-		return codeColumn;
 	}
 
 	public List<String> getArgumentTypes() {
@@ -176,28 +198,6 @@ public class ParsedMethod {
 
 	public Optional<String> getOuterDeclaringType() {
 		return outerDeclaringType;
-	}
-
-	public String getDescription() {
-		String description = null;
-
-		if (isMethod()) {
-			description = "#" + getName() + "(...)";
-		} else if (isStaticMethod()) {
-			description = "." + getName() + "(...)";
-		} else if (isConstructor()) {
-			description = " constructor with " + getArgumentTypes().size() + " arguments";
-		} else if (isInitializer()) {
-			description = " initializer";
-		} else if (isStaticInitializer()) {
-			description = " static initializer";
-		} else if (isLambdaMethod()) {
-			description = " lambda method";
-		} else {
-			throw new IllegalStateException("Unknown method type!");
-		}
-
-		return description;
 	}
 
 	@Override

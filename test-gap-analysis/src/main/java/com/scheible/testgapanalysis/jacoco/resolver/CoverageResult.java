@@ -68,6 +68,17 @@ public class CoverageResult {
 						e -> e.getValue().stream().map(Entry::getKey).collect(Collectors.toSet())));
 	}
 
+	public boolean contains(final ParsedMethod method) {
+		return emptyMethods.contains(method) || resolvedMethods.containsKey(method)
+				|| unresolvedMethods.contains(method)
+				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
+	}
+
+	public boolean isEmpty() {
+		return emptyMethods.isEmpty() && resolvedMethods.isEmpty() && unresolvedMethods.isEmpty()
+				&& ambiguousCoverage.isEmpty();
+	}
+
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedMethods() {
 		return Collections.unmodifiableMap(resolvedMethods);
 	}
@@ -82,16 +93,5 @@ public class CoverageResult {
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
 		return Collections.unmodifiableMap(ambiguousCoverage);
-	}
-
-	public boolean contains(final ParsedMethod method) {
-		return emptyMethods.contains(method) || resolvedMethods.containsKey(method)
-				|| unresolvedMethods.contains(method)
-				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
-	}
-
-	public boolean isEmpty() {
-		return emptyMethods.isEmpty() && resolvedMethods.isEmpty() && unresolvedMethods.isEmpty()
-				&& ambiguousCoverage.isEmpty();
 	}
 }

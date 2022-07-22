@@ -16,131 +16,6 @@ import com.scheible.testgapanalysis.analysis.testgap.TestGapReportBuilder.WorkDi
  */
 public class TestGapReport {
 
-	public static class NewOrChangedFile {
-
-		public enum State {
-			NEW, CHANGED
-		};
-
-		private final String repositoryPath;
-		private final boolean skipped;
-		private final State state;
-
-		public NewOrChangedFile(final String name, final boolean skipped, final State state) {
-			this.repositoryPath = name;
-			this.skipped = skipped;
-			this.state = state;
-		}
-
-		public String getName() {
-			return repositoryPath;
-		}
-
-		public boolean isSkipped() {
-			return skipped;
-		}
-
-		public State getState() {
-			return state;
-		}
-
-		@Override
-		public String toString() {
-			return String.format("[%s%s] %s", skipped ? "skipped, " : "", state == State.CHANGED ? "changed" : "new",
-					repositoryPath);
-		}
-	}
-
-	public static class TestGapMethod {
-
-		private final String topLevelTypeFqn;
-		private final String description;
-		private final int sourceLine;
-		private final int sourceColumn;
-
-		private final Optional<String> coveredMethodName;
-		private final Optional<Integer> coveredMethodLine;
-
-		private TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-				final int sourceColumn, final String coveredMethodName, final Integer coveredMethodLine) {
-			this.topLevelTypeFqn = topLevelTypeFqn;
-			this.description = description;
-			this.sourceLine = sourceLine;
-			this.sourceColumn = sourceColumn;
-
-			this.coveredMethodName = Optional.ofNullable(coveredMethodName);
-			this.coveredMethodLine = Optional.ofNullable(coveredMethodLine);
-		}
-
-		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-				final int sourceColumn, final String coveredMethodName, final int coveredMethodLine) {
-			this(topLevelTypeFqn, description, sourceLine, sourceColumn, coveredMethodName,
-					(Integer) coveredMethodLine);
-		}
-
-		public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-				final int sourceColumn) {
-			this(topLevelTypeFqn, description, sourceLine, sourceColumn, null, null);
-		}
-
-		public String getTopLevelTypeFqn() {
-			return topLevelTypeFqn;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public int getSourceLine() {
-			return sourceLine;
-		}
-
-		public int getSourceColumn() {
-			return sourceColumn;
-		}
-
-		public Optional<String> getCoveredMethodName() {
-			return coveredMethodName;
-		}
-
-		public Optional<Integer> getCoveredMethodLine() {
-			return coveredMethodLine;
-		}
-
-		@Override
-		public String toString() {
-			final String coverageInfo = coveredMethodName.isPresent() && coveredMethodLine.isPresent()
-					? String.format(" resolved to '%s' with line %d", coveredMethodName.get(), coveredMethodLine.get())
-					: "";
-			return String.format("%s%s at %d:%d%s", topLevelTypeFqn, description, sourceLine, sourceColumn,
-					coverageInfo);
-		}
-	}
-
-	public static class CoverageReportMethod {
-
-		private final String coveredMethodName;
-		private final int coveredMethodLine;
-
-		public CoverageReportMethod(final String coveredMethodName, final int coveredMethodLine) {
-			this.coveredMethodName = coveredMethodName;
-			this.coveredMethodLine = coveredMethodLine;
-		}
-
-		public String getCoveredMethodName() {
-			return coveredMethodName;
-		}
-
-		public int getCoveredMethodLine() {
-			return coveredMethodLine;
-		}
-
-		@Override
-		public String toString() {
-			return String.format("'%s' at line %d", coveredMethodName, coveredMethodLine);
-		}
-	}
-
 	private final String workDir;
 
 	private final String oldCommitHash;
@@ -168,10 +43,6 @@ public class TestGapReport {
 	private final Set<TestGapMethod> unresolvableMethods;
 	private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
-	public static WorkDirStep builder() {
-		return new BuilderImpl();
-	}
-
 	TestGapReport(final BuilderImpl builder) {
 		this.workDir = builder.workDir;
 
@@ -186,19 +57,26 @@ public class TestGapReport {
 		consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped()).count();
 
 		coveredMethodsCount = builder.coveredMethods.size();
-		this.coveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.coveredMethods));
 		uncoveredMethodsCount = builder.uncoveredMethods.size();
-		this.uncoveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.uncoveredMethods));
 		coverageRatio = coveredMethodsCount + uncoveredMethodsCount > 0
 				? (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount)
 				: 1.0;
 		emptyMethodsCount = builder.emptyMethods.size();
-		this.emptyMethods = Collections.unmodifiableSet(new HashSet<>(builder.emptyMethods));
+
 		unresolvableMethodsCount = builder.unresolvableMethods.size();
-		this.unresolvableMethods = Collections.unmodifiableSet(new HashSet<>(builder.unresolvableMethods));
 		ambiguouslyResolvedCount = builder.ambiguouslyResolvedCoverage.size();
+
+		this.coveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.coveredMethods));
+		this.uncoveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.uncoveredMethods));
+
+		this.emptyMethods = Collections.unmodifiableSet(new HashSet<>(builder.emptyMethods));
+		this.unresolvableMethods = Collections.unmodifiableSet(new HashSet<>(builder.unresolvableMethods));
 		this.ambiguouslyResolvedCoverage = Collections
 				.unmodifiableMap(new HashMap<>(builder.ambiguouslyResolvedCoverage));
+	}
+
+	public static WorkDirStep builder() {
+		return new BuilderImpl();
 	}
 
 	public String getWorkDir() {
@@ -237,24 +115,20 @@ public class TestGapReport {
 		return coveredMethodsCount;
 	}
 
-	public int getEmptyMethodsCount() {
-		return emptyMethodsCount;
-	}
-
-	public Set<TestGapMethod> getEmptyMethods() {
-		return emptyMethods;
-	}
-
 	public int getUncoveredMethodsCount() {
 		return uncoveredMethodsCount;
 	}
 
-	public int getUnresolvableMethodsCount() {
-		return unresolvableMethodsCount;
-	}
-
 	public double getCoverageRatio() {
 		return coverageRatio;
+	}
+
+	public int getEmptyMethodsCount() {
+		return emptyMethodsCount;
+	}
+
+	public int getUnresolvableMethodsCount() {
+		return unresolvableMethodsCount;
 	}
 
 	public int getAmbiguouslyResolvedCount() {
@@ -267,6 +141,10 @@ public class TestGapReport {
 
 	public Set<TestGapMethod> getUncoveredMethods() {
 		return uncoveredMethods;
+	}
+
+	public Set<TestGapMethod> getEmptyMethods() {
+		return emptyMethods;
 	}
 
 	public Set<TestGapMethod> getUnresolvableMethods() {

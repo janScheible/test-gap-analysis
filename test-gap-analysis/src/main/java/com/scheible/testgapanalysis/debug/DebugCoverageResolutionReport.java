@@ -27,10 +27,6 @@ public class DebugCoverageResolutionReport {
 	private final Set<ParsedMethod> unresolved;
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
 
-	public static CoverageInfoCountStep builder() {
-		return new BuilderImpl();
-	}
-
 	DebugCoverageResolutionReport(final BuilderImpl builder) {
 		this.coverageInfoCount = builder.coverageInfoCount;
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
@@ -41,6 +37,10 @@ public class DebugCoverageResolutionReport {
 
 		this.unresolved = Collections.unmodifiableSet(new HashSet<>(builder.unresolved));
 		this.ambiguousCoverage = Collections.unmodifiableMap(new HashMap<>(builder.ambiguousCoverage));
+	}
+
+	public static CoverageInfoCountStep builder() {
+		return new BuilderImpl();
 	}
 
 	public int getCoverageInfoCount() {

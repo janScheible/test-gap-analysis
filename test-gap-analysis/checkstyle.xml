@@ -8,7 +8,15 @@
 			
 		<module name="CyclomaticComplexity"></module>
 		<module name="JavaNCSS"></module>
+
 		<module name="ModifierOrder"/>
+
+		<module name="OneTopLevelClass"/>
+		<module name="OverloadMethodsDeclarationOrder"/>
+		<module name="DeclarationOrder"/>
+		<module name="InnerTypeLast"/>
+		<module name="HideUtilityClassConstructorCheck" />
+		
 		<module name="ConstantName">
 			<property name="format" value="^(logger|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*)$"/>
 		</module>

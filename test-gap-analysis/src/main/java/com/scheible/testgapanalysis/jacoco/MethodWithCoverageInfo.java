@@ -70,22 +70,6 @@ public class MethodWithCoverageInfo {
 		}
 	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public String getSimpleClassName() {
-		return simpleClassName;
-	}
-
-	public String getEnclosingSimpleName() {
-		return enclosingSimpleName;
-	}
-
-	public String getName() {
-		return name;
-	}
-
 	public boolean isLambdaMethod() {
 		return name.startsWith("lambda$");
 	}
@@ -108,6 +92,22 @@ public class MethodWithCoverageInfo {
 
 	public boolean isNonLambdaMethod() {
 		return !isLambdaMethod() && !isStaticInitializer() && !isConstructor();
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public String getSimpleClassName() {
+		return simpleClassName;
+	}
+
+	public String getEnclosingSimpleName() {
+		return enclosingSimpleName;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getDescription() {

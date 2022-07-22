@@ -28,6 +28,9 @@ public class JavaMethodUtils {
 		PRIMITIVE_TYPE_MAPPING.put("D", "double");
 	}
 
+	private JavaMethodUtils() {
+	}
+
 	/**
 	 * Parses method description arguments (see chapter 4.3.3. in "The Java Virtual Machine Specification (2nd
 	 * ed.)") and returns Java notations. Java notations means for example '.' separator between nested classes.
@@ -132,12 +135,12 @@ public class JavaMethodUtils {
 		}).collect(Collectors.toList());
 	}
 
-	private static String removeArrayBrackets(final String type) {
-		return type.replaceAll("\\[", "").replaceAll("\\]", "");
-	}
-
 	private static List<String> normalizeMethodArguments(final Collection<String> arguments) {
 		return arguments.stream().map(JavaMethodUtils::normalizeArgument).collect(Collectors.toList());
+	}
+
+	private static String removeArrayBrackets(final String type) {
+		return type.replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
 	private static String normalizeArgument(final String argument) {
