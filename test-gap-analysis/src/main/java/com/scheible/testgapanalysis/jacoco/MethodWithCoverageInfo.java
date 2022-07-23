@@ -53,7 +53,7 @@ public class MethodWithCoverageInfo {
 						|| !Objects.equals(description, method.getDescription())
 						|| !Objects.equals(line, method.getLine())) {
 					throw new IllegalArgumentException(
-							methods + " can't be merged because the refer to different methods!");
+							methods + " can't be merged because they refer to different methods!");
 				}
 
 				coveredInstructionCount += method.getCoveredInstructionCount();

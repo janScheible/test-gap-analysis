@@ -34,7 +34,7 @@ public class MethodWithCoverageInfoTest {
 				new MethodWithCoverageInfo("className", "firstName", "desc", 42, 1),
 				new MethodWithCoverageInfo("className", "secondName", "desc", 42, 2))))
 						.isInstanceOf(IllegalArgumentException.class)
-						.hasMessageContaining("can't be merged because the refer to different methods");
+						.hasMessageContaining("can't be merged because they refer to different methods");
 	}
 
 	@Test

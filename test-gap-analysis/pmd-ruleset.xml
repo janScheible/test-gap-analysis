@@ -8,4 +8,10 @@
 
 	<rule ref="category/java/codestyle.xml/MethodArgumentCouldBeFinal" />
 	<rule ref="category/java/codestyle.xml/LocalVariableCouldBeFinal" />
+	
+	<rule ref="category/java/errorprone.xml/EmptyCatchBlock">
+		<properties>
+			<property name="allowCommentedBlocks" value="true" />
+		</properties>
+	</rule>	
 </ruleset>
