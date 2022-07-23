@@ -1,12 +1,7 @@
 package com.scheible.testgapanalysis.jacoco.resolver;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-
-import static com.scheible.testgapanalysis.common.JavaMethodUtils.normalizeMethodArguments;
-import static com.scheible.testgapanalysis.common.JavaMethodUtils.parseDescriptorArguments;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.scheible.testgapanalysis.common.JavaMethodUtils;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
@@ -60,7 +56,7 @@ public class CoverageResolver {
 	CoverageResult resolveType(final TopLevelType type, final Set<ParsedMethod> methods) {
 		final CoverageResult result = new CoverageResult();
 
-		final Set<MethodWithCoverageInfo> coverage = coverageReport.getOrDefault(type, emptySet());
+		final Set<MethodWithCoverageInfo> coverage = coverageReport.getOrDefault(type, Collections.emptySet());
 
 		result.add(resolveInitializers(filter(methods, ParsedMethod::isInitializer), coverage));
 		result.add(resolveStaticInitializers(filter(methods, ParsedMethod::isStaticInitializer), coverage));
@@ -84,7 +80,7 @@ public class CoverageResolver {
 		if (initializers.size() == 1 && coverageConstructors.size() == 1) {
 			final Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
 			resolvedInitializers.put(initializers.iterator().next(), coverageConstructors.get(0));
-			return new CoverageResult(resolvedInitializers, emptySet());
+			return new CoverageResult(resolvedInitializers, Collections.emptySet());
 		} else {
 			// try to find a constructor with covered code, if there is none use any non-covered constructor
 			final Optional<MethodWithCoverageInfo> firstConstructorCoverage = coverageConstructors.stream()
@@ -94,7 +90,7 @@ public class CoverageResolver {
 			if (firstConstructorCoverage.isPresent()) {
 				final Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
 				initializers.forEach(im -> resolvedInitializers.put(im, firstConstructorCoverage.get()));
-				return new CoverageResult(resolvedInitializers, emptySet());
+				return new CoverageResult(resolvedInitializers, Collections.emptySet());
 			}
 		}
 
@@ -113,7 +109,7 @@ public class CoverageResolver {
 		if (!coverageStaticInitializers.isEmpty()) { // make sure that a coverage report is there
 			final Map<ParsedMethod, MethodWithCoverageInfo> resolvedStaticInitializers = new HashMap<>();
 			staticInitializers.forEach(im -> resolvedStaticInitializers.put(im, coverageStaticInitializers.get(0)));
-			return new CoverageResult(resolvedStaticInitializers, emptySet());
+			return new CoverageResult(resolvedStaticInitializers, Collections.emptySet());
 		}
 
 		return new CoverageResult();
@@ -132,8 +128,8 @@ public class CoverageResolver {
 		final Set<ParsedMethod> unresolved = new HashSet<>();
 
 		for (final ParsedMethod constructor : constructors) {
-			final List<String> normalizedConstructorArguments = new ArrayList<>(
-					normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getTypeParameters()));
+			final List<String> normalizedConstructorArguments = new ArrayList<>(JavaMethodUtils
+					.normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getTypeParameters()));
 
 			// The constructors of enums have two additional parameter of type String and int. Most likely the name and
 			// index of the enum const is passed via this parameter.
@@ -150,8 +146,8 @@ public class CoverageResolver {
 			final List<MethodWithCoverageInfo> coverageConstructors = coverage.stream()
 					.filter(MethodWithCoverageInfo::isConstructor)
 					.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
-					.filter(mwci -> normalizedConstructorArguments.equals(
-							normalizeMethodArguments(parseDescriptorArguments(mwci.getDescription()), emptyMap())))
+					.filter(mwci -> normalizedConstructorArguments.equals(JavaMethodUtils.normalizeMethodArguments(
+							JavaMethodUtils.parseDescriptorArguments(mwci.getDescription()), Collections.emptyMap())))
 					.collect(Collectors.toList());
 			if (coverageConstructors.size() == 1) {
 				resolved.put(constructor, coverageConstructors.get(0));
@@ -177,8 +173,8 @@ public class CoverageResolver {
 			for (final MethodWithCoverageInfo coverageMethod : coverage.stream()
 					.filter(MethodWithCoverageInfo::isNonLambdaMethod).collect(Collectors.toSet())) {
 				if (method.containsLine(coverageMethod.getLine()) && method.getName().equals(coverageMethod.getName())
-						&& method.getArgumentCount() == parseDescriptorArguments(coverageMethod.getDescription())
-								.size()) {
+						&& method.getArgumentCount() == JavaMethodUtils
+								.parseDescriptorArguments(coverageMethod.getDescription()).size()) {
 					candidates.add(coverageMethod);
 				}
 			}
@@ -249,9 +245,8 @@ public class CoverageResolver {
 			boolean withoutErrors = true;
 
 			for (int i = 0; i < lambdaCoverage.size(); i++) {
-				if (lambdas.get(i)
-						.getArgumentCount() <= parseDescriptorArguments(lambdaCoverage.get(i).getDescription())
-								.size()) {
+				if (lambdas.get(i).getArgumentCount() <= JavaMethodUtils
+						.parseDescriptorArguments(lambdaCoverage.get(i).getDescription()).size()) {
 					currentResolved.put(lambdas.get(i), lambdaCoverage.get(i));
 				} else {
 					withoutErrors = false;
@@ -260,11 +255,11 @@ public class CoverageResolver {
 			}
 
 			if (withoutErrors) {
-				return new CoverageResult(currentResolved, emptySet());
+				return new CoverageResult(currentResolved, Collections.emptySet());
 			}
 		}
 
-		return new CoverageResult(emptyMap(), new HashSet<>(lambdas));
+		return new CoverageResult(Collections.emptyMap(), new HashSet<>(lambdas));
 	}
 
 	private static Map<TopLevelType, Set<ParsedMethod>> groupMethodsByType(final Set<ParsedMethod> methods) {

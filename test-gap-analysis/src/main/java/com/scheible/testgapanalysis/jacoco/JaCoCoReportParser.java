@@ -1,7 +1,5 @@
 package com.scheible.testgapanalysis.jacoco;
 
-import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,7 +52,7 @@ public class JaCoCoReportParser {
 	private Set<MethodWithCoverageInfo> getMethodCoverage(final InputSource inputSource) {
 		try {
 			final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			builderFactory.setFeature(FEATURE_SECURE_PROCESSING, true);
+			builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			final DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			builder.setEntityResolver((String publicId,
 					String systemId) -> systemId.contains("report.dtd") ? new InputSource(new StringReader("")) : null);

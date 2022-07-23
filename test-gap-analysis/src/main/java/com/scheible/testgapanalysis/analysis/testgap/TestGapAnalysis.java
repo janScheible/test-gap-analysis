@@ -1,9 +1,8 @@
 package com.scheible.testgapanalysis.analysis.testgap;
 
-import static java.util.Collections.emptySet;
-
 import java.io.File;
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -59,7 +58,7 @@ public class TestGapAnalysis {
 	}
 
 	private RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash, final File workDir) {
-		Set<NewOrChangedFile> newOrChangedFiles = emptySet();
+		Set<NewOrChangedFile> newOrChangedFiles = Collections.emptySet();
 
 		final RepositoryStatus status = referenceCommitHash
 				.map(h -> gitDiffer.ofCommitComparedToHead(workDir, h, NON_TEST_JAVA_FILE))

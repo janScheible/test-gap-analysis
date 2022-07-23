@@ -243,3 +243,5 @@ Unresolvable methods (no coverage information available):
         1. don't overuse inner types, as soon as the type is also useful in some other context it should be a top-level type
 1. don't use checked (and unchecked) exceptions for program flow, always prefer returning proper result types (exceptions are reserved for real, unexpected errors)
     1. wrapping an `IOException` with `UncheckedIOException` (or more general any exception in a `IllegalStateException`) is okay but takes away the possibility from the caller to react to errors (for example by skipping a single file that cause an `IOException` while reading it)
+1. no static imports in production code (only allowed in tests)
+1. no wildcard imports in general

@@ -1,7 +1,5 @@
 package com.scheible.testgapanalysis.common;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public abstract class FilesUtils {
 	}
 
 	public static String readUtf8(final InputStream inputStream) {
-		try (InputStream tryCatchInputStream = requireNonNull(inputStream)) {
+		try (InputStream tryCatchInputStream = Objects.requireNonNull(inputStream)) {
 
 			final ByteArrayOutputStream result = new ByteArrayOutputStream();
 			final byte[] buffer = new byte[1024];
@@ -48,7 +47,7 @@ public abstract class FilesUtils {
 
 	public static String readUtf8(final File file) {
 		try {
-			return new String(Files.readAllBytes(requireNonNull(file).toPath()), UTF_8_CHARSET);
+			return new String(Files.readAllBytes(Objects.requireNonNull(file).toPath()), UTF_8_CHARSET);
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}

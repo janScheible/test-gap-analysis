@@ -2,7 +2,6 @@ package com.scheible.testgapanalysis.analysis.testgap;
 
 import com.scheible.pocketsaw.api.SubModule;
 import com.scheible.testgapanalysis.ExternalFunctionalities.Slf4j;
-import com.scheible.testgapanalysis.analysis.*;
 import com.scheible.testgapanalysis.common.CommonSubModule;
 import com.scheible.testgapanalysis.git.GitSubModule;
 import com.scheible.testgapanalysis.jacoco.JaCoCoSubModule;

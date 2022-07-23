@@ -1,7 +1,5 @@
 package com.scheible.testgapanalysis.parser;
 
-import static java.util.Collections.emptyMap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,8 +57,8 @@ public class ParsedMethod {
 				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()));
 
 		argumentCount = argumentTypes.size();
-		this.typeParameters = Collections
-				.unmodifiableMap(builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : emptyMap());
+		this.typeParameters = Collections.unmodifiableMap(
+				builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : Collections.emptyMap());
 		this.outerDeclaringType = builder.outerDeclaringType;
 	}
 
