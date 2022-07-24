@@ -4,11 +4,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 import com.scheible.testgapanalysis.analysis.testgap.TestGapReportBuilder.BuilderImpl;
 import com.scheible.testgapanalysis.analysis.testgap.TestGapReportBuilder.WorkDirStep;
+import com.scheible.testgapanalysis.common.EqualsUtils;
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 
 /**
  *
@@ -153,5 +156,62 @@ public class TestGapReport {
 
 	public Map<CoverageReportMethod, Set<TestGapMethod>> getAmbiguouslyResolvedCoverage() {
 		return ambiguouslyResolvedCoverage;
+	}
+
+	@Override
+	@SuppressWarnings("checkstyle:CyclomaticComplexity")
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof TestGapReport) {
+			final TestGapReport other = (TestGapReport) obj;
+			return Objects.equals(workDir, other.workDir) && Objects.equals(oldCommitHash, other.oldCommitHash)
+					&& Objects.equals(newCommitHash, other.newCommitHash)
+					&& Objects.equals(compareWithWorkingCopyChanges, other.compareWithWorkingCopyChanges)
+					&& Objects.equals(jaCoCoReportFiles, other.jaCoCoReportFiles)
+					&& jaCoCoCoverageCount == other.jaCoCoCoverageCount
+					&& Objects.equals(newOrChangedFiles, other.newOrChangedFiles)
+					&& consideredNewOrChangedFilesCount == other.consideredNewOrChangedFilesCount
+					&& coveredMethodsCount == other.coveredMethodsCount
+					&& uncoveredMethodsCount == other.uncoveredMethodsCount
+					&& EqualsUtils.equals(coverageRatio, other.coverageRatio)
+					&& emptyMethodsCount == other.emptyMethodsCount
+					&& unresolvableMethodsCount == other.unresolvableMethodsCount
+					&& ambiguouslyResolvedCount == other.ambiguouslyResolvedCount
+					&& Objects.equals(coveredMethods, other.coveredMethods)
+					&& Objects.equals(uncoveredMethods, other.uncoveredMethods)
+					&& Objects.equals(emptyMethods, other.emptyMethods)
+					&& Objects.equals(unresolvableMethods, other.unresolvableMethods)
+					&& Objects.equals(ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(workDir, oldCommitHash, newCommitHash, compareWithWorkingCopyChanges, jaCoCoReportFiles,
+				jaCoCoCoverageCount, newOrChangedFiles, consideredNewOrChangedFilesCount, coveredMethodsCount,
+				uncoveredMethodsCount, coverageRatio, emptyMethodsCount, unresolvableMethodsCount,
+				ambiguouslyResolvedCount, coveredMethods, uncoveredMethods, emptyMethods, unresolvableMethods,
+				ambiguouslyResolvedCoverage);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(getClass()).append("workDir", workDir).append("oldCommitHash", oldCommitHash)
+				.append("newCommitHash", newCommitHash)
+				.append("compareWithWorkingCopyChanges", compareWithWorkingCopyChanges)
+				.append("jaCoCoReportFiles", jaCoCoReportFiles).append("jaCoCoCoverageCount", jaCoCoCoverageCount)
+				.append("newOrChangedFiles", newOrChangedFiles)
+				.append("consideredNewOrChangedFilesCount", consideredNewOrChangedFilesCount)
+				.append("coveredMethodsCount", coveredMethodsCount)
+				.append("uncoveredMethodsCount", uncoveredMethodsCount).append("coverageRatio", coverageRatio)
+				.append("emptyMethodsCount", emptyMethodsCount)
+				.append("unresolvableMethodsCount", unresolvableMethodsCount)
+				.append("ambiguouslyResolvedCount", ambiguouslyResolvedCount).append("coveredMethods", coveredMethods)
+				.append("uncoveredMethods", uncoveredMethods).append("emptyMethods", emptyMethods)
+				.append("unresolvableMethods", unresolvableMethods)
+				.append("ambiguouslyResolvedCoverage", ambiguouslyResolvedCoverage).build();
 	}
 }

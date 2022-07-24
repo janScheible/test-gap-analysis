@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtils;
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 
 /**
  *
@@ -131,8 +132,7 @@ public class MethodWithCoverageInfo {
 			return Objects.equals(className, other.className) && Objects.equals(simpleClassName, other.simpleClassName)
 					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
 					&& Objects.equals(name, other.name) && Objects.equals(description, other.description)
-					&& Objects.equals(line, other.line)
-					&& Objects.equals(coveredInstructionCount, other.coveredInstructionCount);
+					&& line == other.line && coveredInstructionCount == other.coveredInstructionCount;
 		} else {
 			return false;
 		}
@@ -146,8 +146,8 @@ public class MethodWithCoverageInfo {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[className='" + className + "', simpleClassName='" + simpleClassName
-				+ "', enclosingSimpleName='" + enclosingSimpleName + "', name='" + name + "', line=" + line
-				+ ", description='" + description + "', coveredInstructionCount=" + coveredInstructionCount + "]";
+		return new ToStringBuilder(getClass()).append("className", className).append("simpleClassName", simpleClassName)
+				.append("enclosingSimpleName", enclosingSimpleName).append("name", name).append("line", line)
+				.append("description", description).append("coveredInstructionCount", coveredInstructionCount).build();
 	}
 }

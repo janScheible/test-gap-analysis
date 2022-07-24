@@ -245,3 +245,12 @@ Unresolvable methods (no coverage information available):
     1. wrapping an `IOException` with `UncheckedIOException` (or more general any exception in a `IllegalStateException`) is okay but takes away the possibility from the caller to react to errors (for example by skipping a single file that cause an `IOException` while reading it)
 1. no static imports in production code (only allowed in tests)
 1. no wildcard imports in general
+1. `equals(...)`, `hashCode()` and `toString()` must be implemented for all model/domain classes but not service or utility classes
+    1. `toString()` should only be used for debugging purposes (printed in logs (`DEBUG` level) or in IDE) and never use to extract the state of an object
+    1. `toString()` should contain all interesting information (too long information can be shorten or summarized)
+    1. on high-level `equals(...)` must first test for identity (`==`) and then for type compatibility with `instanceof`
+    1. `equals(...)` must compare different type of fields differently:
+        1. `float` and `double` with `Float.compare(...)` resp. `Double.compare(...)`
+        1. all other primitive types and enums with `==`
+        1. object references with `Objects.equals(...)`
+    1. `hashCode()` must use `Objects.hash(...)`

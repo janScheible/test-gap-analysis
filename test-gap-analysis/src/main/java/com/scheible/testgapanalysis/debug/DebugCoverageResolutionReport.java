@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 import com.scheible.testgapanalysis.debug.DebugCoverageResolutionReportBuilder.BuilderImpl;
 import com.scheible.testgapanalysis.debug.DebugCoverageResolutionReportBuilder.CoverageInfoCountStep;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
@@ -69,5 +71,35 @@ public class DebugCoverageResolutionReport {
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
 		return ambiguousCoverage;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof DebugCoverageResolutionReport) {
+			final DebugCoverageResolutionReport other = (DebugCoverageResolutionReport) obj;
+			return coverageInfoCount == other.coverageInfoCount
+					&& Objects.equals(jaCoCoReportFiles, other.jaCoCoReportFiles)
+					&& javaFileCount == other.javaFileCount && Objects.equals(resolved, other.resolved)
+					&& Objects.equals(empty, other.empty) && Objects.equals(unresolved, other.unresolved)
+					&& Objects.equals(ambiguousCoverage, other.ambiguousCoverage);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(coverageInfoCount, jaCoCoReportFiles, javaFileCount, resolved, empty, unresolved,
+				ambiguousCoverage);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(getClass()).append("coverageInfoCount", coverageInfoCount)
+				.append("jaCoCoReportFiles", jaCoCoReportFiles).append("javaFileCount", javaFileCount)
+				.append("resolved", resolved).append("empty", empty).append("unresolved", unresolved)
+				.append("ambiguousCoverage", ambiguousCoverage).build();
 	}
 }

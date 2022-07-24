@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.scheible.testgapanalysis.common.JavaMethodUtils;
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 import com.scheible.testgapanalysis.parser.ParsedMethodBuilder.BuilderImpl;
 import com.scheible.testgapanalysis.parser.ParsedMethodBuilder.MethodTypeStep;
 
@@ -215,10 +216,9 @@ public class ParsedMethod {
 					&& Objects.equals(scope, other.scope)
 					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
 					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
-					&& Objects.equals(codeLines, other.codeLines) && Objects.equals(codeColumn, other.codeColumn)
-					&& Objects.equals(empty, other.empty) && Objects.equals(argumentTypes, other.argumentTypes)
-					&& Objects.equals(argumentCount, other.argumentCount)
-					&& Objects.equals(typeParameters, other.typeParameters)
+					&& Objects.equals(codeLines, other.codeLines) && codeColumn == other.codeColumn
+					&& empty == other.empty && Objects.equals(argumentTypes, other.argumentTypes)
+					&& argumentCount == other.argumentCount && Objects.equals(typeParameters, other.typeParameters)
 					&& Objects.equals(outerDeclaringType, other.outerDeclaringType);
 		} else {
 			return false;
@@ -234,12 +234,12 @@ public class ParsedMethod {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[methodType=" + methodType + ", topLevelTypeFqn='" + topLevelTypeFqn
-				+ "', topLevelSimpleName='" + topLevelSimpleName + "', scope='" + scope + "', enclosingSimpleName='"
-				+ enclosingSimpleName + "', name='" + name + "', codeLines=" + codeLines + ", codeColumn=" + codeColumn
-				+ ", empty=" + empty + (!argumentTypes.isEmpty() ? ", parameterTypes=" + argumentTypes : "")
-				+ ", argumentCount=" + argumentCount
-				+ (!typeParameters.isEmpty() ? ", typeParameters=" + typeParameters : "")
-				+ (outerDeclaringType.isPresent() ? ", outerDeclaringType=" + outerDeclaringType.get() : "") + "]";
+		return new ToStringBuilder(getClass()).append("methodType", methodType)
+				.append("topLevelTypeFqn", topLevelTypeFqn).append("topLevelSimpleName", topLevelSimpleName)
+				.append("scope", scope).append("enclosingSimpleName", enclosingSimpleName).append("name", name)
+				.append("relevantCode", ToStringBuilder.shorten(relevantCode.replaceAll("\\R", ""), 30))
+				.append("codeLines", codeLines).append("codeColumn", codeColumn).append("empty", empty)
+				.append("argumentTypes", argumentTypes).append("argumentCount", argumentCount)
+				.append("typeParameters", typeParameters).append("outerDeclaringType", outerDeclaringType).build();
 	}
 }

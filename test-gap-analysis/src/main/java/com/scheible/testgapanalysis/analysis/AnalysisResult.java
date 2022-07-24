@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
@@ -52,5 +54,35 @@ public class AnalysisResult {
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguouslyResolvedCoverage() {
 		return ambiguouslyResolvedCoverage;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof AnalysisResult) {
+			final AnalysisResult other = (AnalysisResult) obj;
+			return Objects.equals(coveredMethods, other.coveredMethods)
+					&& Objects.equals(uncoveredMethods, other.uncoveredMethods)
+					&& Objects.equals(emptyMethods, other.emptyMethods)
+					&& Objects.equals(unresolvableMethods, other.unresolvableMethods)
+					&& Objects.equals(ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(coveredMethods, uncoveredMethods, emptyMethods, unresolvableMethods,
+				ambiguouslyResolvedCoverage);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(getClass()).append("coveredMethods", coveredMethods)
+				.append("uncoveredMethods", uncoveredMethods).append("emptyMethods", emptyMethods)
+				.append("unresolvableMethods", unresolvableMethods)
+				.append("ambiguouslyResolvedCoverage", ambiguouslyResolvedCoverage).build();
 	}
 }

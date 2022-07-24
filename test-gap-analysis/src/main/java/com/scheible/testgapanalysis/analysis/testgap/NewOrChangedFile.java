@@ -1,5 +1,9 @@
 package com.scheible.testgapanalysis.analysis.testgap;
 
+import java.util.Objects;
+
+import com.scheible.testgapanalysis.common.ToStringBuilder;
+
 /**
  *
  * @author sj
@@ -33,8 +37,26 @@ public class NewOrChangedFile {
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof NewOrChangedFile) {
+			final NewOrChangedFile other = (NewOrChangedFile) obj;
+			return Objects.equals(repositoryPath, other.repositoryPath) && skipped == other.skipped
+					&& state == other.state;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(repositoryPath, skipped, state);
+	}
+
+	@Override
 	public String toString() {
-		return String.format("[%s%s] %s", skipped ? "skipped, " : "", state == State.CHANGED ? "changed" : "new",
-				repositoryPath);
+		return new ToStringBuilder(getClass()).append("repositoryPath", repositoryPath).append("skipped", skipped)
+				.append("state", state).build();
 	}
 }
