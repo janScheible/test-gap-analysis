@@ -1,6 +1,9 @@
 package com.scheible.testgapanalysis.analysis.testgap;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 
 /**
  *
@@ -60,10 +63,31 @@ public class TestGapMethod {
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof TestGapMethod) {
+			final TestGapMethod other = (TestGapMethod) obj;
+			return Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn)
+					&& Objects.equals(description, other.description) && sourceLine == other.sourceLine
+					&& sourceColumn == other.sourceColumn && Objects.equals(coveredMethodName, other.coveredMethodName)
+					&& Objects.equals(coveredMethodLine, other.coveredMethodLine);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(topLevelTypeFqn, description, sourceLine, sourceColumn, coveredMethodName,
+				coveredMethodLine);
+	}
+
+	@Override
 	public String toString() {
-		final String coverageInfo = coveredMethodName.isPresent() && coveredMethodLine.isPresent()
-				? String.format(" resolved to '%s' with line %d", coveredMethodName.get(), coveredMethodLine.get())
-				: "";
-		return String.format("%s%s at %d:%d%s", topLevelTypeFqn, description, sourceLine, sourceColumn, coverageInfo);
+		return new ToStringBuilder(getClass()).append("topLevelTypeFqn", topLevelTypeFqn)
+				.append("description", description).append("sourceLine", sourceLine)
+				.append("sourceColumn", sourceColumn).append("coveredMethodName", coveredMethodName)
+				.append("coveredMethodLine", coveredMethodLine).build();
 	}
 }
