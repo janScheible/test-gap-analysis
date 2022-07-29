@@ -31,21 +31,21 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (buildDir.exists()) {
-			final TestGapAnalysis testGapAnalysis = new TestGapAnalysis(new Analysis(new JavaParser()),
+		if (this.buildDir.exists()) {
+			TestGapAnalysis testGapAnalysis = new TestGapAnalysis(new Analysis(new JavaParser()),
 					new JaCoCoReportParser(), new GitDiffer());
-			final TestGapReport report = testGapAnalysis.run(baseDir, findRelevantJaCoCoReportFiles(),
-					Optional.ofNullable(referenceCommitHash));
+			TestGapReport report = testGapAnalysis.run(this.baseDir, findRelevantJaCoCoReportFiles(),
+					Optional.ofNullable(this.referenceCommitHash));
 
 			logReport(report);
 			writeJsonReport(report);
 		} else {
 			getLog().debug(String.format("Skipping test gap analysis because the '%s' directory does not exist and "
-					+ "therefore no JaCoCo coverage reports are available.", buildDir));
+					+ "therefore no JaCoCo coverage reports are available.", this.buildDir));
 		}
 	}
 
-	private void logReport(final TestGapReport report) {
+	private void logReport(TestGapReport report) {
 		getLog().info(String.format("Performing test gap analysis in '%s'.", report.getWorkDir()));
 
 		if (report.getJaCoCoCoverageCount() == 0) {
@@ -55,7 +55,7 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 					report.getJaCoCoReportFiles()));
 		}
 
-		final String oldCommitHash = report.getOldCommitHash().substring(0, 7);
+		String oldCommitHash = report.getOldCommitHash().substring(0, 7);
 		getLog().info(String.format("Comparing the %s", report.getNewCommitHash()
 				.map(newCommitHash -> "repository head (" + newCommitHash.substring(0, 7)
 				+ ") with reference commit " + oldCommitHash + ".")
@@ -103,9 +103,9 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 		}
 	}
 
-	private void writeJsonReport(final TestGapReport report) throws MojoExecutionException {
-		final File reportFile = new File(buildDir, "test-gap-report.json");
-		final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+	private void writeJsonReport(TestGapReport report) throws MojoExecutionException {
+		File reportFile = new File(this.buildDir, "test-gap-report.json");
+		Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
 				.registerTypeAdapter(Optional.class, new OptionalTypeAdapter()).create();
 
 		try {

@@ -29,9 +29,8 @@ public class RepositoryStatus {
 	private final Map<String, String> oldContents;
 	private final Map<String, String> newContents;
 
-	RepositoryStatus(final String oldCommitHash, final Optional<String> newCommitHash, final Set<String> addedFiles,
-			final Set<String> changedFiles, final Map<String, String> oldContents,
-			final Map<String, String> newContents) {
+	RepositoryStatus(String oldCommitHash, Optional<String> newCommitHash, Set<String> addedFiles,
+			Set<String> changedFiles, Map<String, String> oldContents, Map<String, String> newContents) {
 		this.oldCommitHash = oldCommitHash;
 		this.newCommitHash = newCommitHash;
 
@@ -67,11 +66,11 @@ public class RepositoryStatus {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof RepositoryStatus) {
-			final RepositoryStatus other = (RepositoryStatus) obj;
+			RepositoryStatus other = (RepositoryStatus) obj;
 			return Objects.equals(this.oldCommitHash, other.oldCommitHash)
 					&& Objects.equals(this.newCommitHash, other.newCommitHash)
 					&& Objects.equals(this.addedFiles, other.addedFiles)
@@ -91,10 +90,10 @@ public class RepositoryStatus {
 
 	@Override
 	public String toString() {
-		final Function<Entry<String, String>, Entry<String, String>> shortenAndRemoveNewlines = entry //
+		Function<Entry<String, String>, Entry<String, String>> shortenAndRemoveNewlines = entry //
 		-> new SimpleImmutableEntry<>(entry.getKey(),
 				ToStringBuilder.shorten(entry.getValue().replaceAll("\\R", ""), 30));
-		final Function<Map<String, String>, Map<String, String>> shortener = map -> map.entrySet().stream()
+		Function<Map<String, String>, Map<String, String>> shortener = map -> map.entrySet().stream()
 				.map(shortenAndRemoveNewlines).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
 		return new ToStringBuilder(getClass()).append("oldCommitHash", this.oldCommitHash)

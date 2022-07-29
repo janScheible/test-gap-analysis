@@ -24,20 +24,20 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (buildDir.exists()) {
-			final DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(), 
+		if (this.buildDir.exists()) {
+			DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(), 
 					new JaCoCoReportParser());
-			final DebugCoverageResolutionReport report = debugCoverageResolution.run(baseDir, sourceDir,
+			DebugCoverageResolutionReport report = debugCoverageResolution.run(this.baseDir, this.sourceDir,
 					findRelevantJaCoCoReportFiles());
 
 			logReport(report);
 		} else {
 			getLog().debug(String.format("Skipping debug coverage resolution because the '%s' directory does not "
-					+ "exist and therefore no JaCoCo coverage reports are available.", buildDir));
+					+ "exist and therefore no JaCoCo coverage reports are available.", this.buildDir));
 		}
 	}
 
-	private void logReport(final DebugCoverageResolutionReport report) {
+	private void logReport(DebugCoverageResolutionReport report) {
 		if (report.getCoverageInfoCount() == 0) {
 			getLog().info("No coverage info available!");
 		} else {
@@ -46,7 +46,7 @@ public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 		}
 
 		getLog().info(String.format("Found %d Java files with %d methods in '%s'.", report.getJavaFileCount(),
-				report.getResolved().size() + report.getUnresolved().size(), sourceDir));
+				report.getResolved().size() + report.getUnresolved().size(), this.sourceDir));
 
 		if (!report.getResolved().isEmpty()) {
 			getLog().info("Resolved methods:");

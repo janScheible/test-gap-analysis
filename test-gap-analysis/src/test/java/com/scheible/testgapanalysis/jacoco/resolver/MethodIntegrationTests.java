@@ -25,8 +25,8 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 
 	public static class MultiLineArgumentsMethod {
 
-		public void doIt(final String value, //
-				final boolean flag) {
+		public void doIt(String value, //
+				boolean flag) {
 			"".trim();
 		}
 	}

@@ -34,18 +34,16 @@ public class TestGapAnalysis {
 	private final JaCoCoReportParser jaCoCoReportParser;
 	private final GitDiffer gitDiffer;
 
-	public TestGapAnalysis(final Analysis analysis, final JaCoCoReportParser jaCoCoReportParser,
-			final GitDiffer gitDiffer) {
+	public TestGapAnalysis(Analysis analysis, JaCoCoReportParser jaCoCoReportParser, GitDiffer gitDiffer) {
 		this.analysis = analysis;
 		this.jaCoCoReportParser = jaCoCoReportParser;
 		this.gitDiffer = gitDiffer;
 	}
 
-	public TestGapReport run(final File workDir, final Set<File> jaCoCoReportFiles,
-			final Optional<String> referenceCommitHash) {
-		final Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
-		final RepositoryResult repositoryResult = identifyFileChanges(referenceCommitHash, workDir);
-		final CoverageResult coverageResult = performTestGapAnalysis(repositoryResult.repositoryStatus, coverageInfo);
+	public TestGapReport run(File workDir, Set<File> jaCoCoReportFiles, Optional<String> referenceCommitHash) {
+		Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
+		RepositoryResult repositoryResult = identifyFileChanges(referenceCommitHash, workDir);
+		CoverageResult coverageResult = performTestGapAnalysis(repositoryResult.repositoryStatus, coverageInfo);
 
 		return TestGapReport.builder().setWorkDir(workDir.getAbsolutePath())
 				.setOldCommitHash(repositoryResult.repositoryStatus.getOldCommitHash())
@@ -57,10 +55,10 @@ public class TestGapAnalysis {
 				.setAmbiguouslyResolvedCoverage(coverageResult.ambiguouslyResolvedCoverage).build();
 	}
 
-	private RepositoryResult identifyFileChanges(final Optional<String> referenceCommitHash, final File workDir) {
+	private RepositoryResult identifyFileChanges(Optional<String> referenceCommitHash, File workDir) {
 		Set<NewOrChangedFile> newOrChangedFiles = Collections.emptySet();
 
-		final RepositoryStatus status = referenceCommitHash
+		RepositoryStatus status = referenceCommitHash
 				.map(h -> this.gitDiffer.ofCommitComparedToHead(workDir, h, NON_TEST_JAVA_FILE))
 				.orElseGet(() -> this.gitDiffer.ofWorkingCopyChanges(workDir, NON_TEST_JAVA_FILE));
 
@@ -76,9 +74,8 @@ public class TestGapAnalysis {
 		return new RepositoryResult(status, newOrChangedFiles);
 	}
 
-	private CoverageResult performTestGapAnalysis(final RepositoryStatus status,
-			final Set<MethodWithCoverageInfo> coverageInfo) {
-		final AnalysisResult result = this.analysis.perform(status, coverageInfo);
+	private CoverageResult performTestGapAnalysis(RepositoryStatus status, Set<MethodWithCoverageInfo> coverageInfo) {
+		AnalysisResult result = this.analysis.perform(status, coverageInfo);
 
 		return new CoverageResult(toTestGapMethods(result.getCoveredMethods()),
 				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getEmptyMethods()),
@@ -86,17 +83,16 @@ public class TestGapAnalysis {
 				toAmbigouslyResolvedTestGapMethod(result.getAmbiguouslyResolvedCoverage()));
 	}
 
-	private static Set<TestGapMethod> toTestGapMethods(
-			final Map<ParsedMethod, MethodWithCoverageInfo> methodsWithCoverage) {
+	private static Set<TestGapMethod> toTestGapMethods(Map<ParsedMethod, MethodWithCoverageInfo> methodsWithCoverage) {
 		return methodsWithCoverage.entrySet().stream().map(mwc -> toTestGapMethod(mwc.getKey(), mwc.getValue()))
 				.collect(Collectors.toSet());
 	}
 
-	private static Set<TestGapMethod> toTestGapMethods(final Set<ParsedMethod> methodsOnly) {
+	private static Set<TestGapMethod> toTestGapMethods(Set<ParsedMethod> methodsOnly) {
 		return methodsOnly.stream().map(m -> toTestGapMethod(m, null)).collect(Collectors.toSet());
 	}
 
-	private static TestGapMethod toTestGapMethod(final ParsedMethod method, final MethodWithCoverageInfo coverage) {
+	private static TestGapMethod toTestGapMethod(ParsedMethod method, MethodWithCoverageInfo coverage) {
 		return coverage == null
 				? new TestGapMethod(method.getTopLevelTypeFqn(), method.getDescription(), method.getFirstCodeLine(),
 						method.getCodeColumn())
@@ -105,7 +101,7 @@ public class TestGapAnalysis {
 	}
 
 	private static Map<CoverageReportMethod, Set<TestGapMethod>> toAmbigouslyResolvedTestGapMethod(
-			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+			Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		return ambiguouslyResolvedCoverage.entrySet().stream()
 				.map(e -> new AbstractMap.SimpleImmutableEntry<>(
 						new CoverageReportMethod(e.getKey().getName(), e.getKey().getLine()),
@@ -118,8 +114,7 @@ public class TestGapAnalysis {
 		private final RepositoryStatus repositoryStatus;
 		private final Set<NewOrChangedFile> newOrChangedFiles;
 
-		private RepositoryResult(final RepositoryStatus repositoryStatus,
-				final Set<NewOrChangedFile> newOrChangedFiles) {
+		private RepositoryResult(RepositoryStatus repositoryStatus, Set<NewOrChangedFile> newOrChangedFiles) {
 			this.repositoryStatus = repositoryStatus;
 			this.newOrChangedFiles = newOrChangedFiles;
 		}
@@ -134,9 +129,9 @@ public class TestGapAnalysis {
 		private final Set<TestGapMethod> unresolvableMethods;
 		private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
-		private CoverageResult(final Set<TestGapMethod> coveredMethods, final Set<TestGapMethod> uncoveredMethods,
-				final Set<TestGapMethod> emptyMethods, final Set<TestGapMethod> unresolvableMethods,
-				final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
+		private CoverageResult(Set<TestGapMethod> coveredMethods, Set<TestGapMethod> uncoveredMethods,
+				Set<TestGapMethod> emptyMethods, Set<TestGapMethod> unresolvableMethods,
+				Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 			this.coveredMethods = coveredMethods;
 			this.uncoveredMethods = uncoveredMethods;
 

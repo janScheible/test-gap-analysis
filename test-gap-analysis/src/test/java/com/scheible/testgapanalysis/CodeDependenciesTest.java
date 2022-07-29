@@ -29,7 +29,7 @@ public class CodeDependenciesTest {
 	private static class SlicePerPackage implements SliceAssignment {
 
 		@Override
-		public SliceIdentifier getIdentifierOf(final JavaClass javaClass) {
+		public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
 			return SliceIdentifier.of(javaClass.getPackageName());
 		}
 

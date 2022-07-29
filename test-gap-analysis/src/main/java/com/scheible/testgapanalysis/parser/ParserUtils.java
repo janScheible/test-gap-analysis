@@ -32,24 +32,24 @@ public abstract class ParserUtils {
 	/**
 	 * Checks for any child nodes that are not comments.
 	 */
-	static boolean containsCode(final Node node) {
-		final List<Node> codeNodes = node.stream(Node.TreeTraversal.PREORDER).filter(n -> !(n instanceof Comment))
+	static boolean containsCode(Node node) {
+		List<Node> codeNodes = node.stream(Node.TreeTraversal.PREORDER).filter(n -> !(n instanceof Comment))
 				.collect(Collectors.toList());
 		codeNodes.remove(node);
 		return !codeNodes.isEmpty();
 	}
 
-	static List<Integer> getCodeLines(final Node node) {
+	static List<Integer> getCodeLines(Node node) {
 		return IntStream.rangeClosed(node.getRange().get().begin.line, node.getRange().get().end.line).boxed()
 				.collect(Collectors.toList());
 	}
 
-	static String getTopLevelFqn(final Node node) {
+	static String getTopLevelFqn(Node node) {
 		return ((TypeDeclaration<?>) getParents(node).get(0)).getFullyQualifiedName().get();
 	}
 
-	static List<String> getScope(final Node node) {
-		final List<Node> parents = getParents(node);
+	static List<String> getScope(Node node) {
+		List<Node> parents = getParents(node);
 
 		return parents.subList(1, parents.size()).stream()
 				.filter(pn -> pn instanceof ClassOrInterfaceDeclaration || pn instanceof EnumDeclaration
@@ -62,12 +62,12 @@ public abstract class ParserUtils {
 				}).collect(Collectors.toList());
 	}
 
-	private static boolean isObjectCreationExprWithAnonymousClassBody(final Node node) {
+	private static boolean isObjectCreationExprWithAnonymousClassBody(Node node) {
 		return node instanceof ObjectCreationExpr && ((ObjectCreationExpr) node).getAnonymousClassBody().isPresent();
 	}
 
-	private static List<Node> getParents(final Node node) {
-		final List<Node> parents = new ArrayList<>();
+	private static List<Node> getParents(Node node) {
+		List<Node> parents = new ArrayList<>();
 
 		Node current = node;
 		while (current != null) {
@@ -80,14 +80,13 @@ public abstract class ParserUtils {
 		return parents;
 	}
 
-	static Map<String, String> getTypeParameters(final ConstructorDeclaration node) {
-		final List<Node> parents = ParserUtils.getParents(node);
-		final Map<String, String> typeParameters = new HashMap<>();
+	static Map<String, String> getTypeParameters(ConstructorDeclaration node) {
+		List<Node> parents = ParserUtils.getParents(node);
+		Map<String, String> typeParameters = new HashMap<>();
 
 		for (int i = parents.size() - 1; i >= 0; i--) {
 			if (parents.get(i) instanceof ClassOrInterfaceDeclaration) {
-				final ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parents
-						.get(i);
+				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parents.get(i);
 				classOrInterfaceDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(
 						tp.getNameAsString(),
 						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
@@ -96,7 +95,7 @@ public abstract class ParserUtils {
 					break;
 				}
 			} else if (parents.get(i) instanceof RecordDeclaration) {
-				final RecordDeclaration recordDeclaration = (RecordDeclaration) parents.get(i);
+				RecordDeclaration recordDeclaration = (RecordDeclaration) parents.get(i);
 				recordDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
 						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
 
@@ -112,8 +111,8 @@ public abstract class ParserUtils {
 	 * For example for a inner class constructor it is the outer class name.
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	static Optional<String> getOuterDeclaringType(final Node node) {
-		final Optional<TypeDeclaration> outerDeclaringType = node.findAncestor(TypeDeclaration.class)
+	static Optional<String> getOuterDeclaringType(Node node) {
+		Optional<TypeDeclaration> outerDeclaringType = node.findAncestor(TypeDeclaration.class)
 				.flatMap(p -> p.findAncestor(TypeDeclaration.class));
 		return outerDeclaringType.map(TypeDeclaration::getNameAsString);
 	}

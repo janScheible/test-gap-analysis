@@ -21,8 +21,8 @@ public class MethodWithCoverageInfo {
 	private final int line;
 	private final int coveredInstructionCount;
 
-	public MethodWithCoverageInfo(final String className, final String name, final String description, final int line,
-			final int coveredInstructionCount) {
+	public MethodWithCoverageInfo(String className, String name, String description, int line,
+			int coveredInstructionCount) {
 		this.className = className;
 		this.simpleClassName = JavaMethodUtils.getSimpleName(className, "/");
 		this.enclosingSimpleName = JavaMethodUtils.getSimpleName(this.simpleClassName, "$");
@@ -32,7 +32,7 @@ public class MethodWithCoverageInfo {
 		this.coveredInstructionCount = coveredInstructionCount;
 	}
 
-	public static MethodWithCoverageInfo merge(final Collection<MethodWithCoverageInfo> methods) {
+	public static MethodWithCoverageInfo merge(Collection<MethodWithCoverageInfo> methods) {
 		checkEmptyMergeCollection(methods);
 
 		String className = null;
@@ -42,7 +42,7 @@ public class MethodWithCoverageInfo {
 
 		int coveredInstructionCount = 0;
 
-		for (final MethodWithCoverageInfo method : methods) {
+		for (MethodWithCoverageInfo method : methods) {
 			if (className == null && name == null && description == null && line == null) {
 				className = method.getClassName();
 				name = method.getName();
@@ -65,7 +65,7 @@ public class MethodWithCoverageInfo {
 		return new MethodWithCoverageInfo(className, name, description, line, coveredInstructionCount);
 	}
 
-	private static void checkEmptyMergeCollection(final Collection<MethodWithCoverageInfo> methods) {
+	private static void checkEmptyMergeCollection(Collection<MethodWithCoverageInfo> methods) {
 		if (methods.isEmpty()) {
 			throw new IllegalArgumentException("Can't merge a empty set of methods with coverage info!");
 		}
@@ -124,11 +124,11 @@ public class MethodWithCoverageInfo {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof MethodWithCoverageInfo) {
-			final MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
+			MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
 			return Objects.equals(this.className, other.className)
 					&& Objects.equals(this.simpleClassName, other.simpleClassName)
 					&& Objects.equals(this.enclosingSimpleName, other.enclosingSimpleName)

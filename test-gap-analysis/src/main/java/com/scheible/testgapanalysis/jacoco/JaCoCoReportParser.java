@@ -37,44 +37,42 @@ import org.xml.sax.SAXException;
  */
 public class JaCoCoReportParser {
 
-	public Set<MethodWithCoverageInfo> getMethodCoverage(final String reportXmlContent) {
+	public Set<MethodWithCoverageInfo> getMethodCoverage(String reportXmlContent) {
 		return getMethodCoverage(new InputSource(new StringReader(reportXmlContent)));
 	}
 
-	public Set<MethodWithCoverageInfo> getMethodCoverage(final File reportXmlFile) {
+	public Set<MethodWithCoverageInfo> getMethodCoverage(File reportXmlFile) {
 		try (InputStream input = Files.newInputStream(reportXmlFile.toPath())) {
 			return getMethodCoverage(new InputSource(input));
-		} catch (final IOException ex) {
+		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}
 	}
 
-	private Set<MethodWithCoverageInfo> getMethodCoverage(final InputSource inputSource) {
+	private Set<MethodWithCoverageInfo> getMethodCoverage(InputSource inputSource) {
 		try {
-			final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			final DocumentBuilder builder = builderFactory.newDocumentBuilder();
+			DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			builder.setEntityResolver((String publicId,
 					String systemId) -> systemId.contains("report.dtd") ? new InputSource(new StringReader("")) : null);
-			final Document xmlDocument = builder.parse(inputSource);
+			Document xmlDocument = builder.parse(inputSource);
 
-			final XPath xPath = XPathFactory.newInstance().newXPath();
-			final String expression = "/report/package/class/method/counter[@type = 'INSTRUCTION']";
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String expression = "/report/package/class/method/counter[@type = 'INSTRUCTION']";
 
-			final Set<MethodWithCoverageInfo> result = new HashSet<>(8);
-			final NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument,
-					XPathConstants.NODESET);
+			Set<MethodWithCoverageInfo> result = new HashSet<>(8);
+			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
-				final Node node = nodeList.item(i);
+				Node node = nodeList.item(i);
 
-				final int coveredInstructionCount = Integer
+				int coveredInstructionCount = Integer
 						.parseInt(node.getAttributes().getNamedItem("covered").getNodeValue());
-				final String methodName = node.getParentNode().getAttributes().getNamedItem("name").getNodeValue();
-				final String methodDescription = node.getParentNode().getAttributes().getNamedItem("desc")
-						.getNodeValue();
-				final int methodLine = Integer
+				String methodName = node.getParentNode().getAttributes().getNamedItem("name").getNodeValue();
+				String methodDescription = node.getParentNode().getAttributes().getNamedItem("desc").getNodeValue();
+				int methodLine = Integer
 						.parseInt(node.getParentNode().getAttributes().getNamedItem("line").getNodeValue());
-				final String className = node.getParentNode().getParentNode().getAttributes().getNamedItem("name")
+				String className = node.getParentNode().getParentNode().getAttributes().getNamedItem("name")
 						.getNodeValue();
 
 				result.add(new MethodWithCoverageInfo(className, methodName, methodDescription, methodLine,
@@ -82,7 +80,7 @@ public class JaCoCoReportParser {
 			}
 
 			return result;
-		} catch (final ParserConfigurationException | IOException | SAXException | XPathExpressionException ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException ex) {
 			throw new IllegalStateException(ex);
 		}
 	}
@@ -92,13 +90,12 @@ public class JaCoCoReportParser {
 	 * report for unit and integration tests). This methods takes care of merging multiple entries for the same
 	 * method.
 	 */
-	public Set<MethodWithCoverageInfo> getMethodCoverage(final Set<File> reportFiles) {
-		final Map<String, Set<MethodWithCoverageInfo>> methods = new HashMap<>();
+	public Set<MethodWithCoverageInfo> getMethodCoverage(Set<File> reportFiles) {
+		Map<String, Set<MethodWithCoverageInfo>> methods = new HashMap<>();
 
-		for (final File reportFile : reportFiles) {
-			for (final MethodWithCoverageInfo method : getMethodCoverage(reportFile)) {
-				final String key = method.getClassName() + method.getName() + method.getDescription()
-						+ method.getLine();
+		for (File reportFile : reportFiles) {
+			for (MethodWithCoverageInfo method : getMethodCoverage(reportFile)) {
+				String key = method.getClassName() + method.getName() + method.getDescription() + method.getLine();
 				methods.computeIfAbsent(key, k -> new HashSet<>()).add(method);
 			}
 		}
@@ -107,9 +104,9 @@ public class JaCoCoReportParser {
 				.collect(Collectors.toSet());
 	}
 
-	public static Set<File> findJaCoCoReportFiles(final File baseDir, final File... excludeDirs) {
-		final Set<Path> excludeDirsAsPaths = Stream.of(excludeDirs).map(File::toPath).collect(Collectors.toSet());
-		final Predicate<Path> isNotChildOfExcludeDir = getIsNotChildOfSubDirsPredicate(excludeDirsAsPaths);
+	public static Set<File> findJaCoCoReportFiles(File baseDir, File... excludeDirs) {
+		Set<Path> excludeDirsAsPaths = Stream.of(excludeDirs).map(File::toPath).collect(Collectors.toSet());
+		Predicate<Path> isNotChildOfExcludeDir = getIsNotChildOfSubDirsPredicate(excludeDirsAsPaths);
 
 		try {
 			return Files.walk(baseDir.toPath()).filter(p -> "jacoco.xml".equals(p.getFileName().toString()))
@@ -119,7 +116,7 @@ public class JaCoCoReportParser {
 		}
 	}
 
-	static Predicate<Path> getIsNotChildOfSubDirsPredicate(final Set<Path> subDirs) {
+	static Predicate<Path> getIsNotChildOfSubDirsPredicate(Set<Path> subDirs) {
 		return jaCoCoReport -> subDirs.stream().filter(excludeDir -> jaCoCoReport.startsWith(excludeDir)).count() == 0;
 	}
 }

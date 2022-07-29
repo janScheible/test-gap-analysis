@@ -45,11 +45,11 @@ public abstract class AbstractIntegrationTest {
 
 	public static class CoverageResolutionAssert extends AbstractAssert<CoverageResolutionAssert, CoverageResolution> {
 
-		private CoverageResolutionAssert(final CoverageResolution actual) {
+		private CoverageResolutionAssert(CoverageResolution actual) {
 			super(actual, CoverageResolutionAssert.class);
 		}
 
-		public static CoverageResolutionAssert assertThat(final CoverageResolution actual) {
+		public static CoverageResolutionAssert assertThat(CoverageResolution actual) {
 			return new CoverageResolutionAssert(actual);
 		}
 
@@ -67,7 +67,7 @@ public abstract class AbstractIntegrationTest {
 			return this;
 		}
 
-		public CoverageResolutionAssert hasUnresolvedOnly(final ParsedMethod... expectedUnreseolved) {
+		public CoverageResolutionAssert hasUnresolvedOnly(ParsedMethod... expectedUnreseolved) {
 			if (!actual.result.getResolvedMethods().isEmpty() || !actual.result.getAmbiguousCoverage().isEmpty()) {
 				failWithMessage(
 						"Expected only unresolved parsed methods but resolved methods is %s and "
@@ -77,7 +77,7 @@ public abstract class AbstractIntegrationTest {
 
 			try {
 				Assertions.assertThat(actual.result.getUnresolvedMethods()).containsOnly(expectedUnreseolved);
-			} catch (final AssertionError ae) {
+			} catch (AssertionError ae) {
 				failWithMessage("Expected only the following unresolved parsed methods: %s", ae.getMessage());
 			}
 
@@ -109,8 +109,8 @@ public abstract class AbstractIntegrationTest {
 		private final List<MethodWithCoverageInfo> methodCoverage;
 		private final CoverageResult result;
 
-		private CoverageResolution(final Set<ParsedMethod> parsedMethods,
-				final Set<MethodWithCoverageInfo> methodCoverage, final CoverageResult result) {
+		private CoverageResolution(Set<ParsedMethod> parsedMethods, Set<MethodWithCoverageInfo> methodCoverage,
+				CoverageResult result) {
 			this.parsedMethods = parsedMethods.stream().sorted(Comparator.comparing(ParsedMethod::getCodeColumn))
 					.collect(Collectors.toList());
 			this.methodCoverage = methodCoverage.stream().sorted(Comparator.comparing(MethodWithCoverageInfo::getLine))
@@ -139,7 +139,7 @@ public abstract class AbstractIntegrationTest {
 	/**
 	 * Parses the test class and resolves it with the JaCoCo report.
 	 */
-	protected CoverageResolution resolve(final Class<?> testClass, final MethodType... filterTypes) throws Exception {
+	protected CoverageResolution resolve(Class<?> testClass, MethodType... filterTypes) throws Exception {
 		return resolve(testClass, null, null, filterTypes);
 	}
 
@@ -148,23 +148,23 @@ public abstract class AbstractIntegrationTest {
 	 * {@code testInterface} and can be used in {@code execution}. This allows the test code to have parts of the
 	 * class covered.
 	 */
-	protected <T> CoverageResolution resolve(final Class<? extends T> testClass, final Class<T> testInterface,
-			Consumer<T> execution, final MethodType... filterTypes) throws Exception {
-		final String testClassName = testClass.getName();
+	protected <T> CoverageResolution resolve(Class<? extends T> testClass, Class<T> testInterface,
+			Consumer<T> execution, MethodType... filterTypes) throws Exception {
+		String testClassName = testClass.getName();
 
-		final IRuntime runtime = new LoggerRuntime();
+		IRuntime runtime = new LoggerRuntime();
 
-		final Instrumenter instrumenter = new Instrumenter(runtime);
-		final Map<String, byte[]> instrumentedClasses = new ConcurrentHashMap<>();
+		Instrumenter instrumenter = new Instrumenter(runtime);
+		Map<String, byte[]> instrumentedClasses = new ConcurrentHashMap<>();
 
-		final ClassLoader instrumentedClassLoader = new ClassLoader() {
+		ClassLoader instrumentedClassLoader = new ClassLoader() {
 			@Override
-			public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+			public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 				if (name.startsWith(testClassName)) {
-					final byte[] instrumented = instrumentedClasses.computeIfAbsent(name, key -> {
+					byte[] instrumented = instrumentedClasses.computeIfAbsent(name, key -> {
 						try (InputStream original = getTargetClass(name)) {
 							return instrumenter.instrument(original, name);
-						} catch (final IOException ex) {
+						} catch (IOException ex) {
 							throw new UncheckedIOException(ex);
 						}
 					});
@@ -176,7 +176,7 @@ public abstract class AbstractIntegrationTest {
 			}
 		};
 
-		final RuntimeData data = new RuntimeData();
+		RuntimeData data = new RuntimeData();
 		runtime.startup(data);
 
 		if (execution != null) {
@@ -185,39 +185,39 @@ public abstract class AbstractIntegrationTest {
 			execution.accept(instance);
 		}
 
-		final ExecutionDataStore executionData = new ExecutionDataStore();
-		final SessionInfoStore sessionInfos = new SessionInfoStore();
+		ExecutionDataStore executionData = new ExecutionDataStore();
+		SessionInfoStore sessionInfos = new SessionInfoStore();
 		data.collect(executionData, sessionInfos, false);
 		runtime.shutdown();
 
 		// together with the original class definition we can calculate coverage information
-		final CoverageBuilder coverageBuilder = new CoverageBuilder();
-		final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+		CoverageBuilder coverageBuilder = new CoverageBuilder();
+		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
-		final Set<String> originalClassNames = Stream
-				.concat(instrumentedClasses.keySet().stream(), Stream.of(testClassName)).collect(Collectors.toSet());
-		for (final String originalClassName : originalClassNames) {
+		Set<String> originalClassNames = Stream.concat(instrumentedClasses.keySet().stream(), Stream.of(testClassName))
+				.collect(Collectors.toSet());
+		for (String originalClassName : originalClassNames) {
 			try (InputStream original = getTargetClass(originalClassName)) {
 				analyzer.analyzeClass(original, originalClassName);
 			}
 		}
 
-		final Set<ParsedMethod> parsedMethods = parseJavaTestSource(testClass, filterTypes);
+		Set<ParsedMethod> parsedMethods = parseJavaTestSource(testClass, filterTypes);
 
-		final String xmlOutput = getCoverageReportXml(sessionInfos, executionData, coverageBuilder);
-		final JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
-		final Set<MethodWithCoverageInfo> methodCoverage = jaCoCoReportParser.getMethodCoverage(xmlOutput);
+		String xmlOutput = getCoverageReportXml(sessionInfos, executionData, coverageBuilder);
+		JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
+		Set<MethodWithCoverageInfo> methodCoverage = jaCoCoReportParser.getMethodCoverage(xmlOutput);
 
 		return new CoverageResolution(parsedMethods, methodCoverage,
 				CoverageResolver.with(methodCoverage).resolve(parsedMethods));
 	}
 
-	private String getCoverageReportXml(final SessionInfoStore sessionInfos, final ExecutionDataStore executionData,
-			final CoverageBuilder coverageBuilder) throws IOException {
-		final XMLFormatter xmlFormatter = new XMLFormatter();
-		final ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+	private String getCoverageReportXml(SessionInfoStore sessionInfos, ExecutionDataStore executionData,
+			CoverageBuilder coverageBuilder) throws IOException {
+		XMLFormatter xmlFormatter = new XMLFormatter();
+		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 
-		final IReportVisitor visitor = xmlFormatter.createVisitor(xmlOutput);
+		IReportVisitor visitor = xmlFormatter.createVisitor(xmlOutput);
 		visitor.visitInfo(sessionInfos.getInfos(), executionData.getContents());
 		visitor.visitBundle(coverageBuilder.getBundle("test-class"), null);
 		visitor.visitEnd();
@@ -225,22 +225,22 @@ public abstract class AbstractIntegrationTest {
 		return new String(xmlOutput.toByteArray(), StandardCharsets.UTF_8);
 	}
 
-	private InputStream getTargetClass(final String name) {
-		final String resourceName = '/' + name.replace('.', '/') + ".class";
+	private InputStream getTargetClass(String name) {
+		String resourceName = '/' + name.replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resourceName);
 	}
 
-	protected static Entry<ParsedMethod, MethodWithCoverageInfo> resolved(final ParsedMethod method,
+	protected static Entry<ParsedMethod, MethodWithCoverageInfo> resolved(ParsedMethod method,
 			MethodWithCoverageInfo coverage) {
 		return new SimpleImmutableEntry<>(method, coverage);
 	}
 
 	@SafeVarargs
-	protected static final Map<ParsedMethod, MethodWithCoverageInfo> coverageResult(
-			final Entry<ParsedMethod, MethodWithCoverageInfo>... entries) {
-		final Map<ParsedMethod, MethodWithCoverageInfo> result = new HashMap<>();
+	protected static Map<ParsedMethod, MethodWithCoverageInfo> coverageResult(
+			Entry<ParsedMethod, MethodWithCoverageInfo>... entries) {
+		Map<ParsedMethod, MethodWithCoverageInfo> result = new HashMap<>();
 
-		for (final Entry<ParsedMethod, MethodWithCoverageInfo> entry : entries) {
+		for (Entry<ParsedMethod, MethodWithCoverageInfo> entry : entries) {
 			result.put(entry.getKey(), entry.getValue());
 		}
 

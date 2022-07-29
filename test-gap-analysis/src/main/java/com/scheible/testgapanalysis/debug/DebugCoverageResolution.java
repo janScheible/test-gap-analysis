@@ -26,18 +26,17 @@ public class DebugCoverageResolution {
 	private final JavaParser javaParser;
 	private final JaCoCoReportParser jaCoCoReportParser;
 
-	public DebugCoverageResolution(final JavaParser javaParser, final JaCoCoReportParser jaCoCoReportParser) {
+	public DebugCoverageResolution(JavaParser javaParser, JaCoCoReportParser jaCoCoReportParser) {
 		this.javaParser = javaParser;
 		this.jaCoCoReportParser = jaCoCoReportParser;
 	}
 
-	public DebugCoverageResolutionReport run(final File workDir, final File sourceDir,
-			final Set<File> jaCoCoReportFiles) {
-		final Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
-		final ParseResult parseResult = parseMethods(sourceDir);
+	public DebugCoverageResolutionReport run(File workDir, File sourceDir, Set<File> jaCoCoReportFiles) {
+		Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
+		ParseResult parseResult = parseMethods(sourceDir);
 
-		final CoverageResolver resolver = CoverageResolver.with(coverageInfo);
-		final CoverageResult result = resolver.resolve(parseResult.methods);
+		CoverageResolver resolver = CoverageResolver.with(coverageInfo);
+		CoverageResult result = resolver.resolve(parseResult.methods);
 
 		return DebugCoverageResolutionReport.builder().setCoverageInfoCount(coverageInfo.size())
 				.setJaCoCoReportFiles(FilesUtils.toRelative(workDir, jaCoCoReportFiles))
@@ -46,11 +45,11 @@ public class DebugCoverageResolution {
 				.setAmbiguousCoverage(result.getAmbiguousCoverage()).build();
 	}
 
-	private ParseResult parseMethods(final File workingDir) throws UncheckedIOException {
+	private ParseResult parseMethods(File workingDir) throws UncheckedIOException {
 		try (Stream<Path> walkStream = Files.walk(workingDir.toPath())) {
-			final Set<File> javaFiles = walkStream.filter(p -> p.toFile().isFile() && p.toString().endsWith(".java"))
+			Set<File> javaFiles = walkStream.filter(p -> p.toFile().isFile() && p.toString().endsWith(".java"))
 					.map(Path::toFile).collect(Collectors.toSet());
-			final Set<ParsedMethod> methods = javaFiles.stream()
+			Set<ParsedMethod> methods = javaFiles.stream()
 					.flatMap(f -> this.javaParser.getMethods(FilesUtils.readUtf8(f)).stream())
 					.collect(Collectors.toSet());
 
@@ -65,7 +64,7 @@ public class DebugCoverageResolution {
 		private final Set<ParsedMethod> methods;
 		private final int javaFileCount;
 
-		private ParseResult(final Set<ParsedMethod> methods, final int javaFileCount) {
+		private ParseResult(Set<ParsedMethod> methods, int javaFileCount) {
 			this.methods = methods;
 			this.javaFileCount = javaFileCount;
 		}

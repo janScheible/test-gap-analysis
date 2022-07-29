@@ -18,7 +18,7 @@ public class TestGapReportTest {
 
 	@Test
 	public void testEmptyReportCoverageRatio() {
-		final TestGapReport report = TestGapReport.builder().setWorkDir(".").setOldCommitHash("asbc")
+		TestGapReport report = TestGapReport.builder().setWorkDir(".").setOldCommitHash("asbc")
 				.setNewCommitHash(Optional.empty()).setJaCoCoReportFiles(emptySet()).setJaCoCoCoverageCount(0)
 				.setNewOrChangedFiles(emptySet()).setCoveredMethods(emptySet()).setUncoveredMethods(emptySet())
 				.setEmptyMethods(emptySet()).setUnresolvableMethods(emptySet())

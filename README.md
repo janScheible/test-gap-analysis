@@ -222,9 +222,11 @@ Unresolvable methods (no coverage information available):
         1. (package private) constructor in model class with `BuilderImpl` as only parameter
         1. inner step interfaces in `<ModelClassName>Builder` with `Step` suffix
         1. inner static class `BuilderImpl` implementing all the steps
-1. usage of immutable data structures only
-    1. for collections defensive copies and `Collections.unmodifiableXzy(...)` in constructor
-    1. other fields or elements in collections have to be immutable
+1. usage of immutable data structures only by making all members `final`
+    1. for members of type collection defensive copies and `Collections.unmodifiableXzy(...)` in constructor
+        1. the elements in the collections must also be immutable
+    1. local variables and parameters must not use `final` because it adds too much noise (see https://github.com/spring-io/spring-javaformat#final)
+        1. only ever mutate parameters in `private` methods (for example recursive methods), for all other methods return proper result types
 1. usage of `Optional<?>` (was actually designed for method return types only, but is the only JDK built-in way to indicate a nullable value (all `@Nullable` annotations are from third-party libraries))
     1. never pass or return `null`, use `Optional<?>` instead (this eliminates the need for `null` checks everywhere)
     1. but prefer method overloading or usage of a builder over `Optional<?>` method parameters

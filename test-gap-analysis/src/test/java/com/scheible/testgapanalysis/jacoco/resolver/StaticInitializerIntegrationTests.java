@@ -42,11 +42,11 @@ public class StaticInitializerIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleStaticInitializer() throws Exception {
-		final CoverageResolution resolution = resolve(MultipleStaticInitializer.class, STATIC_INITIALIZER);
+		CoverageResolution resolution = resolve(MultipleStaticInitializer.class, STATIC_INITIALIZER);
 
 		assertThat(resolution).isUnambiguouslyResolved();
 
-		final List<MethodWithCoverageInfo> staticInitializerCoverage = resolution.getMethodCoverage().stream()
+		List<MethodWithCoverageInfo> staticInitializerCoverage = resolution.getMethodCoverage().stream()
 				.filter(MethodWithCoverageInfo::isStaticInitializer).collect(Collectors.toList());
 		assertThat(staticInitializerCoverage).hasSize(1).first().matches(mwci -> mwci.isStaticInitializer());
 

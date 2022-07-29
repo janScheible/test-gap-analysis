@@ -28,7 +28,7 @@ public class ParsedMethodTest {
 				.isEqualTo("InnerClass");
 	}
 
-	private static ParsedMethod withTopLevelTypeFqn(final String topLevelTypeFqn, final String... scope) {
+	private static ParsedMethod withTopLevelTypeFqn(String topLevelTypeFqn, String... scope) {
 		return ParsedMethod.builder().setMethodType(MethodType.CONSTRUCTOR).setTopLevelTypeFqn(topLevelTypeFqn)
 				.setScope(Arrays.asList(scope)).setName("").setRelevantCode("").setCodeLines(Arrays.asList(42))
 				.setCodeColumn(0).setEmpty(false).setArgumentCount(0).build();

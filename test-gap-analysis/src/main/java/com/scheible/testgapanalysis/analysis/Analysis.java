@@ -26,20 +26,20 @@ public class Analysis {
 
 	private final JavaParser javaParser;
 
-	public Analysis(final JavaParser javaParser) {
+	public Analysis(JavaParser javaParser) {
 		this.javaParser = javaParser;
 	}
 
-	public AnalysisResult perform(final RepositoryStatus status, final Set<MethodWithCoverageInfo> coverageInfo) {
-		final Map<String, String> newOrChangedFilesWithContent = status.getNewContents();
+	public AnalysisResult perform(RepositoryStatus status, Set<MethodWithCoverageInfo> coverageInfo) {
+		Map<String, String> newOrChangedFilesWithContent = status.getNewContents();
 
 		// all methods of new or changed files in the new state compared to the old state
-		final Set<MethodCompareWrapper> newContentMethods = newOrChangedFilesWithContent.entrySet().stream()
+		Set<MethodCompareWrapper> newContentMethods = newOrChangedFilesWithContent.entrySet().stream()
 				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// all methods of changed files in the new state that already existed in the old state
-		final Set<MethodCompareWrapper> oldContentMethods = status.getOldContents().entrySet().stream()
+		Set<MethodCompareWrapper> oldContentMethods = status.getOldContents().entrySet().stream()
 				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
@@ -61,22 +61,21 @@ public class Analysis {
 		//       current methods
 		// @formatter:on
 
-		final Set<MethodCompareWrapper> unchangedMethods = new HashSet<>(newContentMethods);
+		Set<MethodCompareWrapper> unchangedMethods = new HashSet<>(newContentMethods);
 		unchangedMethods.retainAll(oldContentMethods);
 
-		final Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(newContentMethods);
+		Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(newContentMethods);
 		newOrChangedMethods.removeAll(unchangedMethods);
 
-		final CoverageResolver coverageResolver = CoverageResolver.with(coverageInfo);
+		CoverageResolver coverageResolver = CoverageResolver.with(coverageInfo);
 
-		final CoverageResult coverageResult = coverageResolver
-				.resolve(MethodCompareWrapper.unwrap(newOrChangedMethods));
+		CoverageResult coverageResult = coverageResolver.resolve(MethodCompareWrapper.unwrap(newOrChangedMethods));
 
-		final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredNewOrChangedMethods = coverageResult
-				.getResolvedMethods().entrySet().stream().filter(e -> e.getValue().getCoveredInstructionCount() == 0)
+		Map<ParsedMethod, MethodWithCoverageInfo> uncoveredNewOrChangedMethods = coverageResult.getResolvedMethods()
+				.entrySet().stream().filter(e -> e.getValue().getCoveredInstructionCount() == 0)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		final Map<ParsedMethod, MethodWithCoverageInfo> coveredNewOrChangedMethods = new HashMap<>(
+		Map<ParsedMethod, MethodWithCoverageInfo> coveredNewOrChangedMethods = new HashMap<>(
 				coverageResult.getResolvedMethods());
 		uncoveredNewOrChangedMethods.forEach(coveredNewOrChangedMethods::remove);
 

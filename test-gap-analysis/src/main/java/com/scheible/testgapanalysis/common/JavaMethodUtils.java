@@ -35,16 +35,16 @@ public class JavaMethodUtils {
 	 * Parses method description arguments (see chapter 4.3.3. in "The Java Virtual Machine Specification (2nd
 	 * ed.)") and returns Java notations. Java notations means for example '.' separator between nested classes.
 	 */
-	public static List<String> parseDescriptorArguments(final String descriptor) {
+	public static List<String> parseDescriptorArguments(String descriptor) {
 		return parseArguments(descriptor).stream().map(JavaMethodUtils::convertType).collect(Collectors.toList());
 	}
 
-	static List<String> parseArguments(final String descriptor) {
-		final List<String> arguments = new ArrayList<>();
+	static List<String> parseArguments(String descriptor) {
+		List<String> arguments = new ArrayList<>();
 
 		for (int i = descriptor.indexOf('(') + 1; i < descriptor.indexOf(')'); i++) {
-			final String primitivePart = getNextPrimitivePart(descriptor, i);
-			final String classPart = getNextClassPart(descriptor, i);
+			String primitivePart = getNextPrimitivePart(descriptor, i);
+			String classPart = getNextClassPart(descriptor, i);
 
 			if (primitivePart != null && classPart != null) {
 				throw new IllegalStateException(
@@ -71,11 +71,11 @@ public class JavaMethodUtils {
 	}
 
 	static String convertType(String type) {
-		final int arrayCount = getArrayCount(type, 0);
+		int arrayCount = getArrayCount(type, 0);
 
 		type = type.substring(arrayCount);
 
-		final String primitiveType = PRIMITIVE_TYPE_MAPPING.get(type);
+		String primitiveType = PRIMITIVE_TYPE_MAPPING.get(type);
 		if (primitiveType != null) {
 			type = primitiveType;
 		} else if (type.startsWith("L")) {
@@ -89,17 +89,17 @@ public class JavaMethodUtils {
 		return type + String.join("", Collections.nCopies(arrayCount, "[]"));
 	}
 
-	static String getNextPrimitivePart(final String descriptor, final int start) {
-		final int arrayCount = getArrayCount(descriptor, start);
+	static String getNextPrimitivePart(String descriptor, int start) {
+		int arrayCount = getArrayCount(descriptor, start);
 
-		final String type = descriptor.substring(start, start + arrayCount + 1);
+		String type = descriptor.substring(start, start + arrayCount + 1);
 		return type.substring(type.length() - 1).matches("[ZBCSIJFD]") ? type : null;
 	}
 
-	static String getNextClassPart(final String descriptor, final int start) {
-		final int arrayCount = getArrayCount(descriptor, start);
+	static String getNextClassPart(String descriptor, int start) {
+		int arrayCount = getArrayCount(descriptor, start);
 
-		final String type = descriptor.substring(start, start + arrayCount + 1);
+		String type = descriptor.substring(start, start + arrayCount + 1);
 		if (type.charAt(type.length() - 1) == 'L') {
 			return descriptor.substring(start, descriptor.indexOf(';', start + arrayCount + 1));
 		} else {
@@ -107,7 +107,7 @@ public class JavaMethodUtils {
 		}
 	}
 
-	static int getArrayCount(final String value, final int start) {
+	static int getArrayCount(String value, int start) {
 		int arrayCount = 0;
 
 		for (int i = start; i < value.length(); i++) {
@@ -126,25 +126,25 @@ public class JavaMethodUtils {
 	 * returned and generic type parameters (enclosed by '<' and '>') are stripped of. If the remaining type is
 	 * one of the passed type parameters it is replaced with 'Object'.
 	 */
-	public static List<String> normalizeMethodArguments(final Collection<String> arguments,
-			final Map<String, String> typeParameters) {
+	public static List<String> normalizeMethodArguments(Collection<String> arguments,
+			Map<String, String> typeParameters) {
 		return normalizeMethodArguments(arguments).stream().map(at -> {
-			final String name = removeArrayBrackets(at);
-			final String type = typeParameters.get(name);
+			String name = removeArrayBrackets(at);
+			String type = typeParameters.get(name);
 			return type != null ? type + (at.contains("[") ? at.substring(at.indexOf('[')) : "") : at;
 		}).collect(Collectors.toList());
 	}
 
-	private static List<String> normalizeMethodArguments(final Collection<String> arguments) {
+	private static List<String> normalizeMethodArguments(Collection<String> arguments) {
 		return arguments.stream().map(JavaMethodUtils::normalizeArgument).collect(Collectors.toList());
 	}
 
-	private static String removeArrayBrackets(final String type) {
+	private static String removeArrayBrackets(String type) {
 		return type.replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
-	private static String normalizeArgument(final String argument) {
-		final String withoutGenerics = argument.contains("<")
+	private static String normalizeArgument(String argument) {
+		String withoutGenerics = argument.contains("<")
 				? argument.substring(0, argument.indexOf('<')) + argument.substring(argument.lastIndexOf('>') + 1)
 				: argument;
 		return withoutGenerics.contains(".")
@@ -152,7 +152,7 @@ public class JavaMethodUtils {
 				: withoutGenerics;
 	}
 
-	public static String getSimpleName(final String fqn, final String separator) {
+	public static String getSimpleName(String fqn, String separator) {
 		return fqn.contains(separator) ? fqn.substring(fqn.lastIndexOf(separator) + 1) : fqn;
 	}
 }

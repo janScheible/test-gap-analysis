@@ -20,12 +20,12 @@ class OptionalTypeAdapter implements JsonDeserializer<Optional<?>>, JsonSerializ
 	}
 
 	@Override
-	public Optional<?> deserialize(final JsonElement element, final Type type, final JsonDeserializationContext context) throws JsonParseException {
+	public Optional<?> deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public JsonElement serialize(final Optional<?> value, final Type type, final JsonSerializationContext context) {
+	public JsonElement serialize(Optional<?> value, Type type, JsonSerializationContext context) {
 		return context.serialize(value.orElse(null));
 	}
 }

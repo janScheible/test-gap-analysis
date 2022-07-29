@@ -40,7 +40,7 @@ public class ParsedMethod {
 	private final Map<String, String> typeParameters;
 	private final Optional<String> outerDeclaringType;
 
-	ParsedMethod(final BuilderImpl builder) {
+	ParsedMethod(BuilderImpl builder) {
 		this.methodType = builder.methodType;
 		this.topLevelTypeFqn = builder.topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(builder.topLevelTypeFqn, ".");
@@ -109,8 +109,8 @@ public class ParsedMethod {
 		return this.methodType == MethodType.LAMBDA_METHOD;
 	}
 
-	public boolean containsLine(final int line) {
-		for (final int current : this.codeLines) {
+	public boolean containsLine(int line) {
+		for (int current : this.codeLines) {
 			if (current == line) {
 				return true;
 			}
@@ -207,11 +207,11 @@ public class ParsedMethod {
 
 	@Override
 	@SuppressWarnings("checkstyle:CyclomaticComplexity")
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof ParsedMethod) {
-			final ParsedMethod other = (ParsedMethod) obj;
+			ParsedMethod other = (ParsedMethod) obj;
 			return Objects.equals(this.methodType, other.methodType)
 					&& Objects.equals(this.topLevelTypeFqn, other.topLevelTypeFqn)
 					&& Objects.equals(this.topLevelSimpleName, other.topLevelSimpleName)

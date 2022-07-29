@@ -15,10 +15,10 @@ public class JaCoCoReportCleanerMojo extends AbstractTestGapMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (buildDir.exists()) {
-			getLog().info(String.format("Deleting all JaCoCo reports in: %s", buildDir));
+		if (this.buildDir.exists()) {
+			getLog().info(String.format("Deleting all JaCoCo reports in: %s", this.buildDir));
 
-			for (final File file : findRelevantJaCoCoReportFiles()) {
+			for (File file : findRelevantJaCoCoReportFiles()) {
 				if (file.delete()) {
 					getLog().info(String.format("Deleted %s.", file));
 				} else {
@@ -27,7 +27,7 @@ public class JaCoCoReportCleanerMojo extends AbstractTestGapMojo {
 			}
 		} else {
 			getLog().debug(String.format("Skipping deletion of JaCoCo reports in '%s' because the "
-					+ "directory does not exist.", buildDir));
+					+ "directory does not exist.", this.buildDir));
 		}
 	}
 }

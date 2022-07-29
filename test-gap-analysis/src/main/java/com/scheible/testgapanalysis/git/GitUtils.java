@@ -35,21 +35,20 @@ public abstract class GitUtils {
 	private GitUtils() {
 	}
 
-	static Repository open(final File currentDir) throws IOException {
+	static Repository open(File currentDir) throws IOException {
 		return new FileRepositoryBuilder().findGitDir(currentDir.getAbsoluteFile()).setMustExist(true).build();
 	}
 
-	static Map<String, String> getCommitedContents(final File currentDir, final String objectId,
-			final Set<String> files) {
-		final Map<String, String> fileLastCommitContentMapping = new HashMap<>();
+	static Map<String, String> getCommitedContents(File currentDir, String objectId, Set<String> files) {
+		Map<String, String> fileLastCommitContentMapping = new HashMap<>();
 
 		try (Repository repository = GitUtils.open(currentDir)) {
 			try (Git git = new Git(repository)) {
 
 				try (RevWalk walk = new RevWalk(repository)) {
-					final RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
+					RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
 
-					for (final String file : files) {
+					for (String file : files) {
 						fileLastCommitContentMapping.put(file, getContent(repository, git, commit, file));
 					}
 				}
@@ -62,25 +61,23 @@ public abstract class GitUtils {
 		return Collections.unmodifiableMap(fileLastCommitContentMapping);
 	}
 
-	private static String getContent(final Repository repository, final Git git, final RevCommit commit,
-			final String path) throws IOException {
+	private static String getContent(Repository repository, Git git, RevCommit commit, String path) throws IOException {
 		try (TreeWalk treeWalk = TreeWalk.forPath(git.getRepository(), path, commit.getTree())) {
-			final ObjectId blobId = treeWalk.getObjectId(0);
+			ObjectId blobId = treeWalk.getObjectId(0);
 			try (ObjectReader objectReader = repository.newObjectReader()) {
-				final ObjectLoader objectLoader = objectReader.open(blobId);
-				final byte[] bytes = objectLoader.getBytes();
+				ObjectLoader objectLoader = objectReader.open(blobId);
+				byte[] bytes = objectLoader.getBytes();
 				return new String(bytes, StandardCharsets.UTF_8);
 			}
 		}
 	}
 
-	static AbstractTreeIterator prepareTreeParser(final Repository repository, final String objectId)
-			throws IOException {
+	static AbstractTreeIterator prepareTreeParser(Repository repository, String objectId) throws IOException {
 		try (RevWalk walk = new RevWalk(repository)) {
-			final RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
-			final RevTree tree = walk.parseTree(commit.getTree().getId());
+			RevCommit commit = walk.parseCommit(ObjectId.fromString(objectId));
+			RevTree tree = walk.parseTree(commit.getTree().getId());
 
-			final CanonicalTreeParser treeParser = new CanonicalTreeParser();
+			CanonicalTreeParser treeParser = new CanonicalTreeParser();
 			try (ObjectReader reader = repository.newObjectReader()) {
 				treeParser.reset(reader, tree.getId());
 			}
@@ -91,17 +88,17 @@ public abstract class GitUtils {
 		}
 	}
 
-	static List<String> getCommitHashes(final File currentDir, final int count) {
+	static List<String> getCommitHashes(File currentDir, int count) {
 		try (Repository repository = GitUtils.open(currentDir)) {
 			try (Git git = new Git(repository)) {
-				final Iterator<RevCommit> logs = git.log().call().iterator();
-				final List<String> result = new ArrayList<>(count);
+				Iterator<RevCommit> logs = git.log().call().iterator();
+				List<String> result = new ArrayList<>(count);
 
 				for (int i = 0; i < count; i++) {
 					if (!logs.hasNext()) {
 						break;
 					} else {
-						final RevCommit commit = logs.next();
+						RevCommit commit = logs.next();
 						result.add(commit.getId().getName());
 					}
 				}

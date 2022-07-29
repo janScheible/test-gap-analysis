@@ -27,22 +27,21 @@ public class CoverageResult {
 	public CoverageResult() {
 	}
 
-	public CoverageResult(final Map<ParsedMethod, MethodWithCoverageInfo> resolved,
-			final Set<ParsedMethod> unresolved) {
+	public CoverageResult(Map<ParsedMethod, MethodWithCoverageInfo> resolved, Set<ParsedMethod> unresolved) {
 		add(resolved, unresolved);
 	}
 
-	public static CoverageResult ofEmptyMethods(final Set<ParsedMethod> allMethods) {
-		final CoverageResult result = new CoverageResult();
+	public static CoverageResult ofEmptyMethods(Set<ParsedMethod> allMethods) {
+		CoverageResult result = new CoverageResult();
 		allMethods.stream().filter(ParsedMethod::isEmpty).forEach(result.emptyMethods::add);
 		return result;
 	}
 
-	private void add(final Map<ParsedMethod, MethodWithCoverageInfo> resolved, final Set<ParsedMethod> unresolved) {
+	private void add(Map<ParsedMethod, MethodWithCoverageInfo> resolved, Set<ParsedMethod> unresolved) {
 		this.resolvedMethods.putAll(resolved);
 		this.unresolvedMethods.addAll(unresolved);
 
-		for (final Entry<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage : findAmbiguouslyResolvedCoverage(
+		for (Entry<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage : findAmbiguouslyResolvedCoverage(
 				this.resolvedMethods).entrySet()) {
 			ambiguouslyResolvedCoverage.getValue().stream().forEach(this.resolvedMethods::remove);
 
@@ -53,7 +52,7 @@ public class CoverageResult {
 		}
 	}
 
-	void add(final CoverageResult result) {
+	void add(CoverageResult result) {
 		add(result.resolvedMethods, result.unresolvedMethods);
 	}
 
@@ -62,7 +61,7 @@ public class CoverageResult {
 	 * that (static) initalizers are ignored is their special handling. See {@code CoverageResolver} for details.
 	 */
 	private static Map<MethodWithCoverageInfo, Set<ParsedMethod>> findAmbiguouslyResolvedCoverage(
-			final Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
+			Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
 		return resolved.entrySet().stream()
 				.filter(e -> !(e.getKey().isInitializer() || e.getKey().isStaticInitializer()))
 				.collect(Collectors.groupingBy(Entry::getValue)).entrySet().stream()
@@ -70,7 +69,7 @@ public class CoverageResult {
 						e -> e.getValue().stream().map(Entry::getKey).collect(Collectors.toSet())));
 	}
 
-	public boolean contains(final ParsedMethod method) {
+	public boolean contains(ParsedMethod method) {
 		return this.emptyMethods.contains(method) || this.resolvedMethods.containsKey(method)
 				|| this.unresolvedMethods.contains(method)
 				|| this.ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
@@ -98,11 +97,11 @@ public class CoverageResult {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof CoverageResult) {
-			final CoverageResult other = (CoverageResult) obj;
+			CoverageResult other = (CoverageResult) obj;
 			return Objects.equals(this.resolvedMethods, other.resolvedMethods)
 					&& Objects.equals(this.emptyMethods, other.emptyMethods)
 					&& Objects.equals(this.unresolvedMethods, other.unresolvedMethods)

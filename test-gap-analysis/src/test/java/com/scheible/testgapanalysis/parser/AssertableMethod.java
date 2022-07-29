@@ -2,6 +2,7 @@ package com.scheible.testgapanalysis.parser;
 
 import java.util.Objects;
 
+import com.scheible.testgapanalysis.common.ToStringBuilder;
 import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
 
 /**
@@ -10,16 +11,16 @@ import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
  */
 class AssertableMethod {
 
-	final transient ParsedMethod parsedMethod;
+	private final transient ParsedMethod parsedMethod;
 
-	final MethodType type;
-	final String name;
+	private final MethodType type;
+	private final String name;
 
-	AssertableMethod(final MethodType type, final String name) {
+	AssertableMethod(MethodType type, String name) {
 		this(null, type, name);
 	}
 
-	AssertableMethod(final ParsedMethod parsedMethod, final MethodType type, final String name) {
+	AssertableMethod(ParsedMethod parsedMethod, MethodType type, String name) {
 		this.parsedMethod = parsedMethod;
 
 		this.type = type;
@@ -27,15 +28,15 @@ class AssertableMethod {
 	}
 
 	public ParsedMethod getParsedMethod() {
-		return parsedMethod;
+		return this.parsedMethod;
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof AssertableMethod) {
-			final AssertableMethod other = (AssertableMethod) obj;
+			AssertableMethod other = (AssertableMethod) obj;
 			return Objects.equals(this.type, other.type) && Objects.equals(this.name, other.name);
 		} else {
 			return false;
@@ -44,11 +45,11 @@ class AssertableMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(type, name);
+		return Objects.hash(this.type, this.name);
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[type='" + type + "', name='" + name + "']";
+		return new ToStringBuilder(getClass()).append("type", this.type).append("name", this.name).build();
 	}
 }

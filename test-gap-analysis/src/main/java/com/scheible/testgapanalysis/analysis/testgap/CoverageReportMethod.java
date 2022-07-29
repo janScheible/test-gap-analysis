@@ -13,7 +13,7 @@ public class CoverageReportMethod {
 	private final String coveredMethodName;
 	private final int coveredMethodLine;
 
-	public CoverageReportMethod(final String coveredMethodName, final int coveredMethodLine) {
+	public CoverageReportMethod(String coveredMethodName, int coveredMethodLine) {
 		this.coveredMethodName = coveredMethodName;
 		this.coveredMethodLine = coveredMethodLine;
 	}
@@ -27,11 +27,11 @@ public class CoverageReportMethod {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof CoverageReportMethod) {
-			final CoverageReportMethod other = (CoverageReportMethod) obj;
+			CoverageReportMethod other = (CoverageReportMethod) obj;
 			return Objects.equals(this.coveredMethodName, other.coveredMethodName)
 					&& this.coveredMethodLine == other.coveredMethodLine;
 		} else {

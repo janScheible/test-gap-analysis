@@ -32,13 +32,13 @@ public abstract class AbstractTestGapMojo extends AbstractMojo {
 	 * Find all JaCoCo reports that are in the 'target' dir but not in 'classes' or 'test-classes'.
 	 */
 	protected Set<File> findRelevantJaCoCoReportFiles() {
-		final Set<File> result = new HashSet<>();
+		Set<File> result = new HashSet<>();
 
-		final Path outputDirAsPath = outputDir.toPath();
-		final Path testOutputDirAsPath = testOutputDir.toPath();
+		Path outputDirAsPath = this.outputDir.toPath();
+		Path testOutputDirAsPath = this.testOutputDir.toPath();
 
-		JaCoCoReportParser.findJaCoCoReportFiles(buildDir).forEach(file -> {
-			final Path fileAsPath = file.toPath();
+		JaCoCoReportParser.findJaCoCoReportFiles(this.buildDir).forEach(file -> {
+			Path fileAsPath = file.toPath();
 			if (!fileAsPath.startsWith(outputDirAsPath) && !fileAsPath.startsWith(testOutputDirAsPath)) {
 				result.add(file);
 			} else {

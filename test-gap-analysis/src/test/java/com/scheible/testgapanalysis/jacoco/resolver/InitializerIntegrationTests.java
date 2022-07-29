@@ -31,7 +31,7 @@ public class InitializerIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testSingleInitializerWithSingleConstructor() throws Exception {
-		final CoverageResolution resolution = resolve(SingleInitializerWithSingleConstructor.class, INITIALIZER);
+		CoverageResolution resolution = resolve(SingleInitializerWithSingleConstructor.class, INITIALIZER);
 
 		assertThat(resolution).isUnambiguouslyResolved();
 	}
@@ -60,9 +60,8 @@ public class InitializerIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleInitializerWithMultipleConstructorsWithAtLeastOneCovered() throws Exception {
-		final CoverageResolution resolution = resolve(
-				MultipleInitializerWithMultipleConstructorsWithAtLeastOneCovered.class, Serializable.class,
-				instance -> {
+		CoverageResolution resolution = resolve(MultipleInitializerWithMultipleConstructorsWithAtLeastOneCovered.class,
+				Serializable.class, instance -> {
 				}, INITIALIZER);
 
 		assertThat(resolution).isUnambiguouslyResolved();
@@ -95,7 +94,7 @@ public class InitializerIntegrationTests extends AbstractIntegrationTest {
 
 	@Test
 	public void testMultipleInitializerWithMutlipleNotCoveredConstructors() throws Exception {
-		final CoverageResolution resolution = resolve(MultipleInitializerWithMutlipleNotCoveredConstructors.class,
+		CoverageResolution resolution = resolve(MultipleInitializerWithMutlipleNotCoveredConstructors.class,
 				INITIALIZER);
 
 		assertThat(resolution).isUnambiguouslyResolved();

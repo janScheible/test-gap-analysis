@@ -18,7 +18,7 @@ public class NewOrChangedFile {
 	private final boolean skipped;
 	private final State state;
 
-	public NewOrChangedFile(final String name, final boolean skipped, final State state) {
+	public NewOrChangedFile(String name, boolean skipped, State state) {
 		this.repositoryPath = name;
 		this.skipped = skipped;
 		this.state = state;
@@ -37,11 +37,11 @@ public class NewOrChangedFile {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof NewOrChangedFile) {
-			final NewOrChangedFile other = (NewOrChangedFile) obj;
+			NewOrChangedFile other = (NewOrChangedFile) obj;
 			return Objects.equals(this.repositoryPath, other.repositoryPath) && this.skipped == other.skipped
 					&& this.state == other.state;
 		} else {

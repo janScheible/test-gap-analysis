@@ -14,17 +14,17 @@ import com.github.javaparser.ast.CompilationUnit;
  */
 public class JavaParser {
 
-	public Set<ParsedMethod> getMethods(final String code) {
-		final ParserConfiguration configuration = new ParserConfiguration();
+	public Set<ParsedMethod> getMethods(String code) {
+		ParserConfiguration configuration = new ParserConfiguration();
 		configuration.setLanguageLevel(LanguageLevel.BLEEDING_EDGE);
-		final com.github.javaparser.JavaParser javaParser = new com.github.javaparser.JavaParser(configuration);
+		com.github.javaparser.JavaParser javaParser = new com.github.javaparser.JavaParser(configuration);
 
-		final ParseResult<CompilationUnit> parserResult = javaParser.parse(code);
+		ParseResult<CompilationUnit> parserResult = javaParser.parse(code);
 		if (!parserResult.isSuccessful()) {
 			throw new ParseProblemException(parserResult.getProblems());
 		}
 
-		final MethodVisitor methodVisitor = new MethodVisitor(code);
+		MethodVisitor methodVisitor = new MethodVisitor(code);
 		parserResult.getResult().get().accept(methodVisitor, null);
 		return methodVisitor.getResult();
 	}

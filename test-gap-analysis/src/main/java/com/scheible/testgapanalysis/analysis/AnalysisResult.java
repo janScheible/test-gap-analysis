@@ -24,10 +24,10 @@ public class AnalysisResult {
 	private final Set<ParsedMethod> unresolvableMethods;
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage;
 
-	public AnalysisResult(final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods,
-			final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods, final Set<ParsedMethod> emptyMethods,
-			final Set<ParsedMethod> unresolvableMethods,
-			final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+	public AnalysisResult(Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods,
+			Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods, Set<ParsedMethod> emptyMethods,
+			Set<ParsedMethod> unresolvableMethods,
+			Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		this.coveredMethods = Collections.unmodifiableMap(new HashMap<>(coveredMethods));
 		this.uncoveredMethods = Collections.unmodifiableMap(new HashMap<>(uncoveredMethods));
 
@@ -57,11 +57,11 @@ public class AnalysisResult {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof AnalysisResult) {
-			final AnalysisResult other = (AnalysisResult) obj;
+			AnalysisResult other = (AnalysisResult) obj;
 			return Objects.equals(this.coveredMethods, other.coveredMethods)
 					&& Objects.equals(this.uncoveredMethods, other.uncoveredMethods)
 					&& Objects.equals(this.emptyMethods, other.emptyMethods)

@@ -11,11 +11,11 @@ public class ToStringBuilder {
 
 	private boolean appended = false;
 
-	public ToStringBuilder(final Class<?> clazz) {
+	public ToStringBuilder(Class<?> clazz) {
 		this.stringBuilder.append(clazz.getSimpleName()).append('[');
 	}
 
-	public ToStringBuilder append(final String fieldName, final Object value) {
+	public ToStringBuilder append(String fieldName, Object value) {
 		if (this.appended) {
 			this.stringBuilder.append(", ");
 		}
@@ -39,7 +39,7 @@ public class ToStringBuilder {
 		return this.stringBuilder.toString();
 	}
 
-	public static String shorten(final String value, final int maxLenght) {
+	public static String shorten(String value, int maxLenght) {
 		if (value.length() <= maxLenght) {
 			return value;
 		} else {

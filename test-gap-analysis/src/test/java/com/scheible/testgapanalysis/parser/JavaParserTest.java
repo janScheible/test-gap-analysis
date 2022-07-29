@@ -147,7 +147,7 @@ public class JavaParserTest {
 
 	public static class MethodMasking { // #debug
 
-		public String doIt(String arg1, final boolean isDebugMode) {
+		public String doIt(String arg1, boolean isDebugMode) {
 			// trim the string or jsut be happy
 			return Optional.ofNullable(arg1).map(a -> /* make it short */ a.trim()).orElse(":-)");
 		}
@@ -155,21 +155,20 @@ public class JavaParserTest {
 
 	@Test
 	public void testMethodMasking() throws IOException {
-		final Set<ParsedMethod> methods = parseJavaTestSource(MethodMasking.class, ParsedMethod.MethodType.METHOD);
+		Set<ParsedMethod> methods = parseJavaTestSource(MethodMasking.class, ParsedMethod.MethodType.METHOD);
 
 		assertThat(methods).extracting(pm -> pm.getRelevantCode().trim())
-				.containsOnly("##public String doIt(String arg1, final boolean isDebugMode) {\n"
+				.containsOnly("##public String doIt(String arg1, boolean isDebugMode) {\n"
 						+ "###################################\n"
 						+ "return Optional.ofNullable(arg1).map(#################################).orElse(\":-)\");\n"
 						+ "}");
 	}
 
-	private Stream<AssertableMethod> parseMethods(final Class<?> clazz, final MethodType... filterTypes)
-			throws IOException {
+	private Stream<AssertableMethod> parseMethods(Class<?> clazz, MethodType... filterTypes) throws IOException {
 		return parseJavaTestSource(clazz, filterTypes).stream().map(JavaParserTest::toAssertableMethod);
 	}
 
-	private static AssertableMethod toAssertableMethod(final ParsedMethod parsedMethod) {
+	private static AssertableMethod toAssertableMethod(ParsedMethod parsedMethod) {
 		return new AssertableMethod(parsedMethod, parsedMethod.getMethodType(), parsedMethod.getName());
 	}
 }

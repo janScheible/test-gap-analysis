@@ -19,7 +19,7 @@ public class DebugCoverageResolutionTest {
 	public void testRun() {
 		// There are no (real) JaCoCo reports available at this time --> use the testing ones and just make sure that
 		// it reads the methods correctly.
-		final DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(),
+		DebugCoverageResolution debugCoverageResolution = new DebugCoverageResolution(new JavaParser(),
 				new JaCoCoReportParser());
 		assertThat(debugCoverageResolution.run(new File("."), new File("./src/main/java"),
 				JaCoCoReportParser.findJaCoCoReportFiles(new File("./target/test-classes")))).isNotNull();

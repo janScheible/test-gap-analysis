@@ -46,7 +46,7 @@ public class TestGapReport {
 	private final Set<TestGapMethod> unresolvableMethods;
 	private final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage;
 
-	TestGapReport(final BuilderImpl builder) {
+	TestGapReport(BuilderImpl builder) {
 		this.workDir = builder.workDir;
 
 		this.oldCommitHash = builder.oldCommitHash;
@@ -161,11 +161,11 @@ public class TestGapReport {
 
 	@Override
 	@SuppressWarnings("checkstyle:CyclomaticComplexity")
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof TestGapReport) {
-			final TestGapReport other = (TestGapReport) obj;
+			TestGapReport other = (TestGapReport) obj;
 			return Objects.equals(this.workDir, other.workDir)
 					&& Objects.equals(this.oldCommitHash, other.oldCommitHash)
 					&& Objects.equals(this.newCommitHash, other.newCommitHash)

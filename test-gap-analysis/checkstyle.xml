@@ -22,10 +22,6 @@
 			<property name="validateOnlyOverlapping" value="false" />
 		</module>		
 
-		<module name="ConstantName">
-			<property name="format" value="^(logger|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*)$"/>
-		</module>
- 
 		<module name="ParameterNumber">
 			<property name="max" value="7"/>
 			<property name="ignoreOverriddenMethods" value="true"/>

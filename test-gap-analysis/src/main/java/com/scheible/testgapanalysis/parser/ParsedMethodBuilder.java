@@ -17,59 +17,59 @@ public abstract class ParsedMethodBuilder {
 
 	public interface MethodTypeStep {
 
-		TopLevelTypeFqnStep setMethodType(final MethodType methodType);
+		TopLevelTypeFqnStep setMethodType(MethodType methodType);
 	}
 
 	public interface TopLevelTypeFqnStep {
 
-		ScopeStep setTopLevelTypeFqn(final String topLevelTypeFqn);
+		ScopeStep setTopLevelTypeFqn(String topLevelTypeFqn);
 	}
 
 	public interface ScopeStep {
 
-		NameStep setScope(final List<String> scope);
+		NameStep setScope(List<String> scope);
 	}
 
 	public interface NameStep {
 
-		RelevantCodeStep setName(final String name);
+		RelevantCodeStep setName(String name);
 	}
 
 	public interface RelevantCodeStep {
 
-		CodeLinesStep setRelevantCode(final String relevantCode);
+		CodeLinesStep setRelevantCode(String relevantCode);
 	}
 
 	public interface CodeLinesStep {
 
-		CodeColumnStep setCodeLines(final List<Integer> codeLines);
+		CodeColumnStep setCodeLines(List<Integer> codeLines);
 	}
 
 	public interface CodeColumnStep {
 
-		EmptyStep setCodeColumn(final int codeColumn);
+		EmptyStep setCodeColumn(int codeColumn);
 	}
 
 	public interface EmptyStep {
 
-		ArgumentCountOrArgumentTypesStep setEmpty(final boolean empty);
+		ArgumentCountOrArgumentTypesStep setEmpty(boolean empty);
 	}
 
 	public interface ArgumentCountOrArgumentTypesStep {
 
-		BuildStep setArgumentCount(final int argumentCount);
+		BuildStep setArgumentCount(int argumentCount);
 
-		TypeParametersStep setArgumentTypes(final List<String> argumentTypes);
+		TypeParametersStep setArgumentTypes(List<String> argumentTypes);
 	}
 
 	public interface TypeParametersStep {
 
-		OuterDeclaringTypeStep setTypeParameters(final Map<String, String> typeParameters);
+		OuterDeclaringTypeStep setTypeParameters(Map<String, String> typeParameters);
 	}
 
 	public interface OuterDeclaringTypeStep {
 
-		BuildStep setOuterDeclaringType(final Optional<String> outerDeclaringType);
+		BuildStep setOuterDeclaringType(Optional<String> outerDeclaringType);
 	}
 
 	public interface BuildStep {
@@ -111,73 +111,73 @@ public abstract class ParsedMethodBuilder {
 		}
 
 		@Override
-		public TopLevelTypeFqnStep setMethodType(final MethodType methodType) {
+		public TopLevelTypeFqnStep setMethodType(MethodType methodType) {
 			this.methodType = methodType;
 			return this;
 		}
 
 		@Override
-		public ScopeStep setTopLevelTypeFqn(final String topLevelTypeFqn) {
+		public ScopeStep setTopLevelTypeFqn(String topLevelTypeFqn) {
 			this.topLevelTypeFqn = topLevelTypeFqn;
 			return this;
 		}
 
 		@Override
-		public NameStep setScope(final List<String> scope) {
+		public NameStep setScope(List<String> scope) {
 			this.scope = scope;
 			return this;
 		}
 
 		@Override
-		public RelevantCodeStep setName(final String name) {
+		public RelevantCodeStep setName(String name) {
 			this.name = name;
 			return this;
 		}
 
 		@Override
-		public CodeLinesStep setRelevantCode(final String relevantCode) {
+		public CodeLinesStep setRelevantCode(String relevantCode) {
 			this.relevantCode = relevantCode;
 			return this;
 		}
 
 		@Override
-		public CodeColumnStep setCodeLines(final List<Integer> codeLines) {
+		public CodeColumnStep setCodeLines(List<Integer> codeLines) {
 			this.codeLines = codeLines;
 			return this;
 		}
 
 		@Override
-		public EmptyStep setCodeColumn(final int codeColumn) {
+		public EmptyStep setCodeColumn(int codeColumn) {
 			this.codeColumn = codeColumn;
 			return this;
 		}
 
 		@Override
-		public ArgumentCountOrArgumentTypesStep setEmpty(final boolean empty) {
+		public ArgumentCountOrArgumentTypesStep setEmpty(boolean empty) {
 			this.empty = empty;
 			return this;
 		}
 
 		@Override
-		public BuildStep setArgumentCount(final int argumentCount) {
+		public BuildStep setArgumentCount(int argumentCount) {
 			this.argumentCount = argumentCount;
 			return this;
 		}
 
 		@Override
-		public TypeParametersStep setArgumentTypes(final List<String> argumentTypes) {
+		public TypeParametersStep setArgumentTypes(List<String> argumentTypes) {
 			this.argumentTypes = argumentTypes;
 			return this;
 		}
 
 		@Override
-		public OuterDeclaringTypeStep setTypeParameters(final Map<String, String> typeParameters) {
+		public OuterDeclaringTypeStep setTypeParameters(Map<String, String> typeParameters) {
 			this.typeParameters = typeParameters;
 			return this;
 		}
 
 		@Override
-		public BuildStep setOuterDeclaringType(final Optional<String> outerDeclaringType) {
+		public BuildStep setOuterDeclaringType(Optional<String> outerDeclaringType) {
 			this.outerDeclaringType = outerDeclaringType;
 			return this;
 		}

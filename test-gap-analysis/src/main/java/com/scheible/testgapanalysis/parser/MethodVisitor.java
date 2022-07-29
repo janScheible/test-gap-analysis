@@ -32,7 +32,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 
 	private boolean debugMode = false;
 
-	MethodVisitor(final String code) {
+	MethodVisitor(String code) {
 		this.code = code;
 	}
 
@@ -41,7 +41,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	@Override
-	public void visit(final ClassOrInterfaceDeclaration node, final Void arg) {
+	public void visit(ClassOrInterfaceDeclaration node, Void arg) {
 		// if class is marked with '//#debug' enable debug mode
 		if (node.getName().getComment().map(Comment::getContent).orElse("").contains("#debug")) {
 			this.debugMode = true;
@@ -51,21 +51,20 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	@Override
-	public void visit(final ConstructorDeclaration node, final Void arg) {
+	public void visit(ConstructorDeclaration node, Void arg) {
 		if (node.getRange().isPresent()) {
-			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
-			final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
+			Range range = node.getRange().get();
+			String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
+			List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
 					.map(t -> t.asString() + (((Parameter) t.getParentNode().get()).isVarArgs() ? "[]" : ""))
 					.collect(Collectors.toList());
 
-			final boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration)
-					.isPresent();
-			final boolean innerClassConstructor = node.getParentNode()
-					.filter(pn -> pn instanceof ClassOrInterfaceDeclaration).map(pn -> (ClassOrInterfaceDeclaration) pn)
-					.map(pn -> pn.isInnerClass() && !pn.isStatic()).orElse(Boolean.FALSE);
+			boolean enumConstructor = node.getParentNode().filter(pn -> pn instanceof EnumDeclaration).isPresent();
+			boolean innerClassConstructor = node.getParentNode().filter(pn -> pn instanceof ClassOrInterfaceDeclaration)
+					.map(pn -> (ClassOrInterfaceDeclaration) pn).map(pn -> pn.isInnerClass() && !pn.isStatic())
+					.orElse(Boolean.FALSE);
 
-			final ParsedMethod.MethodType type = enumConstructor
+			ParsedMethod.MethodType type = enumConstructor
 					? ParsedMethod.MethodType.ENUM_CONSTRUCTOR
 					: innerClassConstructor
 							? ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR
@@ -83,10 +82,10 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	@Override
-	public void visit(final InitializerDeclaration node, final Void arg) {
+	public void visit(InitializerDeclaration node, Void arg) {
 		if (node.getRange().isPresent()) {
-			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
+			Range range = node.getRange().get();
+			String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
 			this.result.add(ParsedMethod.builder().setMethodType(
 					node.isStatic() ? ParsedMethod.MethodType.STATIC_INITIALIZER : ParsedMethod.MethodType.INITIALIZER)
@@ -100,10 +99,10 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	@Override
-	public void visit(final MethodDeclaration node, final Void arg) {
+	public void visit(MethodDeclaration node, Void arg) {
 		if (node.getRange().isPresent() && node.getBody().isPresent()) {
-			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
+			Range range = node.getRange().get();
+			String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
 			this.result.add(ParsedMethod.builder()
 					.setMethodType(
@@ -119,10 +118,10 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	@Override
-	public void visit(final LambdaExpr node, final Void arg) {
+	public void visit(LambdaExpr node, Void arg) {
 		if (node.getRange().isPresent()) {
-			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
+			Range range = node.getRange().get();
+			String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
 			this.result.add(ParsedMethod.builder().setMethodType(ParsedMethod.MethodType.LAMBDA_METHOD)
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
@@ -134,12 +133,12 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 		super.visit(node, arg);
 	}
 
-	private static boolean isMethod(final Node node) {
+	private static boolean isMethod(Node node) {
 		return node instanceof ConstructorDeclaration || node instanceof InitializerDeclaration
 				|| node instanceof MethodDeclaration || node instanceof LambdaExpr;
 	}
 
-	private static boolean isComment(final Node node) {
+	private static boolean isComment(Node node) {
 		return node instanceof LineComment || node instanceof BlockComment;
 	}
 
@@ -147,9 +146,9 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	 * Identifies all parts of a method (constructor, (static) initializer, (lambda) method) that shouldn't be
 	 * treated as part of its own code (could be either other nested methods or comments).
 	 */
-	private static List<Range> findMasks(final Node node) {
+	private static List<Range> findMasks(Node node) {
 		if (isMethod(node)) {
-			final List<Range> masks = new ArrayList<>();
+			List<Range> masks = new ArrayList<>();
 			findMasks(node, masks);
 			return masks;
 		} else {
@@ -157,10 +156,10 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 		}
 	}
 
-	private static void findMasks(final Node node, final List<Range> masks) {
+	private static void findMasks(Node node, List<Range> masks) {
 		addCommentRangeIfAny(node, masks);
 
-		for (final Node child : node.getChildNodes()) {
+		for (Node child : node.getChildNodes()) {
 			if (isMethod(child) || isComment(child)) {
 				if (child.getRange().isPresent()) {
 					masks.add(child.getRange().get());
@@ -173,7 +172,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 		}
 	}
 
-	private static void addCommentRangeIfAny(final Node node, final Collection<Range> masks) {
+	private static void addCommentRangeIfAny(Node node, Collection<Range> masks) {
 		if (node.getComment().isPresent() && node.getComment().get().getRange().isPresent()) {
 			masks.add(node.getComment().get().getRange().get());
 		}

@@ -54,7 +54,7 @@ public class MethodWithCoverageInfoTest {
 				.isEqualTo("InnerStatic");
 	}
 
-	private static MethodWithCoverageInfo withClassName(final String className) {
+	private static MethodWithCoverageInfo withClassName(String className) {
 		return new MethodWithCoverageInfo(className, "name", "", 0, 0);
 	}
 }

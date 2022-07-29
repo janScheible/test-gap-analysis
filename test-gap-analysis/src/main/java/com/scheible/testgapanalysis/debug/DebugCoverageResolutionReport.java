@@ -29,7 +29,7 @@ public class DebugCoverageResolutionReport {
 	private final Set<ParsedMethod> unresolved;
 	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
 
-	DebugCoverageResolutionReport(final BuilderImpl builder) {
+	DebugCoverageResolutionReport(BuilderImpl builder) {
 		this.coverageInfoCount = builder.coverageInfoCount;
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
 		this.javaFileCount = builder.javaFileCount;
@@ -74,11 +74,11 @@ public class DebugCoverageResolutionReport {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof DebugCoverageResolutionReport) {
-			final DebugCoverageResolutionReport other = (DebugCoverageResolutionReport) obj;
+			DebugCoverageResolutionReport other = (DebugCoverageResolutionReport) obj;
 			return this.coverageInfoCount == other.coverageInfoCount
 					&& Objects.equals(this.jaCoCoReportFiles, other.jaCoCoReportFiles)
 					&& this.javaFileCount == other.javaFileCount && Objects.equals(this.resolved, other.resolved)

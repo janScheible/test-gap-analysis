@@ -123,7 +123,7 @@ public class JavaMethodUtilTest {
 
 	@Test
 	public void testNormalizeMethodArgumentsWithGenerics() {
-		final Map<String, String> typeParameters = new HashMap<>();
+		Map<String, String> typeParameters = new HashMap<>();
 		typeParameters.put("T", "Object");
 		typeParameters.put("K", "Serializable");
 

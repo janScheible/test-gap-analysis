@@ -16,7 +16,7 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 
 	private final ParsedMethod method;
 
-	public MethodCompareWrapper(final ParsedMethod method) {
+	public MethodCompareWrapper(ParsedMethod method) {
 		this.method = method;
 	}
 
@@ -24,12 +24,12 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 		return this.method;
 	}
 
-	public static Set<ParsedMethod> unwrap(final Set<MethodCompareWrapper> methodWrappers) {
+	public static Set<ParsedMethod> unwrap(Set<MethodCompareWrapper> methodWrappers) {
 		return methodWrappers.stream().map(MethodCompareWrapper::getParsedMethod).collect(Collectors.toSet());
 	}
 
 	@Override
-	public int compareTo(final MethodCompareWrapper other) {
+	public int compareTo(MethodCompareWrapper other) {
 		if (this.method.getTopLevelTypeFqn().equals(other.method.getTopLevelTypeFqn())) {
 			return this.method.getName().compareTo(other.method.getName());
 		} else {
@@ -38,11 +38,11 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof MethodCompareWrapper) {
-			final MethodCompareWrapper otherWrapper = (MethodCompareWrapper) obj;
+			MethodCompareWrapper otherWrapper = (MethodCompareWrapper) obj;
 			return Objects.equals(this.method.getArgumentTypes(), otherWrapper.method.getArgumentTypes())
 					&& Objects.equals(this.method.getName(), otherWrapper.method.getName())
 					&& Objects.equals(this.method.getRelevantCode(), otherWrapper.method.getRelevantCode())

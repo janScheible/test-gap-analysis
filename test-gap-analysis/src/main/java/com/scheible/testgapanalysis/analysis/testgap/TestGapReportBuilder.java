@@ -105,68 +105,68 @@ public abstract class TestGapReportBuilder {
 		}
 
 		@Override
-		public OldCommitHashStep setWorkDir(final String workDir) {
+		public OldCommitHashStep setWorkDir(String workDir) {
 			this.workDir = workDir;
 			return this;
 		}
 
 		@Override
-		public NewCommitHashStep setOldCommitHash(final String oldCommitHash) {
+		public NewCommitHashStep setOldCommitHash(String oldCommitHash) {
 			this.oldCommitHash = oldCommitHash;
 			return this;
 		}
 
 		@Override
-		public JaCoCoReportFilesStep setNewCommitHash(final Optional<String> newCommitHash) {
+		public JaCoCoReportFilesStep setNewCommitHash(Optional<String> newCommitHash) {
 			this.newCommitHash = newCommitHash;
 			return this;
 		}
 
 		@Override
-		public JaCoCoCoverageCountStep setJaCoCoReportFiles(final Set<String> jaCoCoReportFiles) {
+		public JaCoCoCoverageCountStep setJaCoCoReportFiles(Set<String> jaCoCoReportFiles) {
 			this.jaCoCoReportFiles = jaCoCoReportFiles;
 			return this;
 		}
 
 		@Override
-		public NewOrChangedFilesStep setJaCoCoCoverageCount(final int jaCoCoCoverageCount) {
+		public NewOrChangedFilesStep setJaCoCoCoverageCount(int jaCoCoCoverageCount) {
 			this.jaCoCoCoverageCount = jaCoCoCoverageCount;
 			return this;
 		}
 
 		@Override
-		public CoveredMethodsStep setNewOrChangedFiles(final Set<NewOrChangedFile> newOrChangedFiles) {
+		public CoveredMethodsStep setNewOrChangedFiles(Set<NewOrChangedFile> newOrChangedFiles) {
 			this.newOrChangedFiles = newOrChangedFiles;
 			return this;
 		}
 
 		@Override
-		public UncoveredMethodsStep setCoveredMethods(final Set<TestGapMethod> coveredMethods) {
+		public UncoveredMethodsStep setCoveredMethods(Set<TestGapMethod> coveredMethods) {
 			this.coveredMethods = coveredMethods;
 			return this;
 		}
 
 		@Override
-		public EmptyMethodsStep setUncoveredMethods(final Set<TestGapMethod> uncoveredMethods) {
+		public EmptyMethodsStep setUncoveredMethods(Set<TestGapMethod> uncoveredMethods) {
 			this.uncoveredMethods = uncoveredMethods;
 			return this;
 		}
 
 		@Override
-		public UnresolvableMethodsStep setEmptyMethods(final Set<TestGapMethod> emptyMethods) {
+		public UnresolvableMethodsStep setEmptyMethods(Set<TestGapMethod> emptyMethods) {
 			this.emptyMethods = emptyMethods;
 			return this;
 		}
 
 		@Override
-		public AmbiguouslyResolvedCoverageStep setUnresolvableMethods(final Set<TestGapMethod> unresolvableMethods) {
+		public AmbiguouslyResolvedCoverageStep setUnresolvableMethods(Set<TestGapMethod> unresolvableMethods) {
 			this.unresolvableMethods = unresolvableMethods;
 			return this;
 		}
 
 		@Override
 		public BuildStep setAmbiguouslyResolvedCoverage(
-				final Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
+				Map<CoverageReportMethod, Set<TestGapMethod>> ambiguouslyResolvedCoverage) {
 			this.ambiguouslyResolvedCoverage = ambiguouslyResolvedCoverage;
 			return this;
 		}

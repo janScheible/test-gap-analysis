@@ -18,8 +18,8 @@ public class TestGapMethod {
 	private final Optional<String> coveredMethodName;
 	private final Optional<Integer> coveredMethodLine;
 
-	private TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-			final int sourceColumn, final String coveredMethodName, final Integer coveredMethodLine) {
+	private TestGapMethod(String topLevelTypeFqn, String description, int sourceLine, int sourceColumn,
+			String coveredMethodName, Integer coveredMethodLine) {
 		this.topLevelTypeFqn = topLevelTypeFqn;
 		this.description = description;
 		this.sourceLine = sourceLine;
@@ -28,13 +28,12 @@ public class TestGapMethod {
 		this.coveredMethodLine = Optional.ofNullable(coveredMethodLine);
 	}
 
-	public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-			final int sourceColumn, final String coveredMethodName, final int coveredMethodLine) {
+	public TestGapMethod(String topLevelTypeFqn, String description, int sourceLine, int sourceColumn,
+			String coveredMethodName, int coveredMethodLine) {
 		this(topLevelTypeFqn, description, sourceLine, sourceColumn, coveredMethodName, (Integer) coveredMethodLine);
 	}
 
-	public TestGapMethod(final String topLevelTypeFqn, final String description, final int sourceLine,
-			final int sourceColumn) {
+	public TestGapMethod(String topLevelTypeFqn, String description, int sourceLine, int sourceColumn) {
 		this(topLevelTypeFqn, description, sourceLine, sourceColumn, null, null);
 	}
 
@@ -63,11 +62,11 @@ public class TestGapMethod {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof TestGapMethod) {
-			final TestGapMethod other = (TestGapMethod) obj;
+			TestGapMethod other = (TestGapMethod) obj;
 			return Objects.equals(this.topLevelTypeFqn, other.topLevelTypeFqn)
 					&& Objects.equals(this.description, other.description) && this.sourceLine == other.sourceLine
 					&& this.sourceColumn == other.sourceColumn

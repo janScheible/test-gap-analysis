@@ -19,19 +19,19 @@ public class GitDifferTest {
 
 	@Test
 	public void testRepositoryStatusAndContent() {
-		final RepositoryStatus status = gitDiffer.ofWorkingCopyChanges(getWorkingDir(), file -> true);
+		RepositoryStatus status = this.gitDiffer.ofWorkingCopyChanges(getWorkingDir(), file -> true);
 		assertThat(status).isNotNull();
 
-		final Map<String, String> content = status.getOldContents();
+		Map<String, String> content = status.getOldContents();
 		assertThat(content).isNotNull();
 	}
 
 	@Test
 	public void testCompareToHead() {
-		final List<String> commitHashes = GitUtils.getCommitHashes(getWorkingDir(), 5);
-		final String commitHash = commitHashes.get(commitHashes.size() - 1);
+		List<String> commitHashes = GitUtils.getCommitHashes(getWorkingDir(), 5);
+		String commitHash = commitHashes.get(commitHashes.size() - 1);
 
-		final RepositoryStatus status = gitDiffer.ofCommitComparedToHead(getWorkingDir(), commitHash, file -> true);
+		RepositoryStatus status = this.gitDiffer.ofCommitComparedToHead(getWorkingDir(), commitHash, file -> true);
 
 		assertThat(status.getAddedFiles()).isNotNull();
 		assertThat(status.getChangedFiles()).isNotNull();
@@ -39,11 +39,11 @@ public class GitDifferTest {
 
 	@Test
 	public void testCompareToCommits() {
-		final List<String> commitHashes = GitUtils.getCommitHashes(getWorkingDir(), 5);
-		final String oldCommitHash = commitHashes.get(commitHashes.size() - 1);
-		final String newCommitHash = commitHashes.get(0);
+		List<String> commitHashes = GitUtils.getCommitHashes(getWorkingDir(), 5);
+		String oldCommitHash = commitHashes.get(commitHashes.size() - 1);
+		String newCommitHash = commitHashes.get(0);
 
-		final RepositoryStatus status = GitDiffer.ofCommitsCompared(getWorkingDir(), oldCommitHash, newCommitHash,
+		RepositoryStatus status = GitDiffer.ofCommitsCompared(getWorkingDir(), oldCommitHash, newCommitHash,
 				file -> true);
 
 		assertThat(status.getAddedFiles()).isNotNull();

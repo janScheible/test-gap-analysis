@@ -30,11 +30,11 @@ import com.scheible.testgapanalysis.common.FilesUtils;
  */
 public class GitDiffer {
 
-	public RepositoryStatus ofWorkingCopyChanges(final File workingDir, final Predicate<String> fileFilter) {
-		final Set<String> addedFiles = new HashSet<>();
-		final Set<String> changedFiles = new HashSet<>();
+	public RepositoryStatus ofWorkingCopyChanges(File workingDir, Predicate<String> fileFilter) {
+		Set<String> addedFiles = new HashSet<>();
+		Set<String> changedFiles = new HashSet<>();
 
-		final Ref head;
+		Ref head;
 		File workTreeDir;
 
 		try {
@@ -43,7 +43,7 @@ public class GitDiffer {
 				try (Git git = new Git(repository)) {
 					head = repository.exactRef(Constants.HEAD);
 
-					final Status status = git.status().call();
+					Status status = git.status().call();
 
 					addedFiles.addAll(status.getAdded());
 					addedFiles.addAll(status.getUntracked());
@@ -62,15 +62,14 @@ public class GitDiffer {
 				changedFiles, fileFilter);
 	}
 
-	public RepositoryStatus ofCommitComparedToHead(final File workingDir, final String commitHash,
-			final Predicate<String> fileFilter) {
+	public RepositoryStatus ofCommitComparedToHead(File workingDir, String commitHash, Predicate<String> fileFilter) {
 		return ofCommitsCompared(workingDir, commitHash, Constants.HEAD, fileFilter);
 	}
 
-	static RepositoryStatus ofCommitsCompared(final File workingDir, final String oldObjectId, final String newObjectId,
-			final Predicate<String> fileFilter) {
-		final Set<String> addedFiles = new HashSet<>();
-		final Set<String> changedFiles = new HashSet<>();
+	static RepositoryStatus ofCommitsCompared(File workingDir, String oldObjectId, String newObjectId,
+			Predicate<String> fileFilter) {
+		Set<String> addedFiles = new HashSet<>();
+		Set<String> changedFiles = new HashSet<>();
 
 		String resolvedNewObjectId;
 		File workTreeDir;
@@ -84,11 +83,10 @@ public class GitDiffer {
 							? repository.exactRef(Constants.HEAD).getObjectId().getName()
 							: newObjectId;
 
-					final List<DiffEntry> diff = git.diff()
-							.setOldTree(GitUtils.prepareTreeParser(repository, oldObjectId))
+					List<DiffEntry> diff = git.diff().setOldTree(GitUtils.prepareTreeParser(repository, oldObjectId))
 							.setNewTree(GitUtils.prepareTreeParser(repository, resolvedNewObjectId)).call();
 
-					for (final DiffEntry entry : diff) {
+					for (DiffEntry entry : diff) {
 						if (entry.getChangeType() == DiffEntry.ChangeType.ADD
 								|| entry.getChangeType() == DiffEntry.ChangeType.COPY) {
 							addedFiles.add(entry.getNewPath());
@@ -113,16 +111,16 @@ public class GitDiffer {
 	/**
 	 * Only include files that are in the working dir or in a sub-directory of working dir.
 	 */
-	private static RepositoryStatus filterFiles(final File workingDir, final File workTreeDir,
-			final String oldCommitHash, final Optional<String> newCommitHash, final Set<String> addedFiles,
-			final Set<String> changedFiles, final Predicate<String> fileFilter) {
-		final String canonicalWorkingDir = FilesUtils.toCanonical(workingDir).getAbsolutePath() + File.separator;
-		final Predicate<String> isInWorkingDirSubDir = file -> FilesUtils.toCanonical(newFile(workTreeDir, file))
+	private static RepositoryStatus filterFiles(File workingDir, File workTreeDir, String oldCommitHash,
+			Optional<String> newCommitHash, Set<String> addedFiles, Set<String> changedFiles,
+			Predicate<String> fileFilter) {
+		String canonicalWorkingDir = FilesUtils.toCanonical(workingDir).getAbsolutePath() + File.separator;
+		Predicate<String> isInWorkingDirSubDir = file -> FilesUtils.toCanonical(newFile(workTreeDir, file))
 				.getAbsolutePath().startsWith(canonicalWorkingDir);
 
-		final Set<String> filteredAddedFiles = addedFiles.stream().filter(isInWorkingDirSubDir.and(fileFilter))
+		Set<String> filteredAddedFiles = addedFiles.stream().filter(isInWorkingDirSubDir.and(fileFilter))
 				.collect(Collectors.toSet());
-		final Set<String> filteredChangedFiles = changedFiles.stream().filter(isInWorkingDirSubDir.and(fileFilter))
+		Set<String> filteredChangedFiles = changedFiles.stream().filter(isInWorkingDirSubDir.and(fileFilter))
 				.collect(Collectors.toSet());
 
 		return new RepositoryStatus(oldCommitHash, newCommitHash, filteredAddedFiles, filteredChangedFiles,
@@ -130,8 +128,8 @@ public class GitDiffer {
 				getNewContents(workTreeDir, newCommitHash, filteredAddedFiles, filteredChangedFiles));
 	}
 
-	private static Map<String, String> getNewContents(final File workTreeDir, final Optional<String> newCommitHash,
-			final Set<String> addedFiles, final Set<String> changedFiles) {
+	private static Map<String, String> getNewContents(File workTreeDir, Optional<String> newCommitHash,
+			Set<String> addedFiles, Set<String> changedFiles) {
 		if (!newCommitHash.isPresent()) {
 			return Collections.unmodifiableMap(Stream.concat(addedFiles.stream(), changedFiles.stream())
 					.map(file -> new AbstractMap.SimpleImmutableEntry<>(file, newFile(workTreeDir, file)))
@@ -143,7 +141,7 @@ public class GitDiffer {
 	}
 
 	// Extra method to allow a SpotBugs exclusion of PATH_TRAVERSAL_IN.
-	private static File newFile(final File parent, final String child) {
+	private static File newFile(File parent, String child) {
 		return new File(parent, child);
 	}
 }

@@ -17,37 +17,37 @@ public abstract class DebugCoverageResolutionReportBuilder {
 
 	public interface CoverageInfoCountStep {
 
-		JaCoCoReportFilesStep setCoverageInfoCount(final int coverageInfoCount);
+		JaCoCoReportFilesStep setCoverageInfoCount(int coverageInfoCount);
 	}
 
 	public interface JaCoCoReportFilesStep {
 
-		JavaFileCountStep setJaCoCoReportFiles(final Set<String> jaCoCoReportFiles);
+		JavaFileCountStep setJaCoCoReportFiles(Set<String> jaCoCoReportFiles);
 	}
 
 	public interface JavaFileCountStep {
 
-		ResolvedStep setJavaFileCount(final int javaFileCount);
+		ResolvedStep setJavaFileCount(int javaFileCount);
 	}
 
 	public interface ResolvedStep {
 
-		EmptyStep setResolved(final Map<ParsedMethod, MethodWithCoverageInfo> resolved);
+		EmptyStep setResolved(Map<ParsedMethod, MethodWithCoverageInfo> resolved);
 	}
 
 	public interface EmptyStep {
 
-		UnresolvedStep setEmpty(final Set<ParsedMethod> empty);
+		UnresolvedStep setEmpty(Set<ParsedMethod> empty);
 	}
 
 	public interface UnresolvedStep {
 
-		AmbiguousCoverageStep setUnresolved(final Set<ParsedMethod> unresolved);
+		AmbiguousCoverageStep setUnresolved(Set<ParsedMethod> unresolved);
 	}
 
 	public interface AmbiguousCoverageStep {
 
-		BuildStep setAmbiguousCoverage(final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage);
+		BuildStep setAmbiguousCoverage(Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage);
 	}
 
 	public interface BuildStep {
@@ -78,43 +78,43 @@ public abstract class DebugCoverageResolutionReportBuilder {
 		}
 
 		@Override
-		public JaCoCoReportFilesStep setCoverageInfoCount(final int coverageInfoCount) {
+		public JaCoCoReportFilesStep setCoverageInfoCount(int coverageInfoCount) {
 			this.coverageInfoCount = coverageInfoCount;
 			return this;
 		}
 
 		@Override
-		public JavaFileCountStep setJaCoCoReportFiles(final Set<String> jaCoCoReportFiles) {
+		public JavaFileCountStep setJaCoCoReportFiles(Set<String> jaCoCoReportFiles) {
 			this.jaCoCoReportFiles = jaCoCoReportFiles;
 			return this;
 		}
 
 		@Override
-		public ResolvedStep setJavaFileCount(final int javaFileCount) {
+		public ResolvedStep setJavaFileCount(int javaFileCount) {
 			this.javaFileCount = javaFileCount;
 			return this;
 		}
 
 		@Override
-		public EmptyStep setResolved(final Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
+		public EmptyStep setResolved(Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
 			this.resolved = resolved;
 			return this;
 		}
 
 		@Override
-		public UnresolvedStep setEmpty(final Set<ParsedMethod> empty) {
+		public UnresolvedStep setEmpty(Set<ParsedMethod> empty) {
 			this.empty = empty;
 			return this;
 		}
 
 		@Override
-		public AmbiguousCoverageStep setUnresolved(final Set<ParsedMethod> unresolved) {
+		public AmbiguousCoverageStep setUnresolved(Set<ParsedMethod> unresolved) {
 			this.unresolved = unresolved;
 			return this;
 		}
 
 		@Override
-		public BuildStep setAmbiguousCoverage(final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage) {
+		public BuildStep setAmbiguousCoverage(Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage) {
 			this.ambiguousCoverage = ambiguousCoverage;
 			return this;
 		}

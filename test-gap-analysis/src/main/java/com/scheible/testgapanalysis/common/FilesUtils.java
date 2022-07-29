@@ -25,15 +25,15 @@ public abstract class FilesUtils {
 	private FilesUtils() {
 	}
 
-	public static String readUtf8(final Class<?> anchor, final String name) {
+	public static String readUtf8(Class<?> anchor, String name) {
 		return readUtf8(anchor.getResourceAsStream(name));
 	}
 
-	public static String readUtf8(final InputStream inputStream) {
+	public static String readUtf8(InputStream inputStream) {
 		try (InputStream tryCatchInputStream = Objects.requireNonNull(inputStream)) {
 
-			final ByteArrayOutputStream result = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[1024];
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
 			int length;
 			while ((length = tryCatchInputStream.read(buffer)) != -1) {
 				result.write(buffer, 0, length);
@@ -45,7 +45,7 @@ public abstract class FilesUtils {
 		}
 	}
 
-	public static String readUtf8(final File file) {
+	public static String readUtf8(File file) {
 		try {
 			return new String(Files.readAllBytes(Objects.requireNonNull(file).toPath()), UTF_8_CHARSET);
 		} catch (IOException ex) {
@@ -53,7 +53,7 @@ public abstract class FilesUtils {
 		}
 	}
 
-	public static File toCanonical(final File file) {
+	public static File toCanonical(File file) {
 		try {
 			return file.getCanonicalFile();
 		} catch (IOException ex) {
@@ -65,8 +65,8 @@ public abstract class FilesUtils {
 		return toCanonical(new File("."));
 	}
 
-	public static Set<String> toRelative(final File rootDir, final Set<File> files) {
-		final Path rootDirAsPath = rootDir.toPath().toAbsolutePath();
+	public static Set<String> toRelative(File rootDir, Set<File> files) {
+		Path rootDirAsPath = rootDir.toPath().toAbsolutePath();
 		return files.stream().map(File::toPath).map(Path::toAbsolutePath).map(p -> p
 				.subpath(rootDirAsPath.getNameCount(), p.getNameCount()).toString().replaceAll(BACKSLASH_PATTERN, "/"))
 				.collect(Collectors.toSet());

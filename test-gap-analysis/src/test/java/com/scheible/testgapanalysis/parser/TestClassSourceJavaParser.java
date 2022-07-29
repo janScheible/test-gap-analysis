@@ -39,26 +39,26 @@ public class TestClassSourceJavaParser {
 	 * Resolves the passed Java class to the test sources ('src/test/java') for Java source parsing. Returns only
 	 * methods of the tpye passed as filter.
 	 */
-	public static Set<ParsedMethod> parseJavaTestSource(final Class<?> testClass, final MethodType... filterTypes)
+	public static Set<ParsedMethod> parseJavaTestSource(Class<?> testClass, MethodType... filterTypes)
 			throws IOException {
-		final Set<MethodType> filterTypesSet = new HashSet<>(Arrays.asList(filterTypes));
+		Set<MethodType> filterTypesSet = new HashSet<>(Arrays.asList(filterTypes));
 
-		final ClassWithSource classWithSource = readJavaTestSource(testClass);
-		final JavaParser javaParser = new JavaParser();
-		final Set<ParsedMethod> parsedMethods = javaParser.getMethods(classWithSource.source).stream()
+		ClassWithSource classWithSource = readJavaTestSource(testClass);
+		JavaParser javaParser = new JavaParser();
+		Set<ParsedMethod> parsedMethods = javaParser.getMethods(classWithSource.source).stream()
 				.filter(m -> (!m.getScope().isEmpty() && m.getScope().get(0).equals(testClass.getSimpleName()))
 						|| classWithSource.testClass.equals(classWithSource.topLevelClass))
 				.filter(m -> filterTypesSet.contains(m.getMethodType())).collect(Collectors.toSet());
 		return parsedMethods;
 	}
 
-	private static ClassWithSource readJavaTestSource(final Class<?> testClass) throws IOException {
+	private static ClassWithSource readJavaTestSource(Class<?> testClass) throws IOException {
 		Class<?> topLevelClass = testClass;
 		while (topLevelClass.getEnclosingClass() != null) {
 			topLevelClass = topLevelClass.getEnclosingClass();
 		}
 
-		final Path path = Paths.get(".", "src", "test", "java",
+		Path path = Paths.get(".", "src", "test", "java",
 				topLevelClass.getName().replaceAll(quote("."), quoteReplacement(File.separator)) + ".java");
 
 		return new ClassWithSource(testClass, topLevelClass,
