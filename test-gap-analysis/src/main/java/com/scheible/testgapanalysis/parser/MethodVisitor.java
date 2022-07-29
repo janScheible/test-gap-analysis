@@ -37,14 +37,14 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	}
 
 	Set<ParsedMethod> getResult() {
-		return result;
+		return this.result;
 	}
 
 	@Override
 	public void visit(final ClassOrInterfaceDeclaration node, final Void arg) {
 		// if class is marked with '//#debug' enable debug mode
 		if (node.getName().getComment().map(Comment::getContent).orElse("").contains("#debug")) {
-			debugMode = true;
+			this.debugMode = true;
 		}
 
 		super.visit(node, arg);
@@ -54,7 +54,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	public void visit(final ConstructorDeclaration node, final Void arg) {
 		if (node.getRange().isPresent()) {
 			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
+			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 			final List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
 					.map(t -> t.asString() + (((Parameter) t.getParentNode().get()).isVarArgs() ? "[]" : ""))
 					.collect(Collectors.toList());
@@ -71,11 +71,11 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 							? ParsedMethod.MethodType.INNER_CLASS_CONSTRUCTOR
 							: ParsedMethod.MethodType.CONSTRUCTOR;
 
-			result.add(ParsedMethod.builder().setMethodType(type).setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node))
-					.setScope(ParserUtils.getScope(node)).setName("<init>").setRelevantCode(relevantCode)
-					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
-					.setEmpty(!ParserUtils.containsCode(node.getBody())).setArgumentTypes(argumentTypes)
-					.setTypeParameters(ParserUtils.getTypeParameters(node))
+			this.result.add(ParsedMethod.builder().setMethodType(type)
+					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
+					.setName("<init>").setRelevantCode(relevantCode).setCodeLines(ParserUtils.getCodeLines(node))
+					.setCodeColumn(range.begin.column).setEmpty(!ParserUtils.containsCode(node.getBody()))
+					.setArgumentTypes(argumentTypes).setTypeParameters(ParserUtils.getTypeParameters(node))
 					.setOuterDeclaringType(ParserUtils.getOuterDeclaringType(node)).build());
 		}
 
@@ -86,9 +86,9 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	public void visit(final InitializerDeclaration node, final Void arg) {
 		if (node.getRange().isPresent()) {
 			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
+			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
-			result.add(ParsedMethod.builder().setMethodType(
+			this.result.add(ParsedMethod.builder().setMethodType(
 					node.isStatic() ? ParsedMethod.MethodType.STATIC_INITIALIZER : ParsedMethod.MethodType.INITIALIZER)
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
 					.setName(node.isStatic() ? "<clinit>" : "<initbl>").setRelevantCode(relevantCode)
@@ -103,9 +103,9 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	public void visit(final MethodDeclaration node, final Void arg) {
 		if (node.getRange().isPresent() && node.getBody().isPresent()) {
 			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
+			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
-			result.add(ParsedMethod.builder()
+			this.result.add(ParsedMethod.builder()
 					.setMethodType(
 							node.isStatic() ? ParsedMethod.MethodType.STATIC_METHOD : ParsedMethod.MethodType.METHOD)
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
@@ -122,9 +122,9 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 	public void visit(final LambdaExpr node, final Void arg) {
 		if (node.getRange().isPresent()) {
 			final Range range = node.getRange().get();
-			final String relevantCode = MaskUtils.apply(code, range, findMasks(node), debugMode);
+			final String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
 
-			result.add(ParsedMethod.builder().setMethodType(ParsedMethod.MethodType.LAMBDA_METHOD)
+			this.result.add(ParsedMethod.builder().setMethodType(ParsedMethod.MethodType.LAMBDA_METHOD)
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
 					.setName("lambda").setRelevantCode(relevantCode).setCodeLines(ParserUtils.getCodeLines(node))
 					.setCodeColumn(range.begin.column).setEmpty(!ParserUtils.containsCode(node.getBody()))

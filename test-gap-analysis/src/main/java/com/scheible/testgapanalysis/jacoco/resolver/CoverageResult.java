@@ -71,30 +71,30 @@ public class CoverageResult {
 	}
 
 	public boolean contains(final ParsedMethod method) {
-		return emptyMethods.contains(method) || resolvedMethods.containsKey(method)
-				|| unresolvedMethods.contains(method)
-				|| ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
+		return this.emptyMethods.contains(method) || this.resolvedMethods.containsKey(method)
+				|| this.unresolvedMethods.contains(method)
+				|| this.ambiguousCoverage.entrySet().stream().anyMatch(e -> e.getValue().contains(method));
 	}
 
 	public boolean isEmpty() {
-		return emptyMethods.isEmpty() && resolvedMethods.isEmpty() && unresolvedMethods.isEmpty()
-				&& ambiguousCoverage.isEmpty();
+		return this.emptyMethods.isEmpty() && this.resolvedMethods.isEmpty() && this.unresolvedMethods.isEmpty()
+				&& this.ambiguousCoverage.isEmpty();
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedMethods() {
-		return Collections.unmodifiableMap(resolvedMethods);
+		return Collections.unmodifiableMap(this.resolvedMethods);
 	}
 
 	public Set<ParsedMethod> getEmptyMethods() {
-		return Collections.unmodifiableSet(emptyMethods);
+		return Collections.unmodifiableSet(this.emptyMethods);
 	}
 
 	public Set<ParsedMethod> getUnresolvedMethods() {
-		return Collections.unmodifiableSet(unresolvedMethods);
+		return Collections.unmodifiableSet(this.unresolvedMethods);
 	}
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
-		return Collections.unmodifiableMap(ambiguousCoverage);
+		return Collections.unmodifiableMap(this.ambiguousCoverage);
 	}
 
 	@Override
@@ -103,10 +103,10 @@ public class CoverageResult {
 			return true;
 		} else if (obj instanceof CoverageResult) {
 			final CoverageResult other = (CoverageResult) obj;
-			return Objects.equals(resolvedMethods, other.resolvedMethods)
-					&& Objects.equals(emptyMethods, other.emptyMethods)
-					&& Objects.equals(unresolvedMethods, other.unresolvedMethods)
-					&& Objects.equals(ambiguousCoverage, other.ambiguousCoverage);
+			return Objects.equals(this.resolvedMethods, other.resolvedMethods)
+					&& Objects.equals(this.emptyMethods, other.emptyMethods)
+					&& Objects.equals(this.unresolvedMethods, other.unresolvedMethods)
+					&& Objects.equals(this.ambiguousCoverage, other.ambiguousCoverage);
 		} else {
 			return false;
 		}
@@ -114,13 +114,13 @@ public class CoverageResult {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(resolvedMethods, emptyMethods, unresolvedMethods, ambiguousCoverage);
+		return Objects.hash(this.resolvedMethods, this.emptyMethods, this.unresolvedMethods, this.ambiguousCoverage);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("resolvedMethods", resolvedMethods)
-				.append("emptyMethods", emptyMethods).append("unresolvedMethods", unresolvedMethods)
-				.append("ambiguousCoverage", ambiguousCoverage).build();
+		return new ToStringBuilder(getClass()).append("resolvedMethods", this.resolvedMethods)
+				.append("emptyMethods", this.emptyMethods).append("unresolvedMethods", this.unresolvedMethods)
+				.append("ambiguousCoverage", this.ambiguousCoverage).build();
 	}
 }

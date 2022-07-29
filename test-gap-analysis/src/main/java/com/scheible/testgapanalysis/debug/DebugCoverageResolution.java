@@ -33,7 +33,7 @@ public class DebugCoverageResolution {
 
 	public DebugCoverageResolutionReport run(final File workDir, final File sourceDir,
 			final Set<File> jaCoCoReportFiles) {
-		final Set<MethodWithCoverageInfo> coverageInfo = jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
+		final Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
 		final ParseResult parseResult = parseMethods(sourceDir);
 
 		final CoverageResolver resolver = CoverageResolver.with(coverageInfo);
@@ -51,7 +51,8 @@ public class DebugCoverageResolution {
 			final Set<File> javaFiles = walkStream.filter(p -> p.toFile().isFile() && p.toString().endsWith(".java"))
 					.map(Path::toFile).collect(Collectors.toSet());
 			final Set<ParsedMethod> methods = javaFiles.stream()
-					.flatMap(f -> javaParser.getMethods(FilesUtils.readUtf8(f)).stream()).collect(Collectors.toSet());
+					.flatMap(f -> this.javaParser.getMethods(FilesUtils.readUtf8(f)).stream())
+					.collect(Collectors.toSet());
 
 			return new ParseResult(methods, javaFiles.size());
 		} catch (IOException ex) {

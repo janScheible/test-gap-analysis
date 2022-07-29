@@ -19,11 +19,11 @@ public class CoverageReportMethod {
 	}
 
 	public String getCoveredMethodName() {
-		return coveredMethodName;
+		return this.coveredMethodName;
 	}
 
 	public int getCoveredMethodLine() {
-		return coveredMethodLine;
+		return this.coveredMethodLine;
 	}
 
 	@Override
@@ -32,8 +32,8 @@ public class CoverageReportMethod {
 			return true;
 		} else if (obj instanceof CoverageReportMethod) {
 			final CoverageReportMethod other = (CoverageReportMethod) obj;
-			return Objects.equals(coveredMethodName, other.coveredMethodName)
-					&& coveredMethodLine == other.coveredMethodLine;
+			return Objects.equals(this.coveredMethodName, other.coveredMethodName)
+					&& this.coveredMethodLine == other.coveredMethodLine;
 		} else {
 			return false;
 		}
@@ -41,12 +41,12 @@ public class CoverageReportMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(coveredMethodName, coveredMethodLine);
+		return Objects.hash(this.coveredMethodName, this.coveredMethodLine);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("coveredMethodName", coveredMethodName)
-				.append("coveredMethodLine", coveredMethodLine).build();
+		return new ToStringBuilder(getClass()).append("coveredMethodName", this.coveredMethodName)
+				.append("coveredMethodLine", this.coveredMethodLine).build();
 	}
 }

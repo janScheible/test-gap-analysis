@@ -21,7 +21,7 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 	}
 
 	public ParsedMethod getParsedMethod() {
-		return method;
+		return this.method;
 	}
 
 	public static Set<ParsedMethod> unwrap(final Set<MethodCompareWrapper> methodWrappers) {
@@ -30,10 +30,10 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 
 	@Override
 	public int compareTo(final MethodCompareWrapper other) {
-		if (method.getTopLevelTypeFqn().equals(other.method.getTopLevelTypeFqn())) {
-			return method.getName().compareTo(other.method.getName());
+		if (this.method.getTopLevelTypeFqn().equals(other.method.getTopLevelTypeFqn())) {
+			return this.method.getName().compareTo(other.method.getName());
 		} else {
-			return method.getTopLevelTypeFqn().compareTo(other.method.getTopLevelTypeFqn());
+			return this.method.getTopLevelTypeFqn().compareTo(other.method.getTopLevelTypeFqn());
 		}
 	}
 
@@ -43,12 +43,12 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 			return true;
 		} else if (obj instanceof MethodCompareWrapper) {
 			final MethodCompareWrapper otherWrapper = (MethodCompareWrapper) obj;
-			return Objects.equals(method.getArgumentTypes(), otherWrapper.method.getArgumentTypes())
-					&& Objects.equals(method.getName(), otherWrapper.method.getName())
-					&& Objects.equals(method.getRelevantCode(), otherWrapper.method.getRelevantCode())
-					&& Objects.equals(method.getScope(), otherWrapper.method.getScope())
-					&& Objects.equals(method.getTopLevelTypeFqn(), otherWrapper.method.getTopLevelTypeFqn())
-					&& Objects.equals(method.getMethodType(), otherWrapper.method.getMethodType());
+			return Objects.equals(this.method.getArgumentTypes(), otherWrapper.method.getArgumentTypes())
+					&& Objects.equals(this.method.getName(), otherWrapper.method.getName())
+					&& Objects.equals(this.method.getRelevantCode(), otherWrapper.method.getRelevantCode())
+					&& Objects.equals(this.method.getScope(), otherWrapper.method.getScope())
+					&& Objects.equals(this.method.getTopLevelTypeFqn(), otherWrapper.method.getTopLevelTypeFqn())
+					&& Objects.equals(this.method.getMethodType(), otherWrapper.method.getMethodType());
 		} else {
 			return false;
 		}
@@ -56,12 +56,12 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(method.getArgumentTypes(), method.getName(), method.getRelevantCode(), method.getScope(),
-				method.getTopLevelTypeFqn(), method.getMethodType());
+		return Objects.hash(this.method.getArgumentTypes(), this.method.getName(), this.method.getRelevantCode(),
+				this.method.getScope(), this.method.getTopLevelTypeFqn(), this.method.getMethodType());
 	}
 
 	@Override
 	public String toString() {
-		return method.toString();
+		return this.method.toString();
 	}
 }

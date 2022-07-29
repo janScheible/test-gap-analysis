@@ -56,7 +56,7 @@ public class CoverageResolver {
 	CoverageResult resolveType(final TopLevelType type, final Set<ParsedMethod> methods) {
 		final CoverageResult result = new CoverageResult();
 
-		final Set<MethodWithCoverageInfo> coverage = coverageReport.getOrDefault(type, Collections.emptySet());
+		final Set<MethodWithCoverageInfo> coverage = this.coverageReport.getOrDefault(type, Collections.emptySet());
 
 		result.add(resolveInitializers(filter(methods, ParsedMethod::isInitializer), coverage));
 		result.add(resolveStaticInitializers(filter(methods, ParsedMethod::isStaticInitializer), coverage));

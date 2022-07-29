@@ -12,32 +12,31 @@ public class ToStringBuilder {
 	private boolean appended = false;
 
 	public ToStringBuilder(final Class<?> clazz) {
-		stringBuilder.append(clazz.getSimpleName()).append('[');
-
+		this.stringBuilder.append(clazz.getSimpleName()).append('[');
 	}
 
 	public ToStringBuilder append(final String fieldName, final Object value) {
-		if (appended) {
-			stringBuilder.append(", ");
+		if (this.appended) {
+			this.stringBuilder.append(", ");
 		}
-		appended = true;
+		this.appended = true;
 
-		stringBuilder.append(fieldName).append('=');
+		this.stringBuilder.append(fieldName).append('=');
 
 		if (value instanceof String) {
-			stringBuilder.append('\'');
+			this.stringBuilder.append('\'');
 		}
-		stringBuilder.append(value);
+		this.stringBuilder.append(value);
 		if (value instanceof String) {
-			stringBuilder.append('\'');
+			this.stringBuilder.append('\'');
 		}
 
 		return this;
 	}
 
 	public String build() {
-		stringBuilder.append(']');
-		return stringBuilder.toString();
+		this.stringBuilder.append(']');
+		return this.stringBuilder.toString();
 	}
 
 	public static String shorten(final String value, final int maxLenght) {

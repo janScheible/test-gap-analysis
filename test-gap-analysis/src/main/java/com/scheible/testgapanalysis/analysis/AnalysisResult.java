@@ -37,23 +37,23 @@ public class AnalysisResult {
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getCoveredMethods() {
-		return coveredMethods;
+		return this.coveredMethods;
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getUncoveredMethods() {
-		return uncoveredMethods;
+		return this.uncoveredMethods;
 	}
 
 	public Set<ParsedMethod> getEmptyMethods() {
-		return emptyMethods;
+		return this.emptyMethods;
 	}
 
 	public Set<ParsedMethod> getUnresolvableMethods() {
-		return unresolvableMethods;
+		return this.unresolvableMethods;
 	}
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguouslyResolvedCoverage() {
-		return ambiguouslyResolvedCoverage;
+		return this.ambiguouslyResolvedCoverage;
 	}
 
 	@Override
@@ -62,11 +62,11 @@ public class AnalysisResult {
 			return true;
 		} else if (obj instanceof AnalysisResult) {
 			final AnalysisResult other = (AnalysisResult) obj;
-			return Objects.equals(coveredMethods, other.coveredMethods)
-					&& Objects.equals(uncoveredMethods, other.uncoveredMethods)
-					&& Objects.equals(emptyMethods, other.emptyMethods)
-					&& Objects.equals(unresolvableMethods, other.unresolvableMethods)
-					&& Objects.equals(ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
+			return Objects.equals(this.coveredMethods, other.coveredMethods)
+					&& Objects.equals(this.uncoveredMethods, other.uncoveredMethods)
+					&& Objects.equals(this.emptyMethods, other.emptyMethods)
+					&& Objects.equals(this.unresolvableMethods, other.unresolvableMethods)
+					&& Objects.equals(this.ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
 		} else {
 			return false;
 		}
@@ -74,15 +74,15 @@ public class AnalysisResult {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(coveredMethods, uncoveredMethods, emptyMethods, unresolvableMethods,
-				ambiguouslyResolvedCoverage);
+		return Objects.hash(this.coveredMethods, this.uncoveredMethods, this.emptyMethods, this.unresolvableMethods,
+				this.ambiguouslyResolvedCoverage);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("coveredMethods", coveredMethods)
-				.append("uncoveredMethods", uncoveredMethods).append("emptyMethods", emptyMethods)
-				.append("unresolvableMethods", unresolvableMethods)
-				.append("ambiguouslyResolvedCoverage", ambiguouslyResolvedCoverage).build();
+		return new ToStringBuilder(getClass()).append("coveredMethods", this.coveredMethods)
+				.append("uncoveredMethods", this.uncoveredMethods).append("emptyMethods", this.emptyMethods)
+				.append("unresolvableMethods", this.unresolvableMethods)
+				.append("ambiguouslyResolvedCoverage", this.ambiguouslyResolvedCoverage).build();
 	}
 }

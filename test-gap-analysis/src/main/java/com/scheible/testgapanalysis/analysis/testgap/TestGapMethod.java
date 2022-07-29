@@ -39,27 +39,27 @@ public class TestGapMethod {
 	}
 
 	public String getTopLevelTypeFqn() {
-		return topLevelTypeFqn;
+		return this.topLevelTypeFqn;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public int getSourceLine() {
-		return sourceLine;
+		return this.sourceLine;
 	}
 
 	public int getSourceColumn() {
-		return sourceColumn;
+		return this.sourceColumn;
 	}
 
 	public Optional<String> getCoveredMethodName() {
-		return coveredMethodName;
+		return this.coveredMethodName;
 	}
 
 	public Optional<Integer> getCoveredMethodLine() {
-		return coveredMethodLine;
+		return this.coveredMethodLine;
 	}
 
 	@Override
@@ -68,10 +68,11 @@ public class TestGapMethod {
 			return true;
 		} else if (obj instanceof TestGapMethod) {
 			final TestGapMethod other = (TestGapMethod) obj;
-			return Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn)
-					&& Objects.equals(description, other.description) && sourceLine == other.sourceLine
-					&& sourceColumn == other.sourceColumn && Objects.equals(coveredMethodName, other.coveredMethodName)
-					&& Objects.equals(coveredMethodLine, other.coveredMethodLine);
+			return Objects.equals(this.topLevelTypeFqn, other.topLevelTypeFqn)
+					&& Objects.equals(this.description, other.description) && this.sourceLine == other.sourceLine
+					&& this.sourceColumn == other.sourceColumn
+					&& Objects.equals(this.coveredMethodName, other.coveredMethodName)
+					&& Objects.equals(this.coveredMethodLine, other.coveredMethodLine);
 		} else {
 			return false;
 		}
@@ -79,15 +80,15 @@ public class TestGapMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(topLevelTypeFqn, description, sourceLine, sourceColumn, coveredMethodName,
-				coveredMethodLine);
+		return Objects.hash(this.topLevelTypeFqn, this.description, this.sourceLine, this.sourceColumn,
+				this.coveredMethodName, this.coveredMethodLine);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("topLevelTypeFqn", topLevelTypeFqn)
-				.append("description", description).append("sourceLine", sourceLine)
-				.append("sourceColumn", sourceColumn).append("coveredMethodName", coveredMethodName)
-				.append("coveredMethodLine", coveredMethodLine).build();
+		return new ToStringBuilder(getClass()).append("topLevelTypeFqn", this.topLevelTypeFqn)
+				.append("description", this.description).append("sourceLine", this.sourceLine)
+				.append("sourceColumn", this.sourceColumn).append("coveredMethodName", this.coveredMethodName)
+				.append("coveredMethodLine", this.coveredMethodLine).build();
 	}
 }

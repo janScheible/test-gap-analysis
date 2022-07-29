@@ -35,12 +35,12 @@ public class Analysis {
 
 		// all methods of new or changed files in the new state compared to the old state
 		final Set<MethodCompareWrapper> newContentMethods = newOrChangedFilesWithContent.entrySet().stream()
-				.flatMap(e -> javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
+				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// all methods of changed files in the new state that already existed in the old state
 		final Set<MethodCompareWrapper> oldContentMethods = status.getOldContents().entrySet().stream()
-				.flatMap(e -> javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
+				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
 				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// @formatter:off

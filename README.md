@@ -210,7 +210,7 @@ Unresolvable methods (no coverage information available):
     1. exception: completely stateless `*Utils` classes with static methods only
         1. utility classes must be `abstract` and have a private default constructor
     1. exception: real constants with names in upper case delimited by underscores
-1. `logger` has to be protected final but not static: `protected final Logger logger = LoggerFactory.getLogger(getClass());` (see https://www.slf4j.org/faq.html#declared_static)
+1. `logger` has to be `protected final` but not `static`: `protected final Logger logger = LoggerFactory.getLogger(getClass());` (see https://www.slf4j.org/faq.html#declared_static)
 1. restrict file, method and lambda lengths to reasonable values
 1. code dependency
     1. no code cycles on package level
@@ -254,3 +254,5 @@ Unresolvable methods (no coverage information available):
         1. all other primitive types and enums with `==`
         1. object references with `Objects.equals(...)`
     1. `hashCode()` must use `Objects.hash(...)`
+1. always use `this.` for class fields but never for instance methods (same approach as https://github.com/spring-projects/spring-framework/wiki/Code-Style#field-and-method-references)
+1. `static` fields and methods of own class must never be prefixed with the own class name

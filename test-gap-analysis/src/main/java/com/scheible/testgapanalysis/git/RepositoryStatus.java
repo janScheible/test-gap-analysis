@@ -43,27 +43,27 @@ public class RepositoryStatus {
 	}
 
 	public String getOldCommitHash() {
-		return oldCommitHash;
+		return this.oldCommitHash;
 	}
 
 	public Optional<String> getNewCommitHash() {
-		return newCommitHash;
+		return this.newCommitHash;
 	}
 
 	public Set<String> getAddedFiles() {
-		return addedFiles;
+		return this.addedFiles;
 	}
 
 	public Set<String> getChangedFiles() {
-		return changedFiles;
+		return this.changedFiles;
 	}
 
 	public Map<String, String> getOldContents() {
-		return oldContents;
+		return this.oldContents;
 	}
 
 	public Map<String, String> getNewContents() {
-		return newContents;
+		return this.newContents;
 	}
 
 	@Override
@@ -72,10 +72,12 @@ public class RepositoryStatus {
 			return true;
 		} else if (obj instanceof RepositoryStatus) {
 			final RepositoryStatus other = (RepositoryStatus) obj;
-			return Objects.equals(oldCommitHash, other.oldCommitHash)
-					&& Objects.equals(newCommitHash, other.newCommitHash)
-					&& Objects.equals(addedFiles, other.addedFiles) && Objects.equals(changedFiles, other.changedFiles)
-					&& Objects.equals(oldContents, other.oldContents) && Objects.equals(newContents, other.newContents);
+			return Objects.equals(this.oldCommitHash, other.oldCommitHash)
+					&& Objects.equals(this.newCommitHash, other.newCommitHash)
+					&& Objects.equals(this.addedFiles, other.addedFiles)
+					&& Objects.equals(this.changedFiles, other.changedFiles)
+					&& Objects.equals(this.oldContents, other.oldContents)
+					&& Objects.equals(this.newContents, other.newContents);
 		} else {
 			return false;
 		}
@@ -83,7 +85,8 @@ public class RepositoryStatus {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(oldCommitHash, newCommitHash, addedFiles, changedFiles, oldContents, newContents);
+		return Objects.hash(this.oldCommitHash, this.newCommitHash, this.addedFiles, this.changedFiles,
+				this.oldContents, this.newContents);
 	}
 
 	@Override
@@ -94,9 +97,9 @@ public class RepositoryStatus {
 		final Function<Map<String, String>, Map<String, String>> shortener = map -> map.entrySet().stream()
 				.map(shortenAndRemoveNewlines).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		return new ToStringBuilder(getClass()).append("oldCommitHash", oldCommitHash)
-				.append("newCommitHash", newCommitHash).append("addedFiles", addedFiles)
-				.append("changedFiles", changedFiles).append("oldContents", shortener.apply(oldContents))
-				.append("newContents", shortener.apply(newContents)).build();
+		return new ToStringBuilder(getClass()).append("oldCommitHash", this.oldCommitHash)
+				.append("newCommitHash", this.newCommitHash).append("addedFiles", this.addedFiles)
+				.append("changedFiles", this.changedFiles).append("oldContents", shortener.apply(this.oldContents))
+				.append("newContents", shortener.apply(this.newContents)).build();
 	}
 }

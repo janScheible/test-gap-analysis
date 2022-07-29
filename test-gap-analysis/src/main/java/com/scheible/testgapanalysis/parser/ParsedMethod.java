@@ -45,7 +45,9 @@ public class ParsedMethod {
 		this.topLevelTypeFqn = builder.topLevelTypeFqn;
 		this.topLevelSimpleName = JavaMethodUtils.getSimpleName(builder.topLevelTypeFqn, ".");
 		this.scope = Collections.unmodifiableList(new ArrayList<>(builder.scope));
-		this.enclosingSimpleName = scope.isEmpty() ? topLevelSimpleName : builder.scope.get(builder.scope.size() - 1);
+		this.enclosingSimpleName = this.scope.isEmpty()
+				? this.topLevelSimpleName
+				: builder.scope.get(builder.scope.size() - 1);
 		this.name = builder.name;
 		this.relevantCode = builder.relevantCode;
 		this.codeLines = Collections
@@ -57,7 +59,7 @@ public class ParsedMethod {
 				? new ArrayList<>(builder.argumentTypes)
 				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()));
 
-		argumentCount = argumentTypes.size();
+		this.argumentCount = this.argumentTypes.size();
 		this.typeParameters = Collections.unmodifiableMap(
 				builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : Collections.emptyMap());
 		this.outerDeclaringType = builder.outerDeclaringType;
@@ -68,23 +70,23 @@ public class ParsedMethod {
 	}
 
 	public boolean isInitializer() {
-		return methodType == MethodType.INITIALIZER;
+		return this.methodType == MethodType.INITIALIZER;
 	}
 
 	public boolean isStaticInitializer() {
-		return methodType == MethodType.STATIC_INITIALIZER;
+		return this.methodType == MethodType.STATIC_INITIALIZER;
 	}
 
 	public boolean isConstructor() {
-		return methodType == MethodType.CONSTRUCTOR;
+		return this.methodType == MethodType.CONSTRUCTOR;
 	}
 
 	public boolean isEnumConstructor() {
-		return methodType == MethodType.ENUM_CONSTRUCTOR;
+		return this.methodType == MethodType.ENUM_CONSTRUCTOR;
 	}
 
 	public boolean isInnerClassConstructor() {
-		return methodType == MethodType.INNER_CLASS_CONSTRUCTOR;
+		return this.methodType == MethodType.INNER_CLASS_CONSTRUCTOR;
 	}
 
 	public boolean isAnyConstructor() {
@@ -92,11 +94,11 @@ public class ParsedMethod {
 	}
 
 	public boolean isMethod() {
-		return methodType == MethodType.METHOD;
+		return this.methodType == MethodType.METHOD;
 	}
 
 	public boolean isStaticMethod() {
-		return methodType == MethodType.STATIC_METHOD;
+		return this.methodType == MethodType.STATIC_METHOD;
 	}
 
 	public boolean isAnyNonLambdaMethod() {
@@ -104,11 +106,11 @@ public class ParsedMethod {
 	}
 
 	public boolean isLambdaMethod() {
-		return methodType == MethodType.LAMBDA_METHOD;
+		return this.methodType == MethodType.LAMBDA_METHOD;
 	}
 
 	public boolean containsLine(final int line) {
-		for (final int current : codeLines) {
+		for (final int current : this.codeLines) {
 			if (current == line) {
 				return true;
 			}
@@ -118,7 +120,7 @@ public class ParsedMethod {
 	}
 
 	public int getFirstCodeLine() {
-		return codeLines.get(0);
+		return this.codeLines.get(0);
 	}
 
 	public String getDescription() {
@@ -141,66 +143,66 @@ public class ParsedMethod {
 		} else if (isLambdaMethod()) {
 			description = " lambda method";
 		} else {
-			description = " unknown type '" + methodType + "'";
+			description = " unknown type '" + this.methodType + "'";
 		}
 
 		return description;
 	}
 
 	public MethodType getMethodType() {
-		return methodType;
+		return this.methodType;
 	}
 
 	public String getTopLevelTypeFqn() {
-		return topLevelTypeFqn;
+		return this.topLevelTypeFqn;
 	}
 
 	public String getTopLevelSimpleName() {
-		return topLevelSimpleName;
+		return this.topLevelSimpleName;
 	}
 
 	public List<String> getScope() {
-		return scope;
+		return this.scope;
 	}
 
 	public String getEnclosingSimpleName() {
-		return enclosingSimpleName;
+		return this.enclosingSimpleName;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getRelevantCode() {
-		return relevantCode;
+		return this.relevantCode;
 	}
 
 	public List<Integer> getCodeLines() {
-		return codeLines;
+		return this.codeLines;
 	}
 
 	public int getCodeColumn() {
-		return codeColumn;
+		return this.codeColumn;
 	}
 
 	public boolean isEmpty() {
-		return empty;
+		return this.empty;
 	}
 
 	public List<String> getArgumentTypes() {
-		return argumentTypes;
+		return this.argumentTypes;
 	}
 
 	public int getArgumentCount() {
-		return argumentCount;
+		return this.argumentCount;
 	}
 
 	public Map<String, String> getTypeParameters() {
-		return typeParameters;
+		return this.typeParameters;
 	}
 
 	public Optional<String> getOuterDeclaringType() {
-		return outerDeclaringType;
+		return this.outerDeclaringType;
 	}
 
 	@Override
@@ -210,16 +212,17 @@ public class ParsedMethod {
 			return true;
 		} else if (obj instanceof ParsedMethod) {
 			final ParsedMethod other = (ParsedMethod) obj;
-			return Objects.equals(methodType, other.methodType)
-					&& Objects.equals(topLevelTypeFqn, other.topLevelTypeFqn)
-					&& Objects.equals(topLevelSimpleName, other.topLevelSimpleName)
-					&& Objects.equals(scope, other.scope)
-					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
-					&& Objects.equals(name, other.name) && Objects.equals(relevantCode, other.relevantCode)
-					&& Objects.equals(codeLines, other.codeLines) && codeColumn == other.codeColumn
-					&& empty == other.empty && Objects.equals(argumentTypes, other.argumentTypes)
-					&& argumentCount == other.argumentCount && Objects.equals(typeParameters, other.typeParameters)
-					&& Objects.equals(outerDeclaringType, other.outerDeclaringType);
+			return Objects.equals(this.methodType, other.methodType)
+					&& Objects.equals(this.topLevelTypeFqn, other.topLevelTypeFqn)
+					&& Objects.equals(this.topLevelSimpleName, other.topLevelSimpleName)
+					&& Objects.equals(this.scope, other.scope)
+					&& Objects.equals(this.enclosingSimpleName, other.enclosingSimpleName)
+					&& Objects.equals(this.name, other.name) && Objects.equals(this.relevantCode, other.relevantCode)
+					&& Objects.equals(this.codeLines, other.codeLines) && this.codeColumn == other.codeColumn
+					&& this.empty == other.empty && Objects.equals(this.argumentTypes, other.argumentTypes)
+					&& this.argumentCount == other.argumentCount
+					&& Objects.equals(this.typeParameters, other.typeParameters)
+					&& Objects.equals(this.outerDeclaringType, other.outerDeclaringType);
 		} else {
 			return false;
 		}
@@ -227,19 +230,21 @@ public class ParsedMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(methodType, topLevelTypeFqn, topLevelSimpleName, scope, enclosingSimpleName, name,
-				relevantCode, codeLines, codeColumn, empty, argumentTypes, argumentCount, typeParameters,
-				outerDeclaringType);
+		return Objects.hash(this.methodType, this.topLevelTypeFqn, this.topLevelSimpleName, this.scope,
+				this.enclosingSimpleName, this.name, this.relevantCode, this.codeLines, this.codeColumn, this.empty,
+				this.argumentTypes, this.argumentCount, this.typeParameters, this.outerDeclaringType);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("methodType", methodType)
-				.append("topLevelTypeFqn", topLevelTypeFqn).append("topLevelSimpleName", topLevelSimpleName)
-				.append("scope", scope).append("enclosingSimpleName", enclosingSimpleName).append("name", name)
-				.append("relevantCode", ToStringBuilder.shorten(relevantCode.replaceAll("\\R", ""), 30))
-				.append("codeLines", codeLines).append("codeColumn", codeColumn).append("empty", empty)
-				.append("argumentTypes", argumentTypes).append("argumentCount", argumentCount)
-				.append("typeParameters", typeParameters).append("outerDeclaringType", outerDeclaringType).build();
+		return new ToStringBuilder(getClass()).append("methodType", this.methodType)
+				.append("topLevelTypeFqn", this.topLevelTypeFqn).append("topLevelSimpleName", this.topLevelSimpleName)
+				.append("scope", this.scope).append("enclosingSimpleName", this.enclosingSimpleName)
+				.append("name", this.name)
+				.append("relevantCode", ToStringBuilder.shorten(this.relevantCode.replaceAll("\\R", ""), 30))
+				.append("codeLines", this.codeLines).append("codeColumn", this.codeColumn).append("empty", this.empty)
+				.append("argumentTypes", this.argumentTypes).append("argumentCount", this.argumentCount)
+				.append("typeParameters", this.typeParameters).append("outerDeclaringType", this.outerDeclaringType)
+				.build();
 	}
 }

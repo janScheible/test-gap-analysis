@@ -25,7 +25,7 @@ public class MethodWithCoverageInfo {
 			final int coveredInstructionCount) {
 		this.className = className;
 		this.simpleClassName = JavaMethodUtils.getSimpleName(className, "/");
-		this.enclosingSimpleName = JavaMethodUtils.getSimpleName(simpleClassName, "$");
+		this.enclosingSimpleName = JavaMethodUtils.getSimpleName(this.simpleClassName, "$");
 		this.name = name;
 		this.description = description;
 		this.line = line;
@@ -72,23 +72,23 @@ public class MethodWithCoverageInfo {
 	}
 
 	public boolean isLambdaMethod() {
-		return name.startsWith("lambda$");
+		return this.name.startsWith("lambda$");
 	}
 
 	public Optional<Integer> getLambdaIndex() {
 		if (isLambdaMethod()) {
-			return Optional.of(Integer.valueOf(name.substring(name.lastIndexOf('$') + 1)));
+			return Optional.of(Integer.valueOf(this.name.substring(this.name.lastIndexOf('$') + 1)));
 		} else {
 			return Optional.empty();
 		}
 	}
 
 	public boolean isStaticInitializer() {
-		return "<clinit>".equals(name);
+		return "<clinit>".equals(this.name);
 	}
 
 	public boolean isConstructor() {
-		return "<init>".equals(name);
+		return "<init>".equals(this.name);
 	}
 
 	public boolean isNonLambdaMethod() {
@@ -96,31 +96,31 @@ public class MethodWithCoverageInfo {
 	}
 
 	public String getClassName() {
-		return className;
+		return this.className;
 	}
 
 	public String getSimpleClassName() {
-		return simpleClassName;
+		return this.simpleClassName;
 	}
 
 	public String getEnclosingSimpleName() {
-		return enclosingSimpleName;
+		return this.enclosingSimpleName;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public int getLine() {
-		return line;
+		return this.line;
 	}
 
 	public int getCoveredInstructionCount() {
-		return coveredInstructionCount;
+		return this.coveredInstructionCount;
 	}
 
 	@Override
@@ -129,10 +129,11 @@ public class MethodWithCoverageInfo {
 			return true;
 		} else if (obj instanceof MethodWithCoverageInfo) {
 			final MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
-			return Objects.equals(className, other.className) && Objects.equals(simpleClassName, other.simpleClassName)
-					&& Objects.equals(enclosingSimpleName, other.enclosingSimpleName)
-					&& Objects.equals(name, other.name) && Objects.equals(description, other.description)
-					&& line == other.line && coveredInstructionCount == other.coveredInstructionCount;
+			return Objects.equals(this.className, other.className)
+					&& Objects.equals(this.simpleClassName, other.simpleClassName)
+					&& Objects.equals(this.enclosingSimpleName, other.enclosingSimpleName)
+					&& Objects.equals(this.name, other.name) && Objects.equals(this.description, other.description)
+					&& this.line == other.line && this.coveredInstructionCount == other.coveredInstructionCount;
 		} else {
 			return false;
 		}
@@ -140,14 +141,15 @@ public class MethodWithCoverageInfo {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(className, simpleClassName, enclosingSimpleName, name, description, line,
-				coveredInstructionCount);
+		return Objects.hash(this.className, this.simpleClassName, this.enclosingSimpleName, this.name, this.description,
+				this.line, this.coveredInstructionCount);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("className", className).append("simpleClassName", simpleClassName)
-				.append("enclosingSimpleName", enclosingSimpleName).append("name", name).append("line", line)
-				.append("description", description).append("coveredInstructionCount", coveredInstructionCount).build();
+		return new ToStringBuilder(getClass()).append("className", this.className)
+				.append("simpleClassName", this.simpleClassName).append("enclosingSimpleName", this.enclosingSimpleName)
+				.append("name", this.name).append("line", this.line).append("description", this.description)
+				.append("coveredInstructionCount", this.coveredInstructionCount).build();
 	}
 }

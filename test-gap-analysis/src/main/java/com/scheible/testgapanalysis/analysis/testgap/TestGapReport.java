@@ -51,23 +51,24 @@ public class TestGapReport {
 
 		this.oldCommitHash = builder.oldCommitHash;
 		this.newCommitHash = builder.newCommitHash;
-		compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
+		this.compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
 
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
 		this.jaCoCoCoverageCount = builder.jaCoCoCoverageCount;
 
 		this.newOrChangedFiles = Collections.unmodifiableSet(new HashSet<>(builder.newOrChangedFiles));
-		consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped()).count();
+		this.consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped())
+				.count();
 
-		coveredMethodsCount = builder.coveredMethods.size();
-		uncoveredMethodsCount = builder.uncoveredMethods.size();
-		coverageRatio = coveredMethodsCount + uncoveredMethodsCount > 0
-				? (double) coveredMethodsCount / (coveredMethodsCount + uncoveredMethodsCount)
+		this.coveredMethodsCount = builder.coveredMethods.size();
+		this.uncoveredMethodsCount = builder.uncoveredMethods.size();
+		this.coverageRatio = this.coveredMethodsCount + this.uncoveredMethodsCount > 0
+				? (double) this.coveredMethodsCount / (this.coveredMethodsCount + this.uncoveredMethodsCount)
 				: 1.0;
-		emptyMethodsCount = builder.emptyMethods.size();
+		this.emptyMethodsCount = builder.emptyMethods.size();
 
-		unresolvableMethodsCount = builder.unresolvableMethods.size();
-		ambiguouslyResolvedCount = builder.ambiguouslyResolvedCoverage.size();
+		this.unresolvableMethodsCount = builder.unresolvableMethods.size();
+		this.ambiguouslyResolvedCount = builder.ambiguouslyResolvedCoverage.size();
 
 		this.coveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.coveredMethods));
 		this.uncoveredMethods = Collections.unmodifiableSet(new HashSet<>(builder.uncoveredMethods));
@@ -83,79 +84,79 @@ public class TestGapReport {
 	}
 
 	public String getWorkDir() {
-		return workDir;
+		return this.workDir;
 	}
 
 	public String getOldCommitHash() {
-		return oldCommitHash;
+		return this.oldCommitHash;
 	}
 
 	public Optional<String> getNewCommitHash() {
-		return newCommitHash;
+		return this.newCommitHash;
 	}
 
 	public Boolean getCompareWithWorkingCopyChanges() {
-		return compareWithWorkingCopyChanges;
+		return this.compareWithWorkingCopyChanges;
 	}
 
 	public Set<String> getJaCoCoReportFiles() {
-		return jaCoCoReportFiles;
+		return this.jaCoCoReportFiles;
 	}
 
 	public int getJaCoCoCoverageCount() {
-		return jaCoCoCoverageCount;
+		return this.jaCoCoCoverageCount;
 	}
 
 	public Set<NewOrChangedFile> getNewOrChangedFiles() {
-		return newOrChangedFiles;
+		return this.newOrChangedFiles;
 	}
 
 	public int getConsideredNewOrChangedFilesCount() {
-		return consideredNewOrChangedFilesCount;
+		return this.consideredNewOrChangedFilesCount;
 	}
 
 	public int getCoveredMethodsCount() {
-		return coveredMethodsCount;
+		return this.coveredMethodsCount;
 	}
 
 	public int getUncoveredMethodsCount() {
-		return uncoveredMethodsCount;
+		return this.uncoveredMethodsCount;
 	}
 
 	public double getCoverageRatio() {
-		return coverageRatio;
+		return this.coverageRatio;
 	}
 
 	public int getEmptyMethodsCount() {
-		return emptyMethodsCount;
+		return this.emptyMethodsCount;
 	}
 
 	public int getUnresolvableMethodsCount() {
-		return unresolvableMethodsCount;
+		return this.unresolvableMethodsCount;
 	}
 
 	public int getAmbiguouslyResolvedCount() {
-		return ambiguouslyResolvedCount;
+		return this.ambiguouslyResolvedCount;
 	}
 
 	public Set<TestGapMethod> getCoveredMethods() {
-		return coveredMethods;
+		return this.coveredMethods;
 	}
 
 	public Set<TestGapMethod> getUncoveredMethods() {
-		return uncoveredMethods;
+		return this.uncoveredMethods;
 	}
 
 	public Set<TestGapMethod> getEmptyMethods() {
-		return emptyMethods;
+		return this.emptyMethods;
 	}
 
 	public Set<TestGapMethod> getUnresolvableMethods() {
-		return unresolvableMethods;
+		return this.unresolvableMethods;
 	}
 
 	public Map<CoverageReportMethod, Set<TestGapMethod>> getAmbiguouslyResolvedCoverage() {
-		return ambiguouslyResolvedCoverage;
+		return this.ambiguouslyResolvedCoverage;
 	}
 
 	@Override
@@ -165,24 +166,25 @@ public class TestGapReport {
 			return true;
 		} else if (obj instanceof TestGapReport) {
 			final TestGapReport other = (TestGapReport) obj;
-			return Objects.equals(workDir, other.workDir) && Objects.equals(oldCommitHash, other.oldCommitHash)
-					&& Objects.equals(newCommitHash, other.newCommitHash)
-					&& Objects.equals(compareWithWorkingCopyChanges, other.compareWithWorkingCopyChanges)
-					&& Objects.equals(jaCoCoReportFiles, other.jaCoCoReportFiles)
-					&& jaCoCoCoverageCount == other.jaCoCoCoverageCount
-					&& Objects.equals(newOrChangedFiles, other.newOrChangedFiles)
-					&& consideredNewOrChangedFilesCount == other.consideredNewOrChangedFilesCount
-					&& coveredMethodsCount == other.coveredMethodsCount
-					&& uncoveredMethodsCount == other.uncoveredMethodsCount
-					&& EqualsUtils.equals(coverageRatio, other.coverageRatio)
-					&& emptyMethodsCount == other.emptyMethodsCount
-					&& unresolvableMethodsCount == other.unresolvableMethodsCount
-					&& ambiguouslyResolvedCount == other.ambiguouslyResolvedCount
-					&& Objects.equals(coveredMethods, other.coveredMethods)
-					&& Objects.equals(uncoveredMethods, other.uncoveredMethods)
-					&& Objects.equals(emptyMethods, other.emptyMethods)
-					&& Objects.equals(unresolvableMethods, other.unresolvableMethods)
-					&& Objects.equals(ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
+			return Objects.equals(this.workDir, other.workDir)
+					&& Objects.equals(this.oldCommitHash, other.oldCommitHash)
+					&& Objects.equals(this.newCommitHash, other.newCommitHash)
+					&& Objects.equals(this.compareWithWorkingCopyChanges, other.compareWithWorkingCopyChanges)
+					&& Objects.equals(this.jaCoCoReportFiles, other.jaCoCoReportFiles)
+					&& this.jaCoCoCoverageCount == other.jaCoCoCoverageCount
+					&& Objects.equals(this.newOrChangedFiles, other.newOrChangedFiles)
+					&& this.consideredNewOrChangedFilesCount == other.consideredNewOrChangedFilesCount
+					&& this.coveredMethodsCount == other.coveredMethodsCount
+					&& this.uncoveredMethodsCount == other.uncoveredMethodsCount
+					&& EqualsUtils.equals(this.coverageRatio, other.coverageRatio)
+					&& this.emptyMethodsCount == other.emptyMethodsCount
+					&& this.unresolvableMethodsCount == other.unresolvableMethodsCount
+					&& this.ambiguouslyResolvedCount == other.ambiguouslyResolvedCount
+					&& Objects.equals(this.coveredMethods, other.coveredMethods)
+					&& Objects.equals(this.uncoveredMethods, other.uncoveredMethods)
+					&& Objects.equals(this.emptyMethods, other.emptyMethods)
+					&& Objects.equals(this.unresolvableMethods, other.unresolvableMethods)
+					&& Objects.equals(this.ambiguouslyResolvedCoverage, other.ambiguouslyResolvedCoverage);
 		} else {
 			return false;
 		}
@@ -190,28 +192,30 @@ public class TestGapReport {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(workDir, oldCommitHash, newCommitHash, compareWithWorkingCopyChanges, jaCoCoReportFiles,
-				jaCoCoCoverageCount, newOrChangedFiles, consideredNewOrChangedFilesCount, coveredMethodsCount,
-				uncoveredMethodsCount, coverageRatio, emptyMethodsCount, unresolvableMethodsCount,
-				ambiguouslyResolvedCount, coveredMethods, uncoveredMethods, emptyMethods, unresolvableMethods,
-				ambiguouslyResolvedCoverage);
+		return Objects.hash(this.workDir, this.oldCommitHash, this.newCommitHash, this.compareWithWorkingCopyChanges,
+				this.jaCoCoReportFiles, this.jaCoCoCoverageCount, this.newOrChangedFiles,
+				this.consideredNewOrChangedFilesCount, this.coveredMethodsCount, this.uncoveredMethodsCount,
+				this.coverageRatio, this.emptyMethodsCount, this.unresolvableMethodsCount,
+				this.ambiguouslyResolvedCount, this.coveredMethods, this.uncoveredMethods, this.emptyMethods,
+				this.unresolvableMethods, this.ambiguouslyResolvedCoverage);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("workDir", workDir).append("oldCommitHash", oldCommitHash)
-				.append("newCommitHash", newCommitHash)
-				.append("compareWithWorkingCopyChanges", compareWithWorkingCopyChanges)
-				.append("jaCoCoReportFiles", jaCoCoReportFiles).append("jaCoCoCoverageCount", jaCoCoCoverageCount)
-				.append("newOrChangedFiles", newOrChangedFiles)
-				.append("consideredNewOrChangedFilesCount", consideredNewOrChangedFilesCount)
-				.append("coveredMethodsCount", coveredMethodsCount)
-				.append("uncoveredMethodsCount", uncoveredMethodsCount).append("coverageRatio", coverageRatio)
-				.append("emptyMethodsCount", emptyMethodsCount)
-				.append("unresolvableMethodsCount", unresolvableMethodsCount)
-				.append("ambiguouslyResolvedCount", ambiguouslyResolvedCount).append("coveredMethods", coveredMethods)
-				.append("uncoveredMethods", uncoveredMethods).append("emptyMethods", emptyMethods)
-				.append("unresolvableMethods", unresolvableMethods)
-				.append("ambiguouslyResolvedCoverage", ambiguouslyResolvedCoverage).build();
+		return new ToStringBuilder(getClass()).append("workDir", this.workDir)
+				.append("oldCommitHash", this.oldCommitHash).append("newCommitHash", this.newCommitHash)
+				.append("compareWithWorkingCopyChanges", this.compareWithWorkingCopyChanges)
+				.append("jaCoCoReportFiles", this.jaCoCoReportFiles)
+				.append("jaCoCoCoverageCount", this.jaCoCoCoverageCount)
+				.append("newOrChangedFiles", this.newOrChangedFiles)
+				.append("consideredNewOrChangedFilesCount", this.consideredNewOrChangedFilesCount)
+				.append("coveredMethodsCount", this.coveredMethodsCount)
+				.append("uncoveredMethodsCount", this.uncoveredMethodsCount).append("coverageRatio", this.coverageRatio)
+				.append("emptyMethodsCount", this.emptyMethodsCount)
+				.append("unresolvableMethodsCount", this.unresolvableMethodsCount)
+				.append("ambiguouslyResolvedCount", this.ambiguouslyResolvedCount)
+				.append("coveredMethods", this.coveredMethods).append("uncoveredMethods", this.uncoveredMethods)
+				.append("emptyMethods", this.emptyMethods).append("unresolvableMethods", this.unresolvableMethods)
+				.append("ambiguouslyResolvedCoverage", this.ambiguouslyResolvedCoverage).build();
 	}
 }

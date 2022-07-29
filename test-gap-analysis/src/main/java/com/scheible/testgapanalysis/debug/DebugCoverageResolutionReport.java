@@ -46,31 +46,31 @@ public class DebugCoverageResolutionReport {
 	}
 
 	public int getCoverageInfoCount() {
-		return coverageInfoCount;
+		return this.coverageInfoCount;
 	}
 
 	public Set<String> getJaCoCoReportFiles() {
-		return jaCoCoReportFiles;
+		return this.jaCoCoReportFiles;
 	}
 
 	public int getJavaFileCount() {
-		return javaFileCount;
+		return this.javaFileCount;
 	}
 
 	public Map<ParsedMethod, MethodWithCoverageInfo> getResolved() {
-		return resolved;
+		return this.resolved;
 	}
 
 	public Set<ParsedMethod> getEmpty() {
-		return empty;
+		return this.empty;
 	}
 
 	public Set<ParsedMethod> getUnresolved() {
-		return unresolved;
+		return this.unresolved;
 	}
 
 	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
-		return ambiguousCoverage;
+		return this.ambiguousCoverage;
 	}
 
 	@Override
@@ -79,11 +79,11 @@ public class DebugCoverageResolutionReport {
 			return true;
 		} else if (obj instanceof DebugCoverageResolutionReport) {
 			final DebugCoverageResolutionReport other = (DebugCoverageResolutionReport) obj;
-			return coverageInfoCount == other.coverageInfoCount
-					&& Objects.equals(jaCoCoReportFiles, other.jaCoCoReportFiles)
-					&& javaFileCount == other.javaFileCount && Objects.equals(resolved, other.resolved)
-					&& Objects.equals(empty, other.empty) && Objects.equals(unresolved, other.unresolved)
-					&& Objects.equals(ambiguousCoverage, other.ambiguousCoverage);
+			return this.coverageInfoCount == other.coverageInfoCount
+					&& Objects.equals(this.jaCoCoReportFiles, other.jaCoCoReportFiles)
+					&& this.javaFileCount == other.javaFileCount && Objects.equals(this.resolved, other.resolved)
+					&& Objects.equals(this.empty, other.empty) && Objects.equals(this.unresolved, other.unresolved)
+					&& Objects.equals(this.ambiguousCoverage, other.ambiguousCoverage);
 		} else {
 			return false;
 		}
@@ -91,15 +91,15 @@ public class DebugCoverageResolutionReport {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(coverageInfoCount, jaCoCoReportFiles, javaFileCount, resolved, empty, unresolved,
-				ambiguousCoverage);
+		return Objects.hash(this.coverageInfoCount, this.jaCoCoReportFiles, this.javaFileCount, this.resolved,
+				this.empty, this.unresolved, this.ambiguousCoverage);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("coverageInfoCount", coverageInfoCount)
-				.append("jaCoCoReportFiles", jaCoCoReportFiles).append("javaFileCount", javaFileCount)
-				.append("resolved", resolved).append("empty", empty).append("unresolved", unresolved)
-				.append("ambiguousCoverage", ambiguousCoverage).build();
+		return new ToStringBuilder(getClass()).append("coverageInfoCount", this.coverageInfoCount)
+				.append("jaCoCoReportFiles", this.jaCoCoReportFiles).append("javaFileCount", this.javaFileCount)
+				.append("resolved", this.resolved).append("empty", this.empty).append("unresolved", this.unresolved)
+				.append("ambiguousCoverage", this.ambiguousCoverage).build();
 	}
 }

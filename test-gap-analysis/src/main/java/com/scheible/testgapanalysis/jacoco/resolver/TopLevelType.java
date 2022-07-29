@@ -34,7 +34,7 @@ class TopLevelType {
 	}
 
 	public String getFullQualifiedName() {
-		return fullQualifiedName;
+		return this.fullQualifiedName;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ class TopLevelType {
 			return true;
 		} else if (obj instanceof TopLevelType) {
 			final TopLevelType other = (TopLevelType) obj;
-			return Objects.equals(fullQualifiedName, other.fullQualifiedName);
+			return Objects.equals(this.fullQualifiedName, other.fullQualifiedName);
 		} else {
 			return false;
 		}
@@ -51,11 +51,11 @@ class TopLevelType {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fullQualifiedName);
+		return Objects.hash(this.fullQualifiedName);
 	}
 
 	@Override
 	public String toString() {
-		return fullQualifiedName;
+		return this.fullQualifiedName;
 	}
 }

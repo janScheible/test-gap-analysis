@@ -25,15 +25,15 @@ public class NewOrChangedFile {
 	}
 
 	public String getName() {
-		return repositoryPath;
+		return this.repositoryPath;
 	}
 
 	public boolean isSkipped() {
-		return skipped;
+		return this.skipped;
 	}
 
 	public State getState() {
-		return state;
+		return this.state;
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public class NewOrChangedFile {
 			return true;
 		} else if (obj instanceof NewOrChangedFile) {
 			final NewOrChangedFile other = (NewOrChangedFile) obj;
-			return Objects.equals(repositoryPath, other.repositoryPath) && skipped == other.skipped
-					&& state == other.state;
+			return Objects.equals(this.repositoryPath, other.repositoryPath) && this.skipped == other.skipped
+					&& this.state == other.state;
 		} else {
 			return false;
 		}
@@ -51,12 +51,12 @@ public class NewOrChangedFile {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(repositoryPath, skipped, state);
+		return Objects.hash(this.repositoryPath, this.skipped, this.state);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("repositoryPath", repositoryPath).append("skipped", skipped)
-				.append("state", state).build();
+		return new ToStringBuilder(getClass()).append("repositoryPath", this.repositoryPath)
+				.append("skipped", this.skipped).append("state", this.state).build();
 	}
 }
