@@ -1,7 +1,6 @@
 package com.scheible.testgapanalysis.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +9,7 @@ import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -19,6 +19,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
+import com.github.javaparser.ast.type.TypeParameter;
 
 /**
  *
@@ -82,29 +83,27 @@ public abstract class ParserUtils {
 
 	static Map<String, String> getTypeParameters(ConstructorDeclaration node) {
 		List<Node> parents = ParserUtils.getParents(node);
-		Map<String, String> typeParameters = new HashMap<>();
+		NodeList<TypeParameter> typeParameters = new NodeList<>();
 
 		for (int i = parents.size() - 1; i >= 0; i--) {
 			if (parents.get(i) instanceof ClassOrInterfaceDeclaration) {
 				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parents.get(i);
-				classOrInterfaceDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(
-						tp.getNameAsString(),
-						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
+				typeParameters.addAll(classOrInterfaceDeclaration.getTypeParameters());
 
 				if (classOrInterfaceDeclaration.isStatic()) {
 					break;
 				}
 			} else if (parents.get(i) instanceof RecordDeclaration) {
 				RecordDeclaration recordDeclaration = (RecordDeclaration) parents.get(i);
-				recordDeclaration.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
-						tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
+				typeParameters.addAll(recordDeclaration.getTypeParameters());
 
 				break;
 			}
 		}
-		node.getTypeParameters().stream().forEach(tp -> typeParameters.put(tp.getNameAsString(),
-				tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
-		return typeParameters;
+		typeParameters.addAll(node.getTypeParameters());
+
+		return typeParameters.stream().collect(Collectors.toMap(TypeParameter::getNameAsString,
+				tp -> tp.getTypeBound().isNonEmpty() ? tp.getTypeBound().get(0).getNameAsString() : "Object"));
 	}
 
 	/**

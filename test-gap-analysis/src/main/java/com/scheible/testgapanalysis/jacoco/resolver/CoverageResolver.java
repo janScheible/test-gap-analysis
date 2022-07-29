@@ -87,8 +87,8 @@ public class CoverageResolver {
 					.findFirst();
 
 			if (firstConstructorCoverage.isPresent()) {
-				Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = new HashMap<>();
-				initializers.forEach(im -> resolvedInitializers.put(im, firstConstructorCoverage.get()));
+				Map<ParsedMethod, MethodWithCoverageInfo> resolvedInitializers = initializers.stream()
+						.collect(Collectors.toMap(Function.identity(), initilaizer -> firstConstructorCoverage.get()));
 				return new CoverageResult(resolvedInitializers, Collections.emptySet());
 			}
 		}
@@ -106,8 +106,8 @@ public class CoverageResolver {
 				.filter(MethodWithCoverageInfo::isStaticInitializer).collect(Collectors.toList());
 
 		if (!coverageStaticInitializers.isEmpty()) { // make sure that a coverage report is there
-			Map<ParsedMethod, MethodWithCoverageInfo> resolvedStaticInitializers = new HashMap<>();
-			staticInitializers.forEach(im -> resolvedStaticInitializers.put(im, coverageStaticInitializers.get(0)));
+			Map<ParsedMethod, MethodWithCoverageInfo> resolvedStaticInitializers = staticInitializers.stream().collect(
+					Collectors.toMap(Function.identity(), staticInitilaizer -> coverageStaticInitializers.get(0)));
 			return new CoverageResult(resolvedStaticInitializers, Collections.emptySet());
 		}
 

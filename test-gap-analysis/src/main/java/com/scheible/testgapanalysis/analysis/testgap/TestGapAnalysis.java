@@ -1,7 +1,7 @@
 package com.scheible.testgapanalysis.analysis.testgap;
 
 import java.io.File;
-import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,7 +103,7 @@ public class TestGapAnalysis {
 	private static Map<CoverageReportMethod, Set<TestGapMethod>> toAmbigouslyResolvedTestGapMethod(
 			Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		return ambiguouslyResolvedCoverage.entrySet().stream()
-				.map(e -> new AbstractMap.SimpleImmutableEntry<>(
+				.map(e -> new SimpleImmutableEntry<>(
 						new CoverageReportMethod(e.getKey().getName(), e.getKey().getLine()),
 						toTestGapMethods(e.getValue())))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));

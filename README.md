@@ -258,3 +258,6 @@ Unresolvable methods (no coverage information available):
     1. `hashCode()` must use `Objects.hash(...)`
 1. always use `this.` for class fields but never for instance methods (same approach as https://github.com/spring-projects/spring-framework/wiki/Code-Style#field-and-method-references)
 1. `static` fields and methods of own class must never be prefixed with the own class name
+1. usage of Java Stream API
+    1. don't overuse lambdas with streams, prefer method references or simple one line lambdas
+    1. usage of `forEach` with `stream()` is suspicious, should only be used in rare cases with a method reference (good old for-each loops might be easier to read and debug)
