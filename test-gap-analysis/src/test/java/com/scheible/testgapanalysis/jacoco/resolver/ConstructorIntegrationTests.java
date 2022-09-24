@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.scheible.testgapanalysis.jacoco.resolver.ConstructorIntegrationTests.ConstructorOfNonStaticInnerClassWithParentTypeParameter.InnerClass;
 

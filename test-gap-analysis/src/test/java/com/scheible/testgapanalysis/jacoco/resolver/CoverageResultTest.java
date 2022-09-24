@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.assertj.core.util.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.scheible.testgapanalysis.analysis.Analysis;
 import com.scheible.testgapanalysis.git.GitDiffer;

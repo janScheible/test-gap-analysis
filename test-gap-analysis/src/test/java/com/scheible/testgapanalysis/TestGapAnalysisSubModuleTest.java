@@ -2,8 +2,8 @@ package com.scheible.testgapanalysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.scheible.pocketsaw.impl.Pocketsaw;
 import com.scheible.pocketsaw.impl.descriptor.annotation.FastClasspathScanner;
@@ -16,7 +16,7 @@ public class TestGapAnalysisSubModuleTest {
 
 	private static Pocketsaw.AnalysisResult result;
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		result = Pocketsaw.analizeCurrentProject(FastClasspathScanner.create(TestGapAnalysisSubModuleTest.class));
 	}

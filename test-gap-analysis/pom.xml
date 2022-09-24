@@ -32,12 +32,12 @@
 		<javaparser.version>3.24.2</javaparser.version>
 		<jaCoCo.version>0.8.8</jaCoCo.version>
 
-		<!-- NOTE Dependency versions alligned with Spring Boot 2.6.7 (as well spring-boot-maven-plugin version). -->
+		<!-- NOTE Dependency versions alligned with Spring Boot 2.7.4 (as well spring-boot-maven-plugin version). -->
 		<slf4j-api.version>1.7.36</slf4j-api.version>
 		<logback-classic.version>1.2.11</logback-classic.version>
-		<junit.version>4.13.2</junit.version>
-		<assertj-core.version>3.21.0</assertj-core.version>
-		<mockito-core.version>4.0.0</mockito-core.version>
+		<junit.version>5.8.2</junit.version>
+		<assertj-core.version>3.22.0</assertj-core.version>
+		<mockito-core.version>4.5.1</mockito-core.version>
 
 		<maven-compiler-plugin>3.10.1</maven-compiler-plugin>
 		<maven-failsafe-plugin.verion>3.0.0-M6</maven-failsafe-plugin.verion>
@@ -45,7 +45,7 @@
 		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
-		<spring-boot-maven-plugin.version>2.6.7</spring-boot-maven-plugin.version>
+		<spring-boot-maven-plugin.version>2.7.4</spring-boot-maven-plugin.version>
 		<git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
 		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
@@ -78,10 +78,16 @@
 			</dependency>
 
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
 				<version>${junit.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-params</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
@@ -106,7 +112,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tngtech.archunit</groupId>
-				<artifactId>archunit-junit4</artifactId>
+				<artifactId>archunit-junit5</artifactId>
 				<version>${archunit.version}</version>
 			</dependency>
 
@@ -148,8 +154,13 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -170,7 +181,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
-			<artifactId>archunit-junit4</artifactId>
+			<artifactId>archunit-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
 

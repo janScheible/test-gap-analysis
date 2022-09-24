@@ -3,7 +3,7 @@ package com.scheible.testgapanalysis.jacoco.resolver;
 import static com.scheible.testgapanalysis.jacoco.resolver.AbstractIntegrationTest.CoverageResolutionAssert.assertThat;
 import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

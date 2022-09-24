@@ -6,7 +6,7 @@ import static com.scheible.testgapanalysis.parser.ParsedMethod.MethodType.METHOD
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
