@@ -38,6 +38,11 @@ By also adding `jacoco:prepare-agent-integration`, `failsafe:integration-test` a
 The code changes done between a reference commit and the head commit of the repository are inspected and not covered methods are reported.
 This mode can for example be used to record the test gap between the current release and the previous one in a CI build.
 The reference commit hash can be specified either via `<configuration>`-element `<referenceCommitHash>` in the Maven POM or as parameter `-Dtest-gap-analysis.reference-commit-hash`.
+Since version 1.2.0 refs like `HEAD^` are also supported.
+
+In addition to the reference commit referring to a certain previous tag or branch is also supported since 1.2.0.
+With `<previousBranchRegEx>` (`-Dtest-gap-analysis.previous-branch-regex` as parameter) resp. `<previousTagRegEx>` (`-Dtest-gap-analysis.previous-tag-regex` as parameter) in the `<configuration>`-element the previous branch/tag matching the RegEx is used as reference.
+Previous means here before the head commit in terms of commit timestamp.
 
 ## How it works
 

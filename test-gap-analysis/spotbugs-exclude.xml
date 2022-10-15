@@ -35,6 +35,11 @@
 		<Bug pattern="SLF4J_SIGN_ONLY_FORMAT" />
 	</Match>
 
+	<!-- Does not match the non-static decleration. -->
+	<Match>
+		<Bug pattern="SLF4J_LOGGER_SHOULD_BE_PRIVATE" />
+	</Match>	
+
 	<!-- Seems to trigger a false positive with Java 11: https://github.com/spotbugs/spotbugs/issues/756. -->
 	<Match>
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />

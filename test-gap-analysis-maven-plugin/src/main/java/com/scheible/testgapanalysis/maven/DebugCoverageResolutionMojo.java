@@ -19,9 +19,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "debug-coverage-resolution", threadSafe = true, requiresProject = false)
 public class DebugCoverageResolutionMojo extends AbstractTestGapMojo {
 
-	@Parameter(defaultValue = "${project.build.sourceDirectory}")
-	private File sourceDir;
-
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.buildDir.exists()) {

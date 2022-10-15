@@ -16,16 +16,19 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public abstract class AbstractTestGapMojo extends AbstractMojo {
 	
-	@Parameter(defaultValue = "${project.basedir}")
+	@Parameter(defaultValue = "${project.basedir}") // where the POM.xml is
 	protected File baseDir;
+	
+	@Parameter(defaultValue = "${project.build.sourceDirectory}") // ./src/main/java
+	protected File sourceDir;	
 
-	@Parameter(defaultValue = "${project.build.directory}")
+	@Parameter(defaultValue = "${project.build.directory}") // ./target
 	protected File buildDir;
 
-	@Parameter(defaultValue = "${project.build.outputDirectory}")
+	@Parameter(defaultValue = "${project.build.outputDirectory}") // ./taget/classes
 	protected File outputDir;
 
-	@Parameter(defaultValue = "${project.build.testOutputDirectory}")
+	@Parameter(defaultValue = "${project.build.testOutputDirectory}")  // ./taget/test-classes
 	protected File testOutputDir;
 
 	/**

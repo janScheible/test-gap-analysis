@@ -27,8 +27,9 @@
 		<sb-contrib.version>7.4.7</sb-contrib.version>
 		<slf4j.bug-pattern.version>1.5.0</slf4j.bug-pattern.version>
 		<checkstyle.version>9.3</checkstyle.version>
+		<zt-zip.version>1.15</zt-zip.version>
 
-		<jgit.version>5.13.0.202109080827-r</jgit.version>
+		<jgit.version>5.13.1.202206130422-r</jgit.version>
 		<javaparser.version>3.24.2</javaparser.version>
 		<jaCoCo.version>0.8.8</jaCoCo.version>
 
@@ -127,6 +128,12 @@
 				<artifactId>javaparser-symbol-solver-core</artifactId>
 				<version>${javaparser.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.zeroturnaround</groupId>
+				<artifactId>zt-zip</artifactId>
+				<version>${zt-zip.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -206,6 +213,12 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>org.jacoco.report</artifactId>
 			<version>${jaCoCo.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.zeroturnaround</groupId>
+			<artifactId>zt-zip</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -384,7 +397,7 @@
 				<artifactId>formatter-maven-plugin</artifactId>
 				<configuration>
 					<configFile>${project.basedir}/eclipse-formatter-config.xml</configFile>
-					<LineEnding>KEEP</LineEnding>
+					<lineEnding>KEEP</lineEnding>
 				</configuration>
 				<executions>
 					<execution>

@@ -8,7 +8,7 @@
 		</layout>
 	</appender>
 
-	<logger name="com.scheible.testgapanalysis" level="DEBUG" /> 
+	<logger name="com.scheible.testgapanalysis" level="ERROR" /> 
 
 	<root level="ERROR">
 		<appender-ref ref="CONSOLE"/>

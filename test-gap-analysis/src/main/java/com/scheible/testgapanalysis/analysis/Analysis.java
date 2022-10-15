@@ -8,7 +8,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.scheible.testgapanalysis.git.RepositoryStatus;
+import com.scheible.testgapanalysis.git.FileChange;
+import com.scheible.testgapanalysis.git.GitChangeSet;
 import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResult;
@@ -30,21 +31,20 @@ public class Analysis {
 		this.javaParser = javaParser;
 	}
 
-	public AnalysisResult perform(RepositoryStatus status, Set<MethodWithCoverageInfo> coverageInfo) {
-		Map<String, String> newOrChangedFilesWithContent = status.getNewContents();
-
+	public AnalysisResult perform(GitChangeSet changeSet, Set<MethodWithCoverageInfo> coverageInfo) {
 		// all methods of new or changed files in the new state compared to the old state
-		Set<MethodCompareWrapper> newContentMethods = newOrChangedFilesWithContent.entrySet().stream()
-				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
-				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
+		Set<MethodCompareWrapper> previousStateMethods = changeSet.getChanges().stream()
+				.filter(change -> !change.isDeletion())
+				.flatMap(change -> this.javaParser.getMethods(change.getCurrentContent().get()).stream())
+				.map(MethodCompareWrapper::new).filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// all methods of changed files in the new state that already existed in the old state
-		Set<MethodCompareWrapper> oldContentMethods = status.getOldContents().entrySet().stream()
-				.flatMap(e -> this.javaParser.getMethods(e.getValue()).stream()).map(MethodCompareWrapper::new)
-				.filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
+		Set<MethodCompareWrapper> currentStateMethods = changeSet.getChanges().stream().filter(FileChange::isChange)
+				.flatMap(change -> this.javaParser.getMethods(change.getPreviousContent().get()).stream())
+				.map(MethodCompareWrapper::new).filter(NON_GETTER_OR_SETTER_METHOD).collect(Collectors.toSet());
 
 		// @formatter:off
-		//  previous methods
+		//  previous state methods
 		// |----------------|
 		// |                |
 		//
@@ -58,13 +58,13 @@ public class Analysis {
 		//
 		//      |                |
 		//      |----------------|
-		//       current methods
+		//       current state methods
 		// @formatter:on
 
-		Set<MethodCompareWrapper> unchangedMethods = new HashSet<>(newContentMethods);
-		unchangedMethods.retainAll(oldContentMethods);
+		Set<MethodCompareWrapper> unchangedMethods = new HashSet<>(previousStateMethods);
+		unchangedMethods.retainAll(currentStateMethods);
 
-		Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(newContentMethods);
+		Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(previousStateMethods);
 		newOrChangedMethods.removeAll(unchangedMethods);
 
 		CoverageResolver coverageResolver = CoverageResolver.with(coverageInfo);

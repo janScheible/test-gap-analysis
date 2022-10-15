@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.scheible.testgapanalysis.analysis.testgap.TestGapAnalysis;
 import com.scheible.testgapanalysis.analysis.testgap.TestGapReport;
 import com.scheible.testgapanalysis.analysis.Analysis;
-import com.scheible.testgapanalysis.git.GitDiffer;
+import com.scheible.testgapanalysis.git.GitRepoChangeScanner;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
 import com.scheible.testgapanalysis.parser.JavaParser;
 
@@ -28,14 +28,21 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 	@Parameter(property = "test-gap-analysis.reference-commit-hash")
 	private String referenceCommitHash;
+	
+	@Parameter(property = "test-gap-analysis.previous-branch-regex")
+	private String previousBranchRegEx;
+
+	@Parameter(property = "test-gap-analysis.previous-tag-regex")
+	private String previousTagRegEx;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.buildDir.exists()) {
 			TestGapAnalysis testGapAnalysis = new TestGapAnalysis(new Analysis(new JavaParser()),
-					new JaCoCoReportParser(), new GitDiffer());
-			TestGapReport report = testGapAnalysis.run(this.baseDir, findRelevantJaCoCoReportFiles(),
-					Optional.ofNullable(this.referenceCommitHash));
+					new JaCoCoReportParser(), new GitRepoChangeScanner());
+			TestGapReport report = testGapAnalysis.run(this.baseDir, this.sourceDir,
+					findRelevantJaCoCoReportFiles(), Optional.ofNullable(this.referenceCommitHash),
+					Optional.ofNullable(previousBranchRegEx), Optional.ofNullable(previousTagRegEx));
 
 			logReport(report);
 			writeJsonReport(report);
