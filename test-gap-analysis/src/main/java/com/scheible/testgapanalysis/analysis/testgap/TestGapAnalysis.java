@@ -67,7 +67,7 @@ public class TestGapAnalysis {
 		}
 
 		Set<NewOrChangedFile> newOrChangedFiles = changeSet.getChanges().stream().filter(change -> !change.isDeletion())
-				.map(change -> new NewOrChangedFile(change.getRelativePath(), false,
+				.map(change -> new NewOrChangedFile(change.getRelativePath(),
 						change.isCreation() ? State.NEW : State.CHANGED))
 				.collect(Collectors.toSet());
 

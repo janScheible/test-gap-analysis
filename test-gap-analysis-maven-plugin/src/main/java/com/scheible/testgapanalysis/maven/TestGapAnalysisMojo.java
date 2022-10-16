@@ -71,8 +71,8 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 		if (report.getNewOrChangedFiles().isEmpty()) {
 			getLog().info("No new or changed files!");
 		} else {
-			getLog().info(String.format("Found %d new or changed Java files (%d non-test Java files are considered):",
-					report.getNewOrChangedFiles().size(), report.getConsideredNewOrChangedFilesCount()));
+			getLog().info(String.format("Found %d new or changed Java files:",
+					report.getNewOrChangedFiles().size()));
 			report.getNewOrChangedFiles().stream().sorted((a, b) -> a.getName().compareTo(b.getName()))
 					.map(Object::toString).forEach(newOrChangedFile -> getLog().info(" - " + newOrChangedFile));
 		}

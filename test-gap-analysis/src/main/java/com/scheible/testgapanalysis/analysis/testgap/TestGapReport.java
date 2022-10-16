@@ -29,7 +29,6 @@ public class TestGapReport {
 	private final int jaCoCoCoverageCount;
 
 	private final Set<NewOrChangedFile> newOrChangedFiles;
-	private final int consideredNewOrChangedFilesCount;
 
 	private final int coveredMethodsCount;
 	private final int uncoveredMethodsCount;
@@ -57,8 +56,6 @@ public class TestGapReport {
 		this.jaCoCoCoverageCount = builder.jaCoCoCoverageCount;
 
 		this.newOrChangedFiles = Collections.unmodifiableSet(new HashSet<>(builder.newOrChangedFiles));
-		this.consideredNewOrChangedFilesCount = (int) builder.newOrChangedFiles.stream().filter(f -> !f.isSkipped())
-				.count();
 
 		this.coveredMethodsCount = builder.coveredMethods.size();
 		this.uncoveredMethodsCount = builder.uncoveredMethods.size();
@@ -109,10 +106,6 @@ public class TestGapReport {
 
 	public Set<NewOrChangedFile> getNewOrChangedFiles() {
 		return this.newOrChangedFiles;
-	}
-
-	public int getConsideredNewOrChangedFilesCount() {
-		return this.consideredNewOrChangedFilesCount;
 	}
 
 	public int getCoveredMethodsCount() {
@@ -173,7 +166,6 @@ public class TestGapReport {
 					&& Objects.equals(this.jaCoCoReportFiles, other.jaCoCoReportFiles)
 					&& this.jaCoCoCoverageCount == other.jaCoCoCoverageCount
 					&& Objects.equals(this.newOrChangedFiles, other.newOrChangedFiles)
-					&& this.consideredNewOrChangedFilesCount == other.consideredNewOrChangedFilesCount
 					&& this.coveredMethodsCount == other.coveredMethodsCount
 					&& this.uncoveredMethodsCount == other.uncoveredMethodsCount
 					&& EqualsUtils.equals(this.coverageRatio, other.coverageRatio)
@@ -193,9 +185,8 @@ public class TestGapReport {
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.workDir, this.oldCommitHash, this.newCommitHash, this.compareWithWorkingCopyChanges,
-				this.jaCoCoReportFiles, this.jaCoCoCoverageCount, this.newOrChangedFiles,
-				this.consideredNewOrChangedFilesCount, this.coveredMethodsCount, this.uncoveredMethodsCount,
-				this.coverageRatio, this.emptyMethodsCount, this.unresolvableMethodsCount,
+				this.jaCoCoReportFiles, this.jaCoCoCoverageCount, this.newOrChangedFiles, this.coveredMethodsCount,
+				this.uncoveredMethodsCount, this.coverageRatio, this.emptyMethodsCount, this.unresolvableMethodsCount,
 				this.ambiguouslyResolvedCount, this.coveredMethods, this.uncoveredMethods, this.emptyMethods,
 				this.unresolvableMethods, this.ambiguouslyResolvedCoverage);
 	}
@@ -208,7 +199,6 @@ public class TestGapReport {
 				.append("jaCoCoReportFiles", this.jaCoCoReportFiles)
 				.append("jaCoCoCoverageCount", this.jaCoCoCoverageCount)
 				.append("newOrChangedFiles", this.newOrChangedFiles)
-				.append("consideredNewOrChangedFilesCount", this.consideredNewOrChangedFilesCount)
 				.append("coveredMethodsCount", this.coveredMethodsCount)
 				.append("uncoveredMethodsCount", this.uncoveredMethodsCount).append("coverageRatio", this.coverageRatio)
 				.append("emptyMethodsCount", this.emptyMethodsCount)

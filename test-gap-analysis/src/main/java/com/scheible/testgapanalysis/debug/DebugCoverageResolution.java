@@ -3,8 +3,10 @@ package com.scheible.testgapanalysis.debug;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,9 +48,12 @@ public class DebugCoverageResolution {
 	}
 
 	private ParseResult parseMethods(File workingDir) throws UncheckedIOException {
+		PathMatcher javaFileMatcher = FileSystems.getDefault().getPathMatcher("glob:**.java");
+
 		try (Stream<Path> walkStream = Files.walk(workingDir.toPath())) {
-			Set<File> javaFiles = walkStream.filter(p -> p.toFile().isFile() && p.toString().endsWith(".java"))
-					.map(Path::toFile).collect(Collectors.toSet());
+			Set<File> javaFiles = walkStream.filter(javaFileMatcher::matches).map(Path::toFile)
+					.collect(Collectors.toSet());
+
 			Set<ParsedMethod> methods = javaFiles.stream()
 					.flatMap(f -> this.javaParser.getMethods(FilesUtils.readUtf8(f)).stream())
 					.collect(Collectors.toSet());

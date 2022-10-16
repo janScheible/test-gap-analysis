@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -107,10 +109,11 @@ public class JaCoCoReportParser {
 	public static Set<File> findJaCoCoReportFiles(File baseDir, File... excludeDirs) {
 		Set<Path> excludeDirsAsPaths = Stream.of(excludeDirs).map(File::toPath).collect(Collectors.toSet());
 		Predicate<Path> isNotChildOfExcludeDir = getIsNotChildOfSubDirsPredicate(excludeDirsAsPaths);
+		PathMatcher jaCoCoReportMatcher = FileSystems.getDefault().getPathMatcher("glob:**/jacoco.xml");
 
 		try {
-			return Files.walk(baseDir.toPath()).filter(p -> "jacoco.xml".equals(p.getFileName().toString()))
-					.filter(isNotChildOfExcludeDir).map(Path::toFile).collect(Collectors.toSet());
+			return Files.walk(baseDir.toPath()).filter(jaCoCoReportMatcher::matches).filter(isNotChildOfExcludeDir)
+					.map(Path::toFile).collect(Collectors.toSet());
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}
