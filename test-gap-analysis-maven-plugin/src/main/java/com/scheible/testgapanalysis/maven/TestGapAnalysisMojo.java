@@ -85,6 +85,8 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 
 		getLog().info("Method blacklist (excluded from coverage check): all getter and setter");
 
+		getLog().info(String.format("Test gap: %d%%", (int)(report.getTestGap() * 100)));
+		
 		if (!report.getCoveredMethods().isEmpty()) {
 			getLog().info("Covered methods:");
 			report.getCoveredMethods().stream().sorted(getTestGapMethodComparator())

@@ -17,12 +17,12 @@ import org.junit.jupiter.api.Test;
 public class TestGapReportTest {
 
 	@Test
-	public void testEmptyReportCoverageRatio() {
+	public void testEmptyReportTestGap() {
 		TestGapReport report = TestGapReport.builder().setWorkDir(".").setPreviousState("asbc")
 				.setCurrentState(Optional.empty()).setJaCoCoReportFiles(emptySet()).setJaCoCoCoverageCount(0)
 				.setNewOrChangedFiles(emptySet()).setCoveredMethods(emptySet()).setUncoveredMethods(emptySet())
 				.setEmptyMethods(emptySet()).setUnresolvableMethods(emptySet())
 				.setAmbiguouslyResolvedCoverage(emptyMap()).build();
-		assertThat(report.getCoverageRatio()).isNotNaN().isEqualTo(1.0d, offset(0.01));
+		assertThat(report.getTestGap()).isNotNaN().isEqualTo(0.0d, offset(0.01));
 	}
 }
