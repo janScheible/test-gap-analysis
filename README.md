@@ -8,8 +8,8 @@ The reported methods are giving some pointers where completely untested code is 
 ## Prerequisites for usage
 
 1. recent JDK 8 (also tested with Java 11)
-1. recent Maven (tested with 3.6.1)
-1. `mvn clean install` of [Pocketsaw 1.3.2](https://github.com/janScheible/pocketsaw/tree/1.3.2)
+1. recent Maven (tested with 3.8.6)
+1. `mvn clean install` of [Pocketsaw 1.5.1](https://github.com/janScheible/pocketsaw/tree/1.5.1)
 1. **[optionally]** [maven-skip-execution-profile-extension](https://github.com/janScheible/spring-boot-netbeans-getting-started/tree/master/skip-execution-profile/maven-skip-execution-profile-extension) with a [.mvn directory like this](https://github.com/janScheible/spring-boot-netbeans-getting-started/tree/master/spring-boot-netbeans-single-module/.mvn) in the root folder for a smooth Netbeans experience
 1. a project with a Git repository and a local working copy
 1. JaCoCo with `xml` reports for test coverage
@@ -41,7 +41,7 @@ The reference commit hash can be specified either via `<configuration>`-element 
 Since version 1.2.0 refs like `HEAD^` are also supported.
 
 In addition to the reference commit referring to a certain previous tag or branch is also supported since 1.2.0.
-With `<previousBranchRegEx>` (`-Dtest-gap-analysis.previous-branch-regex` as parameter) resp. `<previousTagRegEx>` (`-Dtest-gap-analysis.previous-tag-regex` as parameter) in the `<configuration>`-element the previous branch/tag matching the RegEx is used as reference.
+With `<previousBranchRegEx>` (`-Dtest-gap-analysis.previous-branch-regex` as parameter) resp. `<previousTagRegEx>` (`-Dtest-gap-analysis.previous-tag-regex` as parameter) in the `<configuration>`-element the previous branch/tag matching the regex is used as reference.
 Previous means here before the head commit in terms of commit timestamp.
 
 ## How it works
