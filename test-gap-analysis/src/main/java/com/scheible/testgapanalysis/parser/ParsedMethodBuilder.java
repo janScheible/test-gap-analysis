@@ -52,14 +52,14 @@ public abstract class ParsedMethodBuilder {
 
 	public interface EmptyStep {
 
-		ArgumentCountOrArgumentTypesStep setEmpty(boolean empty);
+		ParameterCountOrParameterTypesStep setEmpty(boolean empty);
 	}
 
-	public interface ArgumentCountOrArgumentTypesStep {
+	public interface ParameterCountOrParameterTypesStep {
 
-		BuildStep setArgumentCount(int argumentCount);
+		BuildStep setParameterCount(int paramterCount);
 
-		TypeParametersStep setArgumentTypes(List<String> argumentTypes);
+		TypeParametersStep setParameterTypes(List<String> paramerterTypes);
 	}
 
 	public interface TypeParametersStep {
@@ -87,7 +87,7 @@ public abstract class ParsedMethodBuilder {
 				CodeLinesStep,
 				CodeColumnStep,
 				EmptyStep,
-				ArgumentCountOrArgumentTypesStep,
+				ParameterCountOrParameterTypesStep,
 				TypeParametersStep,
 				OuterDeclaringTypeStep,
 				BuildStep {
@@ -101,9 +101,9 @@ public abstract class ParsedMethodBuilder {
 		int codeColumn;
 		boolean empty;
 
-		int argumentCount;
+		int parameterCount;
 
-		List<String> argumentTypes;
+		List<String> parameterTypes;
 		Map<String, String> typeParameters;
 		Optional<String> outerDeclaringType = Optional.empty();
 
@@ -153,20 +153,20 @@ public abstract class ParsedMethodBuilder {
 		}
 
 		@Override
-		public ArgumentCountOrArgumentTypesStep setEmpty(boolean empty) {
+		public ParameterCountOrParameterTypesStep setEmpty(boolean empty) {
 			this.empty = empty;
 			return this;
 		}
 
 		@Override
-		public BuildStep setArgumentCount(int argumentCount) {
-			this.argumentCount = argumentCount;
+		public BuildStep setParameterCount(int parameterCount) {
+			this.parameterCount = parameterCount;
 			return this;
 		}
 
 		@Override
-		public TypeParametersStep setArgumentTypes(List<String> argumentTypes) {
-			this.argumentTypes = argumentTypes;
+		public TypeParametersStep setParameterTypes(List<String> parameterTypes) {
+			this.parameterTypes = parameterTypes;
 			return this;
 		}
 

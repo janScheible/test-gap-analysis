@@ -60,28 +60,29 @@ public class ConstructorIntegrationTests extends AbstractIntegrationTest {
 		assertThat(resolve(ConstructorWithInitializer.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 
-	public static class ConstructorWithGenericArgument<T> {
+	public static class ConstructorWithGenericTypeParameter<T> {
 
-		public ConstructorWithGenericArgument(T arg) {
+		public ConstructorWithGenericTypeParameter(T arg) {
 			"".trim();
 		}
 	}
 
 	@Test
-	public void testConstructorWithGenericArgument() throws Exception {
-		assertThat(resolve(ConstructorWithGenericArgument.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+	public void testConstructorWithGenericTypeParameter() throws Exception {
+		assertThat(resolve(ConstructorWithGenericTypeParameter.class, CONSTRUCTOR)).isUnambiguouslyResolved();
 	}
 
-	public static class ConstructorWithGenericArgumentExtendingClass<T extends Predicate<T> & Serializable> {
+	public static class ConstructorWithGenericTypeParameterExtendingClass<T extends Predicate<T> & Serializable> {
 
-		public ConstructorWithGenericArgumentExtendingClass(T arg) {
+		public ConstructorWithGenericTypeParameterExtendingClass(T arg) {
 			"".trim();
 		}
 	}
 
 	@Test
-	public void testConstructorWithGenericArgumentExtendingClass() throws Exception {
-		assertThat(resolve(ConstructorWithGenericArgumentExtendingClass.class, CONSTRUCTOR)).isUnambiguouslyResolved();
+	public void testConstructorWithGenericTypeParameterExtendingClass() throws Exception {
+		assertThat(resolve(ConstructorWithGenericTypeParameterExtendingClass.class, CONSTRUCTOR))
+				.isUnambiguouslyResolved();
 	}
 
 	public static class ConstructorWithUpperBoundedWildcardsGeneric {

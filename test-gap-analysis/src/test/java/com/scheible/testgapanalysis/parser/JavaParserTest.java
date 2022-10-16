@@ -70,31 +70,31 @@ public class JavaParserTest {
 				.containsOnly(new AssertableMethod(ENUM_CONSTRUCTOR, "<init>"));
 	}
 
-	public static class ConstructorWithGenericArgument<T> {
+	public static class ConstructorWithGenericTypeParamter<T> {
 
-		public ConstructorWithGenericArgument(T arg) {
+		public ConstructorWithGenericTypeParamter(T arg) {
 			"".trim();
 		}
 	}
 
 	@Test
-	public void testConstructorWithGenericArgument() throws IOException {
-		assertThat(parseMethods(ConstructorWithGenericArgument.class, CONSTRUCTOR))
+	public void testConstructorWithGenericTypeParamter() throws IOException {
+		assertThat(parseMethods(ConstructorWithGenericTypeParamter.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>")) //
 				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Object")),
 						"has parent type parameters");
 	}
 
-	public static class ConstructorWithGenericArgumentExtendingType<T extends Runnable> {
+	public static class ConstructorWithGenericTypeParameterExtendingType<T extends Runnable> {
 
-		public ConstructorWithGenericArgumentExtendingType(T arg) {
+		public ConstructorWithGenericTypeParameterExtendingType(T arg) {
 			"".trim();
 		}
 	}
 
 	@Test
-	public void testConstructorWithGenericArgumentExtendingType() throws IOException {
-		assertThat(parseMethods(ConstructorWithGenericArgumentExtendingType.class, CONSTRUCTOR))
+	public void testConstructorWithGenericTypeParameterExtendingType() throws IOException {
+		assertThat(parseMethods(ConstructorWithGenericTypeParameterExtendingType.class, CONSTRUCTOR))
 				.containsOnly(new AssertableMethod(CONSTRUCTOR, "<init>")) //
 				.first().matches(am -> am.getParsedMethod().getTypeParameters().equals(newHashMap("T", "Runnable")),
 						"has parent type parameters");

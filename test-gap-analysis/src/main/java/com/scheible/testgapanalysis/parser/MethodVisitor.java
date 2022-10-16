@@ -55,7 +55,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 		if (node.getRange().isPresent()) {
 			Range range = node.getRange().get();
 			String relevantCode = MaskUtils.apply(this.code, range, findMasks(node), this.debugMode);
-			List<String> argumentTypes = node.getParameters().stream().map(Parameter::getType)
+			List<String> parameterTypes = node.getParameters().stream().map(Parameter::getType)
 					.map(t -> t.asString() + (((Parameter) t.getParentNode().get()).isVarArgs() ? "[]" : ""))
 					.collect(Collectors.toList());
 
@@ -74,7 +74,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
 					.setName("<init>").setRelevantCode(relevantCode).setCodeLines(ParserUtils.getCodeLines(node))
 					.setCodeColumn(range.begin.column).setEmpty(!ParserUtils.containsCode(node.getBody()))
-					.setArgumentTypes(argumentTypes).setTypeParameters(ParserUtils.getTypeParameters(node))
+					.setParameterTypes(parameterTypes).setTypeParameters(ParserUtils.getTypeParameters(node))
 					.setOuterDeclaringType(ParserUtils.getOuterDeclaringType(node)).build());
 		}
 
@@ -92,7 +92,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
 					.setName(node.isStatic() ? "<clinit>" : "<initbl>").setRelevantCode(relevantCode)
 					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
-					.setEmpty(!ParserUtils.containsCode(node.getBody())).setArgumentCount(0).build());
+					.setEmpty(!ParserUtils.containsCode(node.getBody())).setParameterCount(0).build());
 		}
 
 		super.visit(node, arg);
@@ -111,7 +111,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 					.setName(node.getNameAsString()).setRelevantCode(relevantCode)
 					.setCodeLines(ParserUtils.getCodeLines(node)).setCodeColumn(range.begin.column)
 					.setEmpty(!ParserUtils.containsCode(node.getBody().get()))
-					.setArgumentCount(node.getParameters().size()).build());
+					.setParameterCount(node.getParameters().size()).build());
 		}
 
 		super.visit(node, arg);
@@ -127,7 +127,7 @@ class MethodVisitor extends VoidVisitorAdapter<Void> {
 					.setTopLevelTypeFqn(ParserUtils.getTopLevelFqn(node)).setScope(ParserUtils.getScope(node))
 					.setName("lambda").setRelevantCode(relevantCode).setCodeLines(ParserUtils.getCodeLines(node))
 					.setCodeColumn(range.begin.column).setEmpty(!ParserUtils.containsCode(node.getBody()))
-					.setArgumentCount(node.getParameters().size()).build());
+					.setParameterCount(node.getParameters().size()).build());
 		}
 
 		super.visit(node, arg);

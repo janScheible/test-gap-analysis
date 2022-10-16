@@ -2,10 +2,10 @@ package com.scheible.testgapanalysis.common;
 
 import static java.util.Collections.emptyMap;
 
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.convertParameterDescriptor;
 import static com.scheible.testgapanalysis.common.JavaMethodUtils.getNextClassPart;
 import static com.scheible.testgapanalysis.common.JavaMethodUtils.getNextPrimitivePart;
-import static com.scheible.testgapanalysis.common.JavaMethodUtils.normalizeMethodArguments;
-import static com.scheible.testgapanalysis.common.JavaMethodUtils.parseDescriptorArguments;
+import static com.scheible.testgapanalysis.common.JavaMethodUtils.normalizeMethodParameters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
@@ -22,49 +22,49 @@ public class JavaMethodUtilTest {
 
 	@Test
 	public void testPrimitiveType() {
-		assertThat(parseDescriptorArguments("(C)V")).containsExactly("char");
+		assertThat(convertParameterDescriptor("(C)V")).containsExactly("char");
 	}
 
 	@Test
 	public void testMiltiplePrimitiveTypes() {
-		assertThat(parseDescriptorArguments("(CZ)V")).containsExactly("char", "boolean");
-		assertThat(parseDescriptorArguments("([BI)J")).containsExactly("byte[]", "int");
+		assertThat(convertParameterDescriptor("(CZ)V")).containsExactly("char", "boolean");
+		assertThat(convertParameterDescriptor("([BI)J")).containsExactly("byte[]", "int");
 	}
 
 	@Test
 	public void testClassType() {
-		assertThat(parseDescriptorArguments("(Lmy/package/MyClass;)V")).containsExactly("MyClass");
+		assertThat(convertParameterDescriptor("(Lmy/package/MyClass;)V")).containsExactly("MyClass");
 	}
 
 	@Test
 	public void testArrayType() {
-		assertThat(parseDescriptorArguments("([[C)V")).containsExactly("char[][]");
-		assertThat(parseDescriptorArguments("([[Lmy/package/MyClass;)V")).containsExactly("MyClass[][]");
+		assertThat(convertParameterDescriptor("([[C)V")).containsExactly("char[][]");
+		assertThat(convertParameterDescriptor("([[Lmy/package/MyClass;)V")).containsExactly("MyClass[][]");
 	}
 
 	@Test
 	public void testNestedClassType() {
-		assertThat(parseDescriptorArguments("(Lmy/package/MyClass$Foo;)V")).containsExactly("MyClass.Foo");
+		assertThat(convertParameterDescriptor("(Lmy/package/MyClass$Foo;)V")).containsExactly("MyClass.Foo");
 	}
 
 	@Test
 	public void testMixedTypes() {
-		assertThat(parseDescriptorArguments("(IILjava/util/List;)V")).containsExactly("int", "int", "List");
+		assertThat(convertParameterDescriptor("(IILjava/util/List;)V")).containsExactly("int", "int", "List");
 
-		assertThat(parseDescriptorArguments(
+		assertThat(convertParameterDescriptor(
 				"(Lcom/scheible/testgapanalysis/parser/ParsedMethod$MethodType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)V"))
 						.containsExactly("ParsedMethod.MethodType", "String", "String", "String", "String", "int",
 								"int", "List");
 
-		assertThat(parseDescriptorArguments(
+		assertThat(convertParameterDescriptor(
 				"(Lcom/scheible/testgapanalysis/parser/ParsedMethod$MethodType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;II)V"))
 						.containsExactly("ParsedMethod.MethodType", "String", "String", "String", "String", "int",
 								"int");
 
-		assertThat(parseDescriptorArguments("(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;II)V"))
+		assertThat(convertParameterDescriptor("(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;II)V"))
 				.containsExactly("String", "String", "String", "int", "int");
 
-		assertThat(parseDescriptorArguments(
+		assertThat(convertParameterDescriptor(
 				"([Lorg/apache/commons/collections4/Predicate;[Lorg/apache/commons/collections4/Closure;Lorg/apache/commons/collections4/Closure;)V"))
 						.containsExactly("Predicate[]", "Closure[]", "Closure");
 	}
@@ -100,40 +100,40 @@ public class JavaMethodUtilTest {
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsNestedClass() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry"), emptyMap())).containsExactly("Entry");
+	public void testNormalizeMethodParametersNestedClass() {
+		assertThat(normalizeMethodParameters(Arrays.asList("Map.Entry"), emptyMap())).containsExactly("Entry");
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<String, String>"), emptyMap())).containsExactly("Map");
+	public void testNormalizeMethodParametersGenerics() {
+		assertThat(normalizeMethodParameters(Arrays.asList("Map<String, String>"), emptyMap())).containsExactly("Map");
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("List<Map<String, String>>"), emptyMap()))
+	public void testNormalizeMethodParametersNestedGenerics() {
+		assertThat(normalizeMethodParameters(Arrays.asList("List<Map<String, String>>"), emptyMap()))
 				.containsExactly("List");
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsNestedClassAndNestedGenerics() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>"), emptyMap()))
+	public void testNormalizeMethodParametersNestedClassAndNestedGenerics() {
+		assertThat(normalizeMethodParameters(Arrays.asList("Map<Map.Entry, Set<String>>"), emptyMap()))
 				.containsExactly("Map");
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsWithGenerics() {
+	public void testNormalizeMethodParametersWithGenerics() {
 		Map<String, String> typeParameters = new HashMap<>();
 		typeParameters.put("T", "Object");
 		typeParameters.put("K", "Serializable");
 
-		assertThat(normalizeMethodArguments(Arrays.asList("Map.Entry", "Object", "T", "K[]"), typeParameters))
+		assertThat(normalizeMethodParameters(Arrays.asList("Map.Entry", "Object", "T", "K[]"), typeParameters))
 				.containsExactly("Entry", "Object", "Object", "Serializable[]");
 	}
 
 	@Test
-	public void testNormalizeMethodArgumentsWithGenericsArray() {
-		assertThat(normalizeMethodArguments(Arrays.asList("Map<Map.Entry, Set<String>>[]"), emptyMap()))
+	public void testNormalizeMethodParametersWithGenericsArray() {
+		assertThat(normalizeMethodParameters(Arrays.asList("Map<Map.Entry, Set<String>>[]"), emptyMap()))
 				.containsExactly("Map[]");
 	}
 }

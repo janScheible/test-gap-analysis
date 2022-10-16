@@ -31,6 +31,6 @@ public class ParsedMethodTest {
 	private static ParsedMethod withTopLevelTypeFqn(String topLevelTypeFqn, String... scope) {
 		return ParsedMethod.builder().setMethodType(MethodType.CONSTRUCTOR).setTopLevelTypeFqn(topLevelTypeFqn)
 				.setScope(Arrays.asList(scope)).setName("").setRelevantCode("").setCodeLines(Arrays.asList(42))
-				.setCodeColumn(0).setEmpty(false).setArgumentCount(0).build();
+				.setCodeColumn(0).setEmpty(false).setParameterCount(0).build();
 	}
 }

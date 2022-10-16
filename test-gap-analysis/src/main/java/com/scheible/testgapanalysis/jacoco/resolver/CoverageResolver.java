@@ -118,7 +118,7 @@ public class CoverageResolver {
 	 * Constructors might loose there line number in the JaCoCo report. Could be caused by a initializer or a
 	 * member variable that is initialized. In JaCoCo line of the constructor is always the first line of code of
 	 * the initalizer or member variable that is initialized instead of the real constructor code line. Therefore
-	 * argument matching is performed instead. Enum constructors and inner class constructors are also special
+	 * parameter matching is performed instead. Enum constructors and inner class constructors are also special
 	 * cases.
 	 */
 	private CoverageResult resolveConstructor(Set<ParsedMethod> constructors, Set<MethodWithCoverageInfo> coverage) {
@@ -126,17 +126,17 @@ public class CoverageResolver {
 		Set<ParsedMethod> unresolved = new HashSet<>();
 
 		for (ParsedMethod constructor : constructors) {
-			List<String> normalizedConstructorArguments = new ArrayList<>(JavaMethodUtils
-					.normalizeMethodArguments(constructor.getArgumentTypes(), constructor.getTypeParameters()));
+			List<String> normalizedConstructorParameters = new ArrayList<>(JavaMethodUtils
+					.normalizeMethodParameters(constructor.getParameterTypes(), constructor.getTypeParameters()));
 
 			// The constructors of enums have two additional parameter of type String and int. Most likely the name and
 			// index of the enum const is passed via this parameter.
 			if (constructor.isEnumConstructor()) {
-				normalizedConstructorArguments.add(0, "int");
-				normalizedConstructorArguments.add(0, "String");
+				normalizedConstructorParameters.add(0, "int");
+				normalizedConstructorParameters.add(0, "String");
 			} else // Non-static nested classes (called inner classes) have and addition first constructor parameter.
 			if (constructor.isInnerClassConstructor()) {
-				normalizedConstructorArguments.add(0,
+				normalizedConstructorParameters.add(0,
 						constructor.getOuterDeclaringType().orElseThrow(() -> new IllegalStateException(
 								"Inner class constructor " + constructor + " has no outer declaring type!")));
 			}
@@ -144,8 +144,8 @@ public class CoverageResolver {
 			List<MethodWithCoverageInfo> coverageConstructors = coverage.stream()
 					.filter(MethodWithCoverageInfo::isConstructor)
 					.filter(mwci -> mwci.getEnclosingSimpleName().equals(constructor.getEnclosingSimpleName()))
-					.filter(mwci -> normalizedConstructorArguments.equals(JavaMethodUtils.normalizeMethodArguments(
-							JavaMethodUtils.parseDescriptorArguments(mwci.getDescription()), Collections.emptyMap())))
+					.filter(mwci -> normalizedConstructorParameters.equals(JavaMethodUtils.normalizeMethodParameters(
+							JavaMethodUtils.convertParameterDescriptor(mwci.getDescription()), Collections.emptyMap())))
 					.collect(Collectors.toList());
 			if (coverageConstructors.size() == 1) {
 				resolved.put(constructor, coverageConstructors.get(0));
@@ -170,8 +170,8 @@ public class CoverageResolver {
 			for (MethodWithCoverageInfo coverageMethod : coverage.stream()
 					.filter(MethodWithCoverageInfo::isNonLambdaMethod).collect(Collectors.toSet())) {
 				if (method.containsLine(coverageMethod.getLine()) && method.getName().equals(coverageMethod.getName())
-						&& method.getArgumentCount() == JavaMethodUtils
-								.parseDescriptorArguments(coverageMethod.getDescription()).size()) {
+						&& method.getParameterCount() == JavaMethodUtils
+								.convertParameterDescriptor(coverageMethod.getDescription()).size()) {
 					candidates.add(coverageMethod);
 				}
 			}
@@ -241,8 +241,8 @@ public class CoverageResolver {
 			boolean withoutErrors = true;
 
 			for (int i = 0; i < lambdaCoverage.size(); i++) {
-				if (lambdas.get(i).getArgumentCount() <= JavaMethodUtils
-						.parseDescriptorArguments(lambdaCoverage.get(i).getDescription()).size()) {
+				if (lambdas.get(i).getParameterCount() <= JavaMethodUtils
+						.convertParameterDescriptor(lambdaCoverage.get(i).getDescription()).size()) {
 					currentResolved.put(lambdas.get(i), lambdaCoverage.get(i));
 				} else {
 					withoutErrors = false;

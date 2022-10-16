@@ -35,8 +35,8 @@ public class ParsedMethod {
 	private final List<Integer> codeLines;
 	private final int codeColumn;
 	private final boolean empty;
-	private final int argumentCount;
-	private final List<String> argumentTypes;
+	private final int parameterCount;
+	private final List<String> parameterTypes;
 	private final Map<String, String> typeParameters;
 	private final Optional<String> outerDeclaringType;
 
@@ -55,11 +55,11 @@ public class ParsedMethod {
 		this.codeColumn = builder.codeColumn;
 		this.empty = builder.empty;
 
-		this.argumentTypes = Collections.unmodifiableList(builder.argumentTypes != null
-				? new ArrayList<>(builder.argumentTypes)
-				: IntStream.range(0, builder.argumentCount).boxed().map(i -> "Object").collect(Collectors.toList()));
+		this.parameterTypes = Collections.unmodifiableList(builder.parameterTypes != null
+				? new ArrayList<>(builder.parameterTypes)
+				: IntStream.range(0, builder.parameterCount).boxed().map(i -> "Object").collect(Collectors.toList()));
 
-		this.argumentCount = this.argumentTypes.size();
+		this.parameterCount = this.parameterTypes.size();
 		this.typeParameters = Collections.unmodifiableMap(
 				builder.typeParameters != null ? new HashMap<>(builder.typeParameters) : Collections.emptyMap());
 		this.outerDeclaringType = builder.outerDeclaringType;
@@ -131,11 +131,11 @@ public class ParsedMethod {
 		} else if (isStaticMethod()) {
 			description = "." + getName() + "(...)";
 		} else if (isConstructor()) {
-			description = " constructor with " + getArgumentTypes().size() + " arguments";
+			description = " constructor with " + getParameterTypes().size() + " parameters";
 		} else if (isInnerClassConstructor()) {
-			description = " inner class constructor with " + getArgumentTypes().size() + " arguments";
+			description = " inner class constructor with " + getParameterTypes().size() + " parameters";
 		} else if (isEnumConstructor()) {
-			description = " enum constructor with " + getArgumentTypes().size() + " arguments";
+			description = " enum constructor with " + getParameterTypes().size() + " parameters";
 		} else if (isInitializer()) {
 			description = " initializer";
 		} else if (isStaticInitializer()) {
@@ -189,12 +189,12 @@ public class ParsedMethod {
 		return this.empty;
 	}
 
-	public List<String> getArgumentTypes() {
-		return this.argumentTypes;
+	public List<String> getParameterTypes() {
+		return this.parameterTypes;
 	}
 
-	public int getArgumentCount() {
-		return this.argumentCount;
+	public int getParameterCount() {
+		return this.parameterCount;
 	}
 
 	public Map<String, String> getTypeParameters() {
@@ -219,8 +219,8 @@ public class ParsedMethod {
 					&& Objects.equals(this.enclosingSimpleName, other.enclosingSimpleName)
 					&& Objects.equals(this.name, other.name) && Objects.equals(this.relevantCode, other.relevantCode)
 					&& Objects.equals(this.codeLines, other.codeLines) && this.codeColumn == other.codeColumn
-					&& this.empty == other.empty && Objects.equals(this.argumentTypes, other.argumentTypes)
-					&& this.argumentCount == other.argumentCount
+					&& this.empty == other.empty && Objects.equals(this.parameterTypes, other.parameterTypes)
+					&& this.parameterCount == other.parameterCount
 					&& Objects.equals(this.typeParameters, other.typeParameters)
 					&& Objects.equals(this.outerDeclaringType, other.outerDeclaringType);
 		} else {
@@ -232,7 +232,7 @@ public class ParsedMethod {
 	public int hashCode() {
 		return Objects.hash(this.methodType, this.topLevelTypeFqn, this.topLevelSimpleName, this.scope,
 				this.enclosingSimpleName, this.name, this.relevantCode, this.codeLines, this.codeColumn, this.empty,
-				this.argumentTypes, this.argumentCount, this.typeParameters, this.outerDeclaringType);
+				this.parameterTypes, this.parameterCount, this.typeParameters, this.outerDeclaringType);
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class ParsedMethod {
 				.append("name", this.name)
 				.append("relevantCode", ToStringBuilder.shorten(this.relevantCode.replaceAll("\\R", ""), 30))
 				.append("codeLines", this.codeLines).append("codeColumn", this.codeColumn).append("empty", this.empty)
-				.append("argumentTypes", this.argumentTypes).append("argumentCount", this.argumentCount)
+				.append("parameterTypes", this.parameterTypes).append("parameterCount", this.parameterCount)
 				.append("typeParameters", this.typeParameters).append("outerDeclaringType", this.outerDeclaringType)
 				.build();
 	}

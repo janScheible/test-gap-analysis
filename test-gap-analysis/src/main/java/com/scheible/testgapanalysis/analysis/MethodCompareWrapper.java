@@ -43,7 +43,7 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 			return true;
 		} else if (obj instanceof MethodCompareWrapper) {
 			MethodCompareWrapper otherWrapper = (MethodCompareWrapper) obj;
-			return Objects.equals(this.method.getArgumentTypes(), otherWrapper.method.getArgumentTypes())
+			return Objects.equals(this.method.getParameterTypes(), otherWrapper.method.getParameterTypes())
 					&& Objects.equals(this.method.getName(), otherWrapper.method.getName())
 					&& Objects.equals(this.method.getRelevantCode(), otherWrapper.method.getRelevantCode())
 					&& Objects.equals(this.method.getScope(), otherWrapper.method.getScope())
@@ -56,7 +56,7 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.method.getArgumentTypes(), this.method.getName(), this.method.getRelevantCode(),
+		return Objects.hash(this.method.getParameterTypes(), this.method.getName(), this.method.getRelevantCode(),
 				this.method.getScope(), this.method.getTopLevelTypeFqn(), this.method.getMethodType());
 	}
 

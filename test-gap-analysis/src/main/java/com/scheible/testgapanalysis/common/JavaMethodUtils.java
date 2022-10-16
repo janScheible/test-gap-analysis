@@ -32,15 +32,15 @@ public class JavaMethodUtils {
 	}
 
 	/**
-	 * Parses method description arguments (see chapter 4.3.3. in "The Java Virtual Machine Specification (2nd
+	 * Parses method parameter descriptor (see chapter 4.3.3. in "The Java Virtual Machine Specification (2nd
 	 * ed.)") and returns Java notations. Java notations means for example '.' separator between nested classes.
 	 */
-	public static List<String> parseDescriptorArguments(String descriptor) {
-		return parseArguments(descriptor).stream().map(JavaMethodUtils::convertType).collect(Collectors.toList());
+	public static List<String> convertParameterDescriptor(String descriptor) {
+		return parseParameters(descriptor).stream().map(JavaMethodUtils::convertType).collect(Collectors.toList());
 	}
 
-	static List<String> parseArguments(String descriptor) {
-		List<String> arguments = new ArrayList<>();
+	static List<String> parseParameters(String descriptor) {
+		List<String> parameterTypes = new ArrayList<>();
 
 		for (int i = descriptor.indexOf('(') + 1; i < descriptor.indexOf(')'); i++) {
 			String primitivePart = getNextPrimitivePart(descriptor, i);
@@ -56,18 +56,18 @@ public class JavaMethodUtils {
 			}
 
 			if (primitivePart != null) {
-				arguments.add(primitivePart);
+				parameterTypes.add(primitivePart);
 
 				if (primitivePart.length() > 1) {
 					i += primitivePart.length() - 1;
 				}
 			} else if (classPart != null) {
-				arguments.add(classPart);
+				parameterTypes.add(classPart);
 				i += classPart.length();
 			}
 		}
 
-		return arguments;
+		return parameterTypes;
 	}
 
 	static String convertType(String type) {
@@ -126,27 +126,27 @@ public class JavaMethodUtils {
 	 * returned and generic type parameters (enclosed by '<' and '>') are stripped of. If the remaining type is
 	 * one of the passed type parameters it is replaced with 'Object'.
 	 */
-	public static List<String> normalizeMethodArguments(Collection<String> arguments,
+	public static List<String> normalizeMethodParameters(Collection<String> parameters,
 			Map<String, String> typeParameters) {
-		return normalizeMethodArguments(arguments).stream().map(at -> {
+		return normalizeMethodParameters(parameters).stream().map(at -> {
 			String name = removeArrayBrackets(at);
 			String type = typeParameters.get(name);
 			return type != null ? type + (at.contains("[") ? at.substring(at.indexOf('[')) : "") : at;
 		}).collect(Collectors.toList());
 	}
 
-	private static List<String> normalizeMethodArguments(Collection<String> arguments) {
-		return arguments.stream().map(JavaMethodUtils::normalizeArgument).collect(Collectors.toList());
+	private static List<String> normalizeMethodParameters(Collection<String> parameters) {
+		return parameters.stream().map(JavaMethodUtils::normalizeParameter).collect(Collectors.toList());
 	}
 
 	private static String removeArrayBrackets(String type) {
 		return type.replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
-	private static String normalizeArgument(String argument) {
-		String withoutGenerics = argument.contains("<")
-				? argument.substring(0, argument.indexOf('<')) + argument.substring(argument.lastIndexOf('>') + 1)
-				: argument;
+	private static String normalizeParameter(String paramter) {
+		String withoutGenerics = paramter.contains("<")
+				? paramter.substring(0, paramter.indexOf('<')) + paramter.substring(paramter.lastIndexOf('>') + 1)
+				: paramter;
 		return withoutGenerics.contains(".")
 				? withoutGenerics.substring(withoutGenerics.lastIndexOf('.') + 1)
 				: withoutGenerics;

@@ -23,7 +23,7 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 		assertThat(resolve(SimpleMethod.class, METHOD)).isUnambiguouslyResolved();
 	}
 
-	public static class MultiLineArgumentsMethod {
+	public static class MultiLineParametersMethod {
 
 		public void doIt(String value, //
 				boolean flag) {
@@ -32,7 +32,7 @@ public class MethodIntegrationTests extends AbstractIntegrationTest {
 	}
 
 	@Test
-	public void testMultiLineArgumentsMethod() throws Exception {
-		assertThat(resolve(MultiLineArgumentsMethod.class, METHOD)).isUnambiguouslyResolved();
+	public void testMultiLineParametersMethod() throws Exception {
+		assertThat(resolve(MultiLineParametersMethod.class, METHOD)).isUnambiguouslyResolved();
 	}
 }
