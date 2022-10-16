@@ -17,8 +17,8 @@ import com.scheible.testgapanalysis.git.GitChangeSet;
 import com.scheible.testgapanalysis.git.GitRepoChangeScanner;
 import com.scheible.testgapanalysis.git.GitRepoChangeScanner.PreviousType;
 import com.scheible.testgapanalysis.git.GitRepoState;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -41,7 +41,7 @@ public class TestGapAnalysis {
 	public TestGapReport run(File workDir, File sourceDir, Set<File> jaCoCoReportFiles,
 			Optional<String> referenceCommitHash, Optional<String> previousBranchRegEx,
 			Optional<String> previousTagRegEx) {
-		Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
+		Set<InstrumentedMethod> instrumentedMethods = this.jaCoCoReportParser.getInstrumentedMethods(jaCoCoReportFiles);
 
 		Path sourceDirAsPath = FilesUtils.toCanonical(sourceDir).toPath();
 
@@ -71,7 +71,7 @@ public class TestGapAnalysis {
 						change.isCreation() ? State.NEW : State.CHANGED))
 				.collect(Collectors.toSet());
 
-		CoverageResult coverageResult = performTestGapAnalysis(changeSet, coverageInfo);
+		CoverageResult coverageResult = performTestGapAnalysis(changeSet, instrumentedMethods);
 
 		return TestGapReport.builder().setWorkDir(sourceDir.getAbsolutePath())
 				.setPreviousState(changeSet.getPreviousState().getValue())
@@ -79,14 +79,14 @@ public class TestGapAnalysis {
 						? null
 						: changeSet.getCurrentState().getValue()))
 				.setJaCoCoReportFiles(FilesUtils.toRelative(workDir, jaCoCoReportFiles))
-				.setJaCoCoCoverageCount(coverageInfo.size()).setNewOrChangedFiles(newOrChangedFiles)
+				.setJaCoCoCoverageCount(instrumentedMethods.size()).setNewOrChangedFiles(newOrChangedFiles)
 				.setCoveredMethods(coverageResult.coveredMethods).setUncoveredMethods(coverageResult.uncoveredMethods)
 				.setEmptyMethods(coverageResult.emptyMethods).setUnresolvableMethods(coverageResult.unresolvableMethods)
 				.setAmbiguouslyResolvedCoverage(coverageResult.ambiguouslyResolvedCoverage).build();
 	}
 
-	private CoverageResult performTestGapAnalysis(GitChangeSet changeSet, Set<MethodWithCoverageInfo> coverageInfo) {
-		AnalysisResult result = this.analysis.perform(changeSet, coverageInfo);
+	private CoverageResult performTestGapAnalysis(GitChangeSet changeSet, Set<InstrumentedMethod> instrumentedMethods) {
+		AnalysisResult result = this.analysis.perform(changeSet, instrumentedMethods);
 
 		return new CoverageResult(toTestGapMethods(result.getCoveredMethods()),
 				toTestGapMethods(result.getUncoveredMethods()), toTestGapMethods(result.getEmptyMethods()),
@@ -94,8 +94,8 @@ public class TestGapAnalysis {
 				toAmbigouslyResolvedTestGapMethod(result.getAmbiguouslyResolvedCoverage()));
 	}
 
-	private static Set<TestGapMethod> toTestGapMethods(Map<ParsedMethod, MethodWithCoverageInfo> methodsWithCoverage) {
-		return methodsWithCoverage.entrySet().stream().map(mwc -> toTestGapMethod(mwc.getKey(), mwc.getValue()))
+	private static Set<TestGapMethod> toTestGapMethods(Map<ParsedMethod, InstrumentedMethod> coveredMethods) {
+		return coveredMethods.entrySet().stream().map(mwc -> toTestGapMethod(mwc.getKey(), mwc.getValue()))
 				.collect(Collectors.toSet());
 	}
 
@@ -103,7 +103,7 @@ public class TestGapAnalysis {
 		return methodsOnly.stream().map(m -> toTestGapMethod(m, null)).collect(Collectors.toSet());
 	}
 
-	private static TestGapMethod toTestGapMethod(ParsedMethod method, MethodWithCoverageInfo coverage) {
+	private static TestGapMethod toTestGapMethod(ParsedMethod method, InstrumentedMethod coverage) {
 		return coverage == null
 				? new TestGapMethod(method.getTopLevelTypeFqn(), method.getDescription(), method.getFirstCodeLine(),
 						method.getCodeColumn())
@@ -112,7 +112,7 @@ public class TestGapAnalysis {
 	}
 
 	private static Map<CoverageReportMethod, Set<TestGapMethod>> toAmbigouslyResolvedTestGapMethod(
-			Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+			Map<InstrumentedMethod, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		return ambiguouslyResolvedCoverage.entrySet().stream()
 				.map(e -> new SimpleImmutableEntry<>(
 						new CoverageReportMethod(e.getKey().getName(), e.getKey().getLine()),

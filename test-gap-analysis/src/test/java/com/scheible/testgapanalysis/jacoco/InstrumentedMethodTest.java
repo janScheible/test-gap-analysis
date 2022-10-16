@@ -12,27 +12,26 @@ import org.junit.jupiter.api.Test;
  *
  * @author sj
  */
-public class MethodWithCoverageInfoTest {
+public class InstrumentedMethodTest {
 
 	@Test
 	public void testMerge() {
-		assertThat(MethodWithCoverageInfo
-				.merge(Arrays.asList(new MethodWithCoverageInfo("className", "name", "desc", 42, 1),
-						new MethodWithCoverageInfo("className", "name", "desc", 42, 2))))
-								.isEqualTo(new MethodWithCoverageInfo("className", "name", "desc", 42, 3));
+		assertThat(InstrumentedMethod.merge(Arrays.asList(new InstrumentedMethod("className", "name", "desc", 42, 1),
+				new InstrumentedMethod("className", "name", "desc", 42, 2))))
+						.isEqualTo(new InstrumentedMethod("className", "name", "desc", 42, 3));
 	}
 
 	@Test
 	public void testMergeEmptySet() {
-		assertThatThrownBy(() -> MethodWithCoverageInfo.merge(Collections.emptySet()))
+		assertThatThrownBy(() -> InstrumentedMethod.merge(Collections.emptySet()))
 				.isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Can't merge a empty set");
 	}
 
 	@Test
 	public void testMergeWithDifferentMethods() {
-		assertThatThrownBy(() -> MethodWithCoverageInfo.merge(Arrays.asList( //
-				new MethodWithCoverageInfo("className", "firstName", "desc", 42, 1),
-				new MethodWithCoverageInfo("className", "secondName", "desc", 42, 2))))
+		assertThatThrownBy(() -> InstrumentedMethod.merge(Arrays.asList( //
+				new InstrumentedMethod("className", "firstName", "desc", 42, 1),
+				new InstrumentedMethod("className", "secondName", "desc", 42, 2))))
 						.isInstanceOf(IllegalArgumentException.class)
 						.hasMessageContaining("can't be merged because they refer to different methods");
 	}
@@ -54,7 +53,7 @@ public class MethodWithCoverageInfoTest {
 				.isEqualTo("InnerStatic");
 	}
 
-	private static MethodWithCoverageInfo withClassName(String className) {
-		return new MethodWithCoverageInfo(className, "name", "", 0, 0);
+	private static InstrumentedMethod withClassName(String className) {
+		return new InstrumentedMethod(className, "name", "", 0, 0);
 	}
 }

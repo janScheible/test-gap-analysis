@@ -10,7 +10,7 @@ import java.util.Set;
 import com.scheible.testgapanalysis.common.ToStringBuilder;
 import com.scheible.testgapanalysis.debug.DebugCoverageResolutionReportBuilder.BuilderImpl;
 import com.scheible.testgapanalysis.debug.DebugCoverageResolutionReportBuilder.CoverageInfoCountStep;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -23,11 +23,11 @@ public class DebugCoverageResolutionReport {
 	private final Set<String> jaCoCoReportFiles;
 	private final int javaFileCount;
 
-	private final Map<ParsedMethod, MethodWithCoverageInfo> resolved;
+	private final Map<ParsedMethod, InstrumentedMethod> resolved;
 	private final Set<ParsedMethod> empty;
 
 	private final Set<ParsedMethod> unresolved;
-	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
+	private final Map<InstrumentedMethod, Set<ParsedMethod>> ambiguousCoverage;
 
 	DebugCoverageResolutionReport(BuilderImpl builder) {
 		this.coverageInfoCount = builder.coverageInfoCount;
@@ -57,7 +57,7 @@ public class DebugCoverageResolutionReport {
 		return this.javaFileCount;
 	}
 
-	public Map<ParsedMethod, MethodWithCoverageInfo> getResolved() {
+	public Map<ParsedMethod, InstrumentedMethod> getResolved() {
 		return this.resolved;
 	}
 
@@ -69,7 +69,7 @@ public class DebugCoverageResolutionReport {
 		return this.unresolved;
 	}
 
-	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
+	public Map<InstrumentedMethod, Set<ParsedMethod>> getAmbiguousCoverage() {
 		return this.ambiguousCoverage;
 	}
 

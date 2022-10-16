@@ -13,7 +13,7 @@ import java.util.Map;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -101,20 +101,24 @@ public class InitializerIntegrationTests extends AbstractIntegrationTest {
 
 		// we don't know if the initalizers are resolved to the first or second constructor
 		assertThat(resolution.getResult().getResolvedMethods())
-				.is(anyOf(new Condition<Map<ParsedMethod, MethodWithCoverageInfo>>() {
+				.is(anyOf(new Condition<Map<ParsedMethod, InstrumentedMethod>>() {
 					@Override
-					public boolean matches(Map<ParsedMethod, MethodWithCoverageInfo> actual) {
+					public boolean matches(Map<ParsedMethod, InstrumentedMethod> actual) {
 						return actual.equals(coverageResult( //
-								resolved(resolution.getParsedMethods().get(0), resolution.getMethodCoverage().get(0)),
-								resolved(resolution.getParsedMethods().get(1), resolution.getMethodCoverage().get(0))));
+								resolved(resolution.getParsedMethods().get(0),
+										resolution.getInstrumentedMethods().get(0)),
+								resolved(resolution.getParsedMethods().get(1),
+										resolution.getInstrumentedMethods().get(0))));
 					}
 
-				}, new Condition<Map<ParsedMethod, MethodWithCoverageInfo>>() {
+				}, new Condition<Map<ParsedMethod, InstrumentedMethod>>() {
 					@Override
-					public boolean matches(Map<ParsedMethod, MethodWithCoverageInfo> actual) {
+					public boolean matches(Map<ParsedMethod, InstrumentedMethod> actual) {
 						return actual.equals(coverageResult( //
-								resolved(resolution.getParsedMethods().get(0), resolution.getMethodCoverage().get(1)),
-								resolved(resolution.getParsedMethods().get(1), resolution.getMethodCoverage().get(1))));
+								resolved(resolution.getParsedMethods().get(0),
+										resolution.getInstrumentedMethods().get(1)),
+								resolved(resolution.getParsedMethods().get(1),
+										resolution.getInstrumentedMethods().get(1))));
 					}
 				}));
 	}

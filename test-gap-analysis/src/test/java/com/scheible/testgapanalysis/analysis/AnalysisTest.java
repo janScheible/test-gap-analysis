@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.scheible.testgapanalysis.git.FileChange;
 import com.scheible.testgapanalysis.git.GitChangeSet;
 import com.scheible.testgapanalysis.git.GitRepoState;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.JavaParser;
 
 /**
@@ -31,12 +31,12 @@ public class AnalysisTest {
 						Optional.of("package test; public class Changed { private void done() { \"\".trim(); }}"),
 						Optional.of("package test; public class Changed { private void done() { \"\".size(); }}"))));
 
-		Set<MethodWithCoverageInfo> coverageInfo = new HashSet<>(
-				Arrays.asList(new MethodWithCoverageInfo("test.Added", "doIt", "", 1, 1),
-						new MethodWithCoverageInfo("test.Changed", "done", "", 1, 0)));
+		Set<InstrumentedMethod> instrumentedMethods = new HashSet<>(
+				Arrays.asList(new InstrumentedMethod("test.Added", "doIt", "", 1, 1),
+						new InstrumentedMethod("test.Changed", "done", "", 1, 0)));
 
 		Analysis analysis = new Analysis(new JavaParser());
-		AnalysisResult result = analysis.perform(changeSet, coverageInfo);
+		AnalysisResult result = analysis.perform(changeSet, instrumentedMethods);
 		assertThat(
 				result.getUncoveredMethods().keySet().stream().map(pm -> pm.getTopLevelTypeFqn() + "#" + pm.getName()))
 						.containsOnly("test.Changed#done");

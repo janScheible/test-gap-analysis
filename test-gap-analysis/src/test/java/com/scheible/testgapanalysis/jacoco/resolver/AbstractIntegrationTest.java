@@ -32,8 +32,8 @@ import org.jacoco.core.runtime.RuntimeData;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.xml.XMLFormatter;
 
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod.MethodType;
 
@@ -106,15 +106,15 @@ public abstract class AbstractIntegrationTest {
 	public static class CoverageResolution {
 
 		private final List<ParsedMethod> parsedMethods;
-		private final List<MethodWithCoverageInfo> methodCoverage;
+		private final List<InstrumentedMethod> instrumentedMethods;
 		private final CoverageResult result;
 
-		private CoverageResolution(Set<ParsedMethod> parsedMethods, Set<MethodWithCoverageInfo> methodCoverage,
+		private CoverageResolution(Set<ParsedMethod> parsedMethods, Set<InstrumentedMethod> instrumentedMethods,
 				CoverageResult result) {
 			this.parsedMethods = parsedMethods.stream().sorted(Comparator.comparing(ParsedMethod::getCodeColumn))
 					.collect(Collectors.toList());
-			this.methodCoverage = methodCoverage.stream().sorted(Comparator.comparing(MethodWithCoverageInfo::getLine))
-					.collect(Collectors.toList());
+			this.instrumentedMethods = instrumentedMethods.stream()
+					.sorted(Comparator.comparing(InstrumentedMethod::getLine)).collect(Collectors.toList());
 			this.result = result;
 		}
 
@@ -122,12 +122,12 @@ public abstract class AbstractIntegrationTest {
 			return parsedMethods;
 		}
 
-		public List<MethodWithCoverageInfo> getMethodCoverage() {
-			return methodCoverage;
+		public List<InstrumentedMethod> getInstrumentedMethods() {
+			return instrumentedMethods;
 		}
 
-		public List<MethodWithCoverageInfo> getCoveredMethods() {
-			return methodCoverage.stream().filter(mwci -> mwci.getCoveredInstructionCount() > 0)
+		public List<InstrumentedMethod> getCoveredMethods() {
+			return instrumentedMethods.stream().filter(mwci -> mwci.getCoveredInstructionCount() > 0)
 					.collect(Collectors.toList());
 		}
 
@@ -206,10 +206,10 @@ public abstract class AbstractIntegrationTest {
 
 		String xmlOutput = getCoverageReportXml(sessionInfos, executionData, coverageBuilder);
 		JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
-		Set<MethodWithCoverageInfo> methodCoverage = jaCoCoReportParser.getMethodCoverage(xmlOutput);
+		Set<InstrumentedMethod> instrumentedMethods = jaCoCoReportParser.getInstrumentedMethods(xmlOutput);
 
-		return new CoverageResolution(parsedMethods, methodCoverage,
-				CoverageResolver.with(methodCoverage).resolve(parsedMethods));
+		return new CoverageResolution(parsedMethods, instrumentedMethods,
+				CoverageResolver.with(instrumentedMethods).resolve(parsedMethods));
 	}
 
 	private String getCoverageReportXml(SessionInfoStore sessionInfos, ExecutionDataStore executionData,
@@ -230,17 +230,17 @@ public abstract class AbstractIntegrationTest {
 		return getClass().getResourceAsStream(resourceName);
 	}
 
-	protected static Entry<ParsedMethod, MethodWithCoverageInfo> resolved(ParsedMethod method,
-			MethodWithCoverageInfo coverage) {
+	protected static Entry<ParsedMethod, InstrumentedMethod> resolved(ParsedMethod method,
+			InstrumentedMethod coverage) {
 		return new SimpleImmutableEntry<>(method, coverage);
 	}
 
 	@SafeVarargs
-	protected static Map<ParsedMethod, MethodWithCoverageInfo> coverageResult(
-			Entry<ParsedMethod, MethodWithCoverageInfo>... entries) {
-		Map<ParsedMethod, MethodWithCoverageInfo> result = new HashMap<>();
+	protected static Map<ParsedMethod, InstrumentedMethod> coverageResult(
+			Entry<ParsedMethod, InstrumentedMethod>... entries) {
+		Map<ParsedMethod, InstrumentedMethod> result = new HashMap<>();
 
-		for (Entry<ParsedMethod, MethodWithCoverageInfo> entry : entries) {
+		for (Entry<ParsedMethod, InstrumentedMethod> entry : entries) {
 			result.put(entry.getKey(), entry.getValue());
 		}
 

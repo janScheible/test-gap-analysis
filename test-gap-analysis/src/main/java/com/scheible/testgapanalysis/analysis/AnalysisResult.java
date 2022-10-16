@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.scheible.testgapanalysis.common.ToStringBuilder;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -17,17 +17,17 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class AnalysisResult {
 
-	private final Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods;
-	private final Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods;
+	private final Map<ParsedMethod, InstrumentedMethod> coveredMethods;
+	private final Map<ParsedMethod, InstrumentedMethod> uncoveredMethods;
 
 	private final Set<ParsedMethod> emptyMethods;
 	private final Set<ParsedMethod> unresolvableMethods;
-	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage;
+	private final Map<InstrumentedMethod, Set<ParsedMethod>> ambiguouslyResolvedCoverage;
 
-	public AnalysisResult(Map<ParsedMethod, MethodWithCoverageInfo> coveredMethods,
-			Map<ParsedMethod, MethodWithCoverageInfo> uncoveredMethods, Set<ParsedMethod> emptyMethods,
+	public AnalysisResult(Map<ParsedMethod, InstrumentedMethod> coveredMethods,
+			Map<ParsedMethod, InstrumentedMethod> uncoveredMethods, Set<ParsedMethod> emptyMethods,
 			Set<ParsedMethod> unresolvableMethods,
-			Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
+			Map<InstrumentedMethod, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		this.coveredMethods = Collections.unmodifiableMap(new HashMap<>(coveredMethods));
 		this.uncoveredMethods = Collections.unmodifiableMap(new HashMap<>(uncoveredMethods));
 
@@ -36,11 +36,11 @@ public class AnalysisResult {
 		this.ambiguouslyResolvedCoverage = Collections.unmodifiableMap(new HashMap<>(ambiguouslyResolvedCoverage));
 	}
 
-	public Map<ParsedMethod, MethodWithCoverageInfo> getCoveredMethods() {
+	public Map<ParsedMethod, InstrumentedMethod> getCoveredMethods() {
 		return this.coveredMethods;
 	}
 
-	public Map<ParsedMethod, MethodWithCoverageInfo> getUncoveredMethods() {
+	public Map<ParsedMethod, InstrumentedMethod> getUncoveredMethods() {
 		return this.uncoveredMethods;
 	}
 
@@ -52,7 +52,7 @@ public class AnalysisResult {
 		return this.unresolvableMethods;
 	}
 
-	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguouslyResolvedCoverage() {
+	public Map<InstrumentedMethod, Set<ParsedMethod>> getAmbiguouslyResolvedCoverage() {
 		return this.ambiguouslyResolvedCoverage;
 	}
 

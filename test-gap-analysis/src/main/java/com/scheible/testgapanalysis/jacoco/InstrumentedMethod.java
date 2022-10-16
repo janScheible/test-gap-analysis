@@ -11,7 +11,7 @@ import com.scheible.testgapanalysis.common.ToStringBuilder;
  *
  * @author sj
  */
-public class MethodWithCoverageInfo {
+public class InstrumentedMethod {
 
 	private final String className;
 	private final String simpleClassName;
@@ -21,7 +21,7 @@ public class MethodWithCoverageInfo {
 	private final int line;
 	private final int coveredInstructionCount;
 
-	public MethodWithCoverageInfo(String className, String name, String description, int line,
+	public InstrumentedMethod(String className, String name, String description, int line,
 			int coveredInstructionCount) {
 		this.className = className;
 		this.simpleClassName = JavaMethodUtils.getSimpleName(className, "/");
@@ -32,7 +32,7 @@ public class MethodWithCoverageInfo {
 		this.coveredInstructionCount = coveredInstructionCount;
 	}
 
-	public static MethodWithCoverageInfo merge(Collection<MethodWithCoverageInfo> methods) {
+	public static InstrumentedMethod merge(Collection<InstrumentedMethod> methods) {
 		checkEmptyMergeCollection(methods);
 
 		String className = null;
@@ -42,7 +42,7 @@ public class MethodWithCoverageInfo {
 
 		int coveredInstructionCount = 0;
 
-		for (MethodWithCoverageInfo method : methods) {
+		for (InstrumentedMethod method : methods) {
 			if (className == null && name == null && description == null && line == null) {
 				className = method.getClassName();
 				name = method.getName();
@@ -62,10 +62,10 @@ public class MethodWithCoverageInfo {
 
 		}
 
-		return new MethodWithCoverageInfo(className, name, description, line, coveredInstructionCount);
+		return new InstrumentedMethod(className, name, description, line, coveredInstructionCount);
 	}
 
-	private static void checkEmptyMergeCollection(Collection<MethodWithCoverageInfo> methods) {
+	private static void checkEmptyMergeCollection(Collection<InstrumentedMethod> methods) {
 		if (methods.isEmpty()) {
 			throw new IllegalArgumentException("Can't merge a empty set of methods with coverage info!");
 		}
@@ -127,8 +127,8 @@ public class MethodWithCoverageInfo {
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
-		} else if (obj instanceof MethodWithCoverageInfo) {
-			MethodWithCoverageInfo other = (MethodWithCoverageInfo) obj;
+		} else if (obj instanceof InstrumentedMethod) {
+			InstrumentedMethod other = (InstrumentedMethod) obj;
 			return Objects.equals(this.className, other.className)
 					&& Objects.equals(this.simpleClassName, other.simpleClassName)
 					&& Objects.equals(this.enclosingSimpleName, other.enclosingSimpleName)

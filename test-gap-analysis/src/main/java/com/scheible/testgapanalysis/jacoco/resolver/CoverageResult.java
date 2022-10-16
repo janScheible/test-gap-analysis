@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.scheible.testgapanalysis.common.ToStringBuilder;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -19,15 +19,15 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  */
 public class CoverageResult {
 
-	private final Map<ParsedMethod, MethodWithCoverageInfo> resolvedMethods = new HashMap<>();
+	private final Map<ParsedMethod, InstrumentedMethod> resolvedMethods = new HashMap<>();
 	private final Set<ParsedMethod> emptyMethods = new HashSet<>();
 	private final Set<ParsedMethod> unresolvedMethods = new HashSet<>();
-	private final Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage = new HashMap<>();
+	private final Map<InstrumentedMethod, Set<ParsedMethod>> ambiguousCoverage = new HashMap<>();
 
 	public CoverageResult() {
 	}
 
-	public CoverageResult(Map<ParsedMethod, MethodWithCoverageInfo> resolved, Set<ParsedMethod> unresolved) {
+	public CoverageResult(Map<ParsedMethod, InstrumentedMethod> resolved, Set<ParsedMethod> unresolved) {
 		add(resolved, unresolved);
 	}
 
@@ -37,11 +37,11 @@ public class CoverageResult {
 		return result;
 	}
 
-	private void add(Map<ParsedMethod, MethodWithCoverageInfo> resolved, Set<ParsedMethod> unresolved) {
+	private void add(Map<ParsedMethod, InstrumentedMethod> resolved, Set<ParsedMethod> unresolved) {
 		this.resolvedMethods.putAll(resolved);
 		this.unresolvedMethods.addAll(unresolved);
 
-		for (Entry<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguouslyResolvedCoverage : findAmbiguouslyResolvedCoverage(
+		for (Entry<InstrumentedMethod, Set<ParsedMethod>> ambiguouslyResolvedCoverage : findAmbiguouslyResolvedCoverage(
 				this.resolvedMethods).entrySet()) {
 			ambiguouslyResolvedCoverage.getValue().stream().forEach(this.resolvedMethods::remove);
 
@@ -60,8 +60,8 @@ public class CoverageResult {
 	 * Creates a map of all methods that are ambiguously resolved (excluding (static) initializers). The reason
 	 * that (static) initalizers are ignored is their special handling. See {@code CoverageResolver} for details.
 	 */
-	private static Map<MethodWithCoverageInfo, Set<ParsedMethod>> findAmbiguouslyResolvedCoverage(
-			Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
+	private static Map<InstrumentedMethod, Set<ParsedMethod>> findAmbiguouslyResolvedCoverage(
+			Map<ParsedMethod, InstrumentedMethod> resolved) {
 		return resolved.entrySet().stream()
 				.filter(e -> !(e.getKey().isInitializer() || e.getKey().isStaticInitializer()))
 				.collect(Collectors.groupingBy(Entry::getValue)).entrySet().stream()
@@ -80,7 +80,7 @@ public class CoverageResult {
 				&& this.ambiguousCoverage.isEmpty();
 	}
 
-	public Map<ParsedMethod, MethodWithCoverageInfo> getResolvedMethods() {
+	public Map<ParsedMethod, InstrumentedMethod> getResolvedMethods() {
 		return Collections.unmodifiableMap(this.resolvedMethods);
 	}
 
@@ -92,7 +92,7 @@ public class CoverageResult {
 		return Collections.unmodifiableSet(this.unresolvedMethods);
 	}
 
-	public Map<MethodWithCoverageInfo, Set<ParsedMethod>> getAmbiguousCoverage() {
+	public Map<InstrumentedMethod, Set<ParsedMethod>> getAmbiguousCoverage() {
 		return Collections.unmodifiableMap(this.ambiguousCoverage);
 	}
 

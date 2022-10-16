@@ -13,7 +13,7 @@
 
 	<!-- Original JacoCo information should be preserved whilst a parsed representation for comparison is needed. -->
 	<Match>
-		<Class name="com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo" />
+		<Class name="com.scheible.testgapanalysis.jacoco.InstrumentedMethod" />
 		<Method name="getLambdaIndex" />
 		<Bug pattern="STT_STRING_PARSING_A_FIELD" />
 	</Match>

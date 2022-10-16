@@ -3,7 +3,7 @@ package com.scheible.testgapanalysis.jacoco.resolver;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -20,13 +20,13 @@ class TopLevelType {
 		this.fullQualifiedName = fullQualifiedName;
 	}
 
-	static TopLevelType of(ParsedMethod parsedMethod) {
-		return new TopLevelType(parsedMethod.getTopLevelTypeFqn());
+	static TopLevelType of(ParsedMethod method) {
+		return new TopLevelType(method.getTopLevelTypeFqn());
 	}
 
-	static TopLevelType of(MethodWithCoverageInfo methodWithCoverageInfo) {
+	static TopLevelType of(InstrumentedMethod method) {
 		// JaCoCo uses slashes instead of dots
-		String fullQualifiedName = methodWithCoverageInfo.getClassName().replaceAll(SLASH_PATTERN, ".");
+		String fullQualifiedName = method.getClassName().replaceAll(SLASH_PATTERN, ".");
 		// JaCoCo also uses dollar notation for nested classes
 		int dollarIndex = fullQualifiedName.indexOf('$');
 

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import com.scheible.testgapanalysis.git.FileChange;
 import com.scheible.testgapanalysis.git.GitChangeSet;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResult;
 import com.scheible.testgapanalysis.parser.JavaParser;
@@ -31,7 +31,7 @@ public class Analysis {
 		this.javaParser = javaParser;
 	}
 
-	public AnalysisResult perform(GitChangeSet changeSet, Set<MethodWithCoverageInfo> coverageInfo) {
+	public AnalysisResult perform(GitChangeSet changeSet, Set<InstrumentedMethod> instrumentedMethods) {
 		// all methods of new or changed files in the new state compared to the old state
 		Set<MethodCompareWrapper> previousStateMethods = changeSet.getChanges().stream()
 				.filter(change -> !change.isDeletion())
@@ -67,15 +67,15 @@ public class Analysis {
 		Set<MethodCompareWrapper> newOrChangedMethods = new HashSet<>(previousStateMethods);
 		newOrChangedMethods.removeAll(unchangedMethods);
 
-		CoverageResolver coverageResolver = CoverageResolver.with(coverageInfo);
+		CoverageResolver coverageResolver = CoverageResolver.with(instrumentedMethods);
 
 		CoverageResult coverageResult = coverageResolver.resolve(MethodCompareWrapper.unwrap(newOrChangedMethods));
 
-		Map<ParsedMethod, MethodWithCoverageInfo> uncoveredNewOrChangedMethods = coverageResult.getResolvedMethods()
+		Map<ParsedMethod, InstrumentedMethod> uncoveredNewOrChangedMethods = coverageResult.getResolvedMethods()
 				.entrySet().stream().filter(e -> e.getValue().getCoveredInstructionCount() == 0)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		Map<ParsedMethod, MethodWithCoverageInfo> coveredNewOrChangedMethods = new HashMap<>(
+		Map<ParsedMethod, InstrumentedMethod> coveredNewOrChangedMethods = new HashMap<>(
 				coverageResult.getResolvedMethods());
 		uncoveredNewOrChangedMethods.forEach(coveredNewOrChangedMethods::remove);
 

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 
 /**
  *
@@ -46,8 +46,8 @@ public class StaticInitializerIntegrationTests extends AbstractIntegrationTest {
 
 		assertThat(resolution).isUnambiguouslyResolved();
 
-		List<MethodWithCoverageInfo> staticInitializerCoverage = resolution.getMethodCoverage().stream()
-				.filter(MethodWithCoverageInfo::isStaticInitializer).collect(Collectors.toList());
+		List<InstrumentedMethod> staticInitializerCoverage = resolution.getInstrumentedMethods().stream()
+				.filter(InstrumentedMethod::isStaticInitializer).collect(Collectors.toList());
 		assertThat(staticInitializerCoverage).hasSize(1).first().matches(mwci -> mwci.isStaticInitializer());
 
 		assertThat(resolution.getResult().getResolvedMethods()).isEqualTo(coverageResult( //

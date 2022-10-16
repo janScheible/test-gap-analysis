@@ -39,19 +39,19 @@ import org.xml.sax.SAXException;
  */
 public class JaCoCoReportParser {
 
-	public Set<MethodWithCoverageInfo> getMethodCoverage(String reportXmlContent) {
-		return getMethodCoverage(new InputSource(new StringReader(reportXmlContent)));
+	public Set<InstrumentedMethod> getInstrumentedMethods(String reportXmlContent) {
+		return getInstrumentedMethods(new InputSource(new StringReader(reportXmlContent)));
 	}
 
-	public Set<MethodWithCoverageInfo> getMethodCoverage(File reportXmlFile) {
+	public Set<InstrumentedMethod> getInstrumentedMethods(File reportXmlFile) {
 		try (InputStream input = Files.newInputStream(reportXmlFile.toPath())) {
-			return getMethodCoverage(new InputSource(input));
+			return getInstrumentedMethods(new InputSource(input));
 		} catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}
 	}
 
-	private Set<MethodWithCoverageInfo> getMethodCoverage(InputSource inputSource) {
+	private Set<InstrumentedMethod> getInstrumentedMethods(InputSource inputSource) {
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -63,7 +63,7 @@ public class JaCoCoReportParser {
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "/report/package/class/method/counter[@type = 'INSTRUCTION']";
 
-			Set<MethodWithCoverageInfo> result = new HashSet<>(8);
+			Set<InstrumentedMethod> result = new HashSet<>(8);
 			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
@@ -77,7 +77,7 @@ public class JaCoCoReportParser {
 				String className = node.getParentNode().getParentNode().getAttributes().getNamedItem("name")
 						.getNodeValue();
 
-				result.add(new MethodWithCoverageInfo(className, methodName, methodDescription, methodLine,
+				result.add(new InstrumentedMethod(className, methodName, methodDescription, methodLine,
 						coveredInstructionCount));
 			}
 
@@ -92,17 +92,17 @@ public class JaCoCoReportParser {
 	 * report for unit and integration tests). This methods takes care of merging multiple entries for the same
 	 * method.
 	 */
-	public Set<MethodWithCoverageInfo> getMethodCoverage(Set<File> reportFiles) {
-		Map<String, Set<MethodWithCoverageInfo>> methods = new HashMap<>();
+	public Set<InstrumentedMethod> getInstrumentedMethods(Set<File> reportFiles) {
+		Map<String, Set<InstrumentedMethod>> methods = new HashMap<>();
 
 		for (File reportFile : reportFiles) {
-			for (MethodWithCoverageInfo method : getMethodCoverage(reportFile)) {
+			for (InstrumentedMethod method : getInstrumentedMethods(reportFile)) {
 				String key = method.getClassName() + method.getName() + method.getDescription() + method.getLine();
 				methods.computeIfAbsent(key, k -> new HashSet<>()).add(method);
 			}
 		}
 
-		return methods.entrySet().stream().map(Entry::getValue).map(MethodWithCoverageInfo::merge)
+		return methods.entrySet().stream().map(Entry::getValue).map(InstrumentedMethod::merge)
 				.collect(Collectors.toSet());
 	}
 

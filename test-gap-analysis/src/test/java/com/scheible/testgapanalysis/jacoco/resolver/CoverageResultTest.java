@@ -13,7 +13,7 @@ import java.util.Map;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Test;
 
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -25,7 +25,7 @@ public class CoverageResultTest {
 	private final ParsedMethod secondMethod = mock(ParsedMethod.class);
 	private final ParsedMethod firstMethod = mock(ParsedMethod.class);
 
-	private final MethodWithCoverageInfo coverageInfo = mock(MethodWithCoverageInfo.class);
+	private final InstrumentedMethod coverageInfo = mock(InstrumentedMethod.class);
 
 	@Test
 	public void testSingleResult() {
@@ -38,7 +38,7 @@ public class CoverageResultTest {
 
 	@Test
 	public void testFindAmbiguouslyResolvedSingleResult() {
-		Map<ParsedMethod, MethodWithCoverageInfo> resolved = new HashMap<>();
+		Map<ParsedMethod, InstrumentedMethod> resolved = new HashMap<>();
 		resolved.put(this.firstMethod, this.coverageInfo);
 		resolved.put(this.secondMethod, this.coverageInfo);
 

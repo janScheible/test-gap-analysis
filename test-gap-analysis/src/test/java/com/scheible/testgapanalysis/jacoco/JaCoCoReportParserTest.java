@@ -38,9 +38,9 @@ public class JaCoCoReportParserTest {
 	@Test
 	public void testMethodCoverage() {
 		JaCoCoReportParser jaCoCoReportParser = new JaCoCoReportParser();
-		assertThat(jaCoCoReportParser.getMethodCoverage(REPORT)).containsOnly( //
-				new MethodWithCoverageInfo("com/scheible/testgapanalysis/git/GitHelper", "<init>", "()V", 37, 0),
-				new MethodWithCoverageInfo("com/scheible/testgapanalysis/git/GitHelper", "open",
+		assertThat(jaCoCoReportParser.getInstrumentedMethods(REPORT)).containsOnly( //
+				new InstrumentedMethod("com/scheible/testgapanalysis/git/GitHelper", "<init>", "()V", 37, 0),
+				new InstrumentedMethod("com/scheible/testgapanalysis/git/GitHelper", "open",
 						"(Ljava/io/File;)Lorg/eclipse/jgit/lib/Repository;", 42, 12));
 	}
 

@@ -3,7 +3,7 @@ package com.scheible.testgapanalysis.debug;
 import java.util.Map;
 import java.util.Set;
 
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.parser.ParsedMethod;
 
 /**
@@ -32,7 +32,7 @@ public abstract class DebugCoverageResolutionReportBuilder {
 
 	public interface ResolvedStep {
 
-		EmptyStep setResolved(Map<ParsedMethod, MethodWithCoverageInfo> resolved);
+		EmptyStep setResolved(Map<ParsedMethod, InstrumentedMethod> resolved);
 	}
 
 	public interface EmptyStep {
@@ -47,7 +47,7 @@ public abstract class DebugCoverageResolutionReportBuilder {
 
 	public interface AmbiguousCoverageStep {
 
-		BuildStep setAmbiguousCoverage(Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage);
+		BuildStep setAmbiguousCoverage(Map<InstrumentedMethod, Set<ParsedMethod>> ambiguousCoverage);
 	}
 
 	public interface BuildStep {
@@ -69,10 +69,10 @@ public abstract class DebugCoverageResolutionReportBuilder {
 		int coverageInfoCount;
 		Set<String> jaCoCoReportFiles;
 		int javaFileCount;
-		Map<ParsedMethod, MethodWithCoverageInfo> resolved;
+		Map<ParsedMethod, InstrumentedMethod> resolved;
 		Set<ParsedMethod> empty;
 		Set<ParsedMethod> unresolved;
-		Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage;
+		Map<InstrumentedMethod, Set<ParsedMethod>> ambiguousCoverage;
 
 		BuilderImpl() {
 		}
@@ -96,7 +96,7 @@ public abstract class DebugCoverageResolutionReportBuilder {
 		}
 
 		@Override
-		public EmptyStep setResolved(Map<ParsedMethod, MethodWithCoverageInfo> resolved) {
+		public EmptyStep setResolved(Map<ParsedMethod, InstrumentedMethod> resolved) {
 			this.resolved = resolved;
 			return this;
 		}
@@ -114,7 +114,7 @@ public abstract class DebugCoverageResolutionReportBuilder {
 		}
 
 		@Override
-		public BuildStep setAmbiguousCoverage(Map<MethodWithCoverageInfo, Set<ParsedMethod>> ambiguousCoverage) {
+		public BuildStep setAmbiguousCoverage(Map<InstrumentedMethod, Set<ParsedMethod>> ambiguousCoverage) {
 			this.ambiguousCoverage = ambiguousCoverage;
 			return this;
 		}

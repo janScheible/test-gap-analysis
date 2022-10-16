@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.scheible.testgapanalysis.common.FilesUtils;
+import com.scheible.testgapanalysis.jacoco.InstrumentedMethod;
 import com.scheible.testgapanalysis.jacoco.JaCoCoReportParser;
-import com.scheible.testgapanalysis.jacoco.MethodWithCoverageInfo;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResolver;
 import com.scheible.testgapanalysis.jacoco.resolver.CoverageResult;
 import com.scheible.testgapanalysis.parser.JavaParser;
@@ -34,13 +34,13 @@ public class DebugCoverageResolution {
 	}
 
 	public DebugCoverageResolutionReport run(File workDir, File sourceDir, Set<File> jaCoCoReportFiles) {
-		Set<MethodWithCoverageInfo> coverageInfo = this.jaCoCoReportParser.getMethodCoverage(jaCoCoReportFiles);
+		Set<InstrumentedMethod> instrumentedMethods = this.jaCoCoReportParser.getInstrumentedMethods(jaCoCoReportFiles);
 		ParseResult parseResult = parseMethods(sourceDir);
 
-		CoverageResolver resolver = CoverageResolver.with(coverageInfo);
+		CoverageResolver resolver = CoverageResolver.with(instrumentedMethods);
 		CoverageResult result = resolver.resolve(parseResult.methods);
 
-		return DebugCoverageResolutionReport.builder().setCoverageInfoCount(coverageInfo.size())
+		return DebugCoverageResolutionReport.builder().setCoverageInfoCount(instrumentedMethods.size())
 				.setJaCoCoReportFiles(FilesUtils.toRelative(workDir, jaCoCoReportFiles))
 				.setJavaFileCount(parseResult.javaFileCount).setResolved(result.getResolvedMethods())
 				.setEmpty(result.getEmptyMethods()).setUnresolved(result.getUnresolvedMethods())
