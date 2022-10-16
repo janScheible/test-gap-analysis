@@ -12,7 +12,7 @@ import com.scheible.testgapanalysis.parser.ParsedMethod;
  *
  * @author sj
  */
-public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
+public class MethodCompareWrapper {
 
 	private final ParsedMethod method;
 
@@ -26,15 +26,6 @@ public class MethodCompareWrapper implements Comparable<MethodCompareWrapper> {
 
 	public static Set<ParsedMethod> unwrap(Set<MethodCompareWrapper> methodWrappers) {
 		return methodWrappers.stream().map(MethodCompareWrapper::getParsedMethod).collect(Collectors.toSet());
-	}
-
-	@Override
-	public int compareTo(MethodCompareWrapper other) {
-		if (this.method.getTopLevelTypeFqn().equals(other.method.getTopLevelTypeFqn())) {
-			return this.method.getName().compareTo(other.method.getName());
-		} else {
-			return this.method.getTopLevelTypeFqn().compareTo(other.method.getTopLevelTypeFqn());
-		}
 	}
 
 	@Override

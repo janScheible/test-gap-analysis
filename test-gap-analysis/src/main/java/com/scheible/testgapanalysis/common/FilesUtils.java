@@ -1,9 +1,7 @@
 package com.scheible.testgapanalysis.common;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,26 +21,6 @@ public abstract class FilesUtils {
 	private static final String BACKSLASH_PATTERN = "\\\\";
 
 	private FilesUtils() {
-	}
-
-	public static String readUtf8(Class<?> anchor, String name) {
-		return readUtf8(anchor.getResourceAsStream(name));
-	}
-
-	public static String readUtf8(InputStream inputStream) {
-		try (InputStream tryCatchInputStream = Objects.requireNonNull(inputStream)) {
-
-			ByteArrayOutputStream result = new ByteArrayOutputStream();
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = tryCatchInputStream.read(buffer)) != -1) {
-				result.write(buffer, 0, length);
-			}
-
-			return result.toString(UTF_8_CHARSET);
-		} catch (IOException ex) {
-			throw new UncheckedIOException(ex);
-		}
 	}
 
 	public static String readUtf8(File file) {
