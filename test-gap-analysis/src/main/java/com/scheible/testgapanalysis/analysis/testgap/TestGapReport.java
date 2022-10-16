@@ -21,8 +21,8 @@ public class TestGapReport {
 
 	private final String workDir;
 
-	private final String oldCommitHash;
-	private final Optional<String> newCommitHash;
+	private final String previousState;
+	private final Optional<String> currentState;
 	private final Boolean compareWithWorkingCopyChanges;
 
 	private final Set<String> jaCoCoReportFiles;
@@ -48,9 +48,9 @@ public class TestGapReport {
 	TestGapReport(BuilderImpl builder) {
 		this.workDir = builder.workDir;
 
-		this.oldCommitHash = builder.oldCommitHash;
-		this.newCommitHash = builder.newCommitHash;
-		this.compareWithWorkingCopyChanges = builder.newCommitHash.isPresent() ? null : Boolean.TRUE;
+		this.previousState = builder.previousState;
+		this.currentState = builder.currentState;
+		this.compareWithWorkingCopyChanges = builder.currentState.isPresent() ? null : Boolean.TRUE;
 
 		this.jaCoCoReportFiles = Collections.unmodifiableSet(new HashSet<>(builder.jaCoCoReportFiles));
 		this.jaCoCoCoverageCount = builder.jaCoCoCoverageCount;
@@ -84,12 +84,12 @@ public class TestGapReport {
 		return this.workDir;
 	}
 
-	public String getOldCommitHash() {
-		return this.oldCommitHash;
+	public String getPreviousState() {
+		return this.previousState;
 	}
 
-	public Optional<String> getNewCommitHash() {
-		return this.newCommitHash;
+	public Optional<String> getCurrentState() {
+		return this.currentState;
 	}
 
 	public Boolean getCompareWithWorkingCopyChanges() {
@@ -160,8 +160,8 @@ public class TestGapReport {
 		} else if (obj instanceof TestGapReport) {
 			TestGapReport other = (TestGapReport) obj;
 			return Objects.equals(this.workDir, other.workDir)
-					&& Objects.equals(this.oldCommitHash, other.oldCommitHash)
-					&& Objects.equals(this.newCommitHash, other.newCommitHash)
+					&& Objects.equals(this.previousState, other.previousState)
+					&& Objects.equals(this.currentState, other.currentState)
 					&& Objects.equals(this.compareWithWorkingCopyChanges, other.compareWithWorkingCopyChanges)
 					&& Objects.equals(this.jaCoCoReportFiles, other.jaCoCoReportFiles)
 					&& this.jaCoCoCoverageCount == other.jaCoCoCoverageCount
@@ -184,7 +184,7 @@ public class TestGapReport {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.workDir, this.oldCommitHash, this.newCommitHash, this.compareWithWorkingCopyChanges,
+		return Objects.hash(this.workDir, this.previousState, this.currentState, this.compareWithWorkingCopyChanges,
 				this.jaCoCoReportFiles, this.jaCoCoCoverageCount, this.newOrChangedFiles, this.coveredMethodsCount,
 				this.uncoveredMethodsCount, this.coverageRatio, this.emptyMethodsCount, this.unresolvableMethodsCount,
 				this.ambiguouslyResolvedCount, this.coveredMethods, this.uncoveredMethods, this.emptyMethods,
@@ -194,7 +194,7 @@ public class TestGapReport {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(getClass()).append("workDir", this.workDir)
-				.append("oldCommitHash", this.oldCommitHash).append("newCommitHash", this.newCommitHash)
+				.append("previousState", this.previousState).append("currentState", this.currentState)
 				.append("compareWithWorkingCopyChanges", this.compareWithWorkingCopyChanges)
 				.append("jaCoCoReportFiles", this.jaCoCoReportFiles)
 				.append("jaCoCoCoverageCount", this.jaCoCoCoverageCount)

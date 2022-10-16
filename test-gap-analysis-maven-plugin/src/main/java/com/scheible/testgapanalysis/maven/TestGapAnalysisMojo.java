@@ -62,8 +62,8 @@ public class TestGapAnalysisMojo extends AbstractTestGapMojo {
 					report.getJaCoCoReportFiles()));
 		}
 
-		String oldCommitHash = report.getOldCommitHash().substring(0, 7);
-		getLog().info(String.format("Comparing the %s", report.getNewCommitHash()
+		String oldCommitHash = report.getPreviousState().substring(0, 7);
+		getLog().info(String.format("Comparing the %s", report.getCurrentState()
 				.map(newCommitHash -> "repository head (" + newCommitHash.substring(0, 7)
 				+ ") with reference commit " + oldCommitHash + ".")
 				.orElseGet(() -> "working copy changes with the repository head (" + oldCommitHash + ").")));

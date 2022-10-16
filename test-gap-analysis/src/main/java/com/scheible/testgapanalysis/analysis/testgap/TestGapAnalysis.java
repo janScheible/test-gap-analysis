@@ -74,8 +74,8 @@ public class TestGapAnalysis {
 		CoverageResult coverageResult = performTestGapAnalysis(changeSet, coverageInfo);
 
 		return TestGapReport.builder().setWorkDir(sourceDir.getAbsolutePath())
-				.setOldCommitHash(changeSet.getPreviousState().getValue())
-				.setNewCommitHash(Optional.ofNullable(changeSet.getCurrentState().equals(GitRepoState.WORKING_TREE)
+				.setPreviousState(changeSet.getPreviousState().getValue())
+				.setCurrentState(Optional.ofNullable(changeSet.getCurrentState().equals(GitRepoState.WORKING_TREE)
 						? null
 						: changeSet.getCurrentState().getValue()))
 				.setJaCoCoReportFiles(FilesUtils.toRelative(workDir, jaCoCoReportFiles))

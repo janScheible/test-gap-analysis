@@ -15,17 +15,17 @@ public abstract class TestGapReportBuilder {
 
 	public interface WorkDirStep {
 
-		OldCommitHashStep setWorkDir(String workDir);
+		PreviousStateStep setWorkDir(String workDir);
 	}
 
-	public interface OldCommitHashStep {
+	public interface PreviousStateStep {
 
-		NewCommitHashStep setOldCommitHash(String oldCommitHash);
+		CurrentStateStep setPreviousState(String previousState);
 	}
 
-	public interface NewCommitHashStep {
+	public interface CurrentStateStep {
 
-		JaCoCoReportFilesStep setNewCommitHash(Optional<String> newCommitHash);
+		JaCoCoReportFilesStep setCurrentState(Optional<String> setCurrentState);
 	}
 
 	public interface JaCoCoReportFilesStep {
@@ -77,8 +77,8 @@ public abstract class TestGapReportBuilder {
 	static class BuilderImpl
 			implements
 				WorkDirStep,
-				OldCommitHashStep,
-				NewCommitHashStep,
+				PreviousStateStep,
+				CurrentStateStep,
 				JaCoCoReportFilesStep,
 				JaCoCoCoverageCountStep,
 				NewOrChangedFilesStep,
@@ -90,8 +90,8 @@ public abstract class TestGapReportBuilder {
 				BuildStep {
 
 		String workDir;
-		String oldCommitHash;
-		Optional<String> newCommitHash;
+		String previousState;
+		Optional<String> currentState;
 		Set<String> jaCoCoReportFiles;
 		int jaCoCoCoverageCount;
 		Set<NewOrChangedFile> newOrChangedFiles;
@@ -105,20 +105,20 @@ public abstract class TestGapReportBuilder {
 		}
 
 		@Override
-		public OldCommitHashStep setWorkDir(String workDir) {
+		public PreviousStateStep setWorkDir(String workDir) {
 			this.workDir = workDir;
 			return this;
 		}
 
 		@Override
-		public NewCommitHashStep setOldCommitHash(String oldCommitHash) {
-			this.oldCommitHash = oldCommitHash;
+		public CurrentStateStep setPreviousState(String previousState) {
+			this.previousState = previousState;
 			return this;
 		}
 
 		@Override
-		public JaCoCoReportFilesStep setNewCommitHash(Optional<String> newCommitHash) {
-			this.newCommitHash = newCommitHash;
+		public JaCoCoReportFilesStep setCurrentState(Optional<String> currentState) {
+			this.currentState = currentState;
 			return this;
 		}
 
