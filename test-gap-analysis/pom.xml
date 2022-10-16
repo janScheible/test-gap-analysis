@@ -41,8 +41,8 @@
 		<mockito-core.version>4.5.1</mockito-core.version>
 
 		<maven-compiler-plugin>3.10.1</maven-compiler-plugin>
-		<maven-failsafe-plugin.verion>3.0.0-M6</maven-failsafe-plugin.verion>
-		<maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.verion>3.0.0-M7</maven-failsafe-plugin.verion>
+		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>

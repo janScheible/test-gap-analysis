@@ -12,8 +12,8 @@ import com.scheible.testgapanalysis.parser.ParserSubModule;
  *
  * @author sj
  */
-@SubModule(uses = {JaCoCoSubModule.class, JaCoCoResolverSubModule.class, GitSubModule.class, ParserSubModule.class,
-		Slf4j.class, CommonSubModule.class})
+@SubModule(includeSubPackages = false, uses = {JaCoCoSubModule.class, JaCoCoResolverSubModule.class, GitSubModule.class,
+		ParserSubModule.class, Slf4j.class, CommonSubModule.class})
 public class AnalysisSubModule {
 
 }
