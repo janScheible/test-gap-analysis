@@ -10,12 +10,18 @@ import com.scheible.testgapanalysis.common.ToStringBuilder;
  */
 public class CoverageReportMethod {
 
+	private final String coveredClassName;
 	private final String coveredMethodName;
 	private final int coveredMethodLine;
 
-	public CoverageReportMethod(String coveredMethodName, int coveredMethodLine) {
+	public CoverageReportMethod(String coveredClassName, String coveredMethodName, int coveredMethodLine) {
+		this.coveredClassName = coveredClassName;
 		this.coveredMethodName = coveredMethodName;
 		this.coveredMethodLine = coveredMethodLine;
+	}
+
+	public String getCoveredClassName() {
+		return this.coveredClassName;
 	}
 
 	public String getCoveredMethodName() {
@@ -32,7 +38,8 @@ public class CoverageReportMethod {
 			return true;
 		} else if (obj instanceof CoverageReportMethod) {
 			CoverageReportMethod other = (CoverageReportMethod) obj;
-			return Objects.equals(this.coveredMethodName, other.coveredMethodName)
+			return Objects.equals(this.coveredClassName, other.coveredClassName)
+					&& Objects.equals(this.coveredMethodName, other.coveredMethodName)
 					&& this.coveredMethodLine == other.coveredMethodLine;
 		} else {
 			return false;
@@ -41,12 +48,13 @@ public class CoverageReportMethod {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.coveredMethodName, this.coveredMethodLine);
+		return Objects.hash(this.coveredClassName, this.coveredMethodName, this.coveredMethodLine);
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(getClass()).append("coveredMethodName", this.coveredMethodName)
-				.append("coveredMethodLine", this.coveredMethodLine).build();
+		return new ToStringBuilder(getClass()).append("coveredClassName", this.coveredClassName)
+				.append("coveredMethodName", this.coveredMethodName).append("coveredMethodLine", this.coveredMethodLine)
+				.build();
 	}
 }

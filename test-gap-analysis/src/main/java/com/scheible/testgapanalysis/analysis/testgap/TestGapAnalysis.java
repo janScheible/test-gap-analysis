@@ -115,7 +115,7 @@ public class TestGapAnalysis {
 			Map<InstrumentedMethod, Set<ParsedMethod>> ambiguouslyResolvedCoverage) {
 		return ambiguouslyResolvedCoverage.entrySet().stream()
 				.map(e -> new SimpleImmutableEntry<>(
-						new CoverageReportMethod(e.getKey().getName(), e.getKey().getLine()),
+						new CoverageReportMethod(e.getKey().getClassName(), e.getKey().getName(), e.getKey().getLine()),
 						toTestGapMethods(e.getValue())))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}

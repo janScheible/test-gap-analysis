@@ -1,6 +1,7 @@
 package com.scheible.testgapanalysis.maven;
 
 import java.io.File;
+import java.util.stream.Collectors;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,7 +19,7 @@ public class JaCoCoReportCleanerMojo extends AbstractTestGapMojo {
 		if (this.buildDir.exists()) {
 			getLog().info(String.format("Deleting all JaCoCo reports in: %s", this.buildDir));
 
-			for (File file : findRelevantJaCoCoReportFiles()) {
+			for (File file : findRelevantJaCoCoReportFiles().stream().sorted().collect(Collectors.toList())) {
 				if (file.delete()) {
 					getLog().info(String.format("Deleted %s.", file));
 				} else {
