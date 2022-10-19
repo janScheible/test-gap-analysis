@@ -55,7 +55,7 @@ public class DebugCoverageResolution {
 					.collect(Collectors.toSet());
 
 			Set<ParsedMethod> methods = javaFiles.stream()
-					.flatMap(f -> this.javaParser.getMethods(FilesUtils.readUtf8(f)).stream())
+					.flatMap(f -> this.javaParser.getMethods(FilesUtils.readUtf8(f), f.getAbsolutePath()).stream())
 					.collect(Collectors.toSet());
 
 			return new ParseResult(methods, javaFiles.size());

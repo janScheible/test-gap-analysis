@@ -45,7 +45,8 @@ public class TestClassSourceJavaParser {
 
 		ClassWithSource classWithSource = readJavaTestSource(testClass);
 		JavaParser javaParser = new JavaParser();
-		Set<ParsedMethod> parsedMethods = javaParser.getMethods(classWithSource.source).stream()
+		Set<ParsedMethod> parsedMethods = javaParser
+				.getMethods(classWithSource.source, classWithSource.testClass.getSimpleName()).stream()
 				.filter(m -> (!m.getScope().isEmpty() && m.getScope().get(0).equals(testClass.getSimpleName()))
 						|| classWithSource.testClass.equals(classWithSource.topLevelClass))
 				.filter(m -> filterTypesSet.contains(m.getMethodType())).collect(Collectors.toSet());

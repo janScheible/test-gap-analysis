@@ -132,14 +132,14 @@ public class JavaParserTest {
 
 	@Test
 	public void testRecordParsing() {
-		// records require Java 16, test-gap source code is Java 8 --> parse from string
+		// records requires Java 16, test-gap source code is Java 8 --> parse from string
 		assertThat(new JavaParser().getMethods("class Foo<J> {\n" + //
 				"	record TestRecord<T>(String value) { \n" + //
 				"		TestRecord(T val) {\n" + //
 				"			this(null);\n" + //
 				"		}\n" + //
 				"	}\n" + //
-				"}")).first().satisfies(pm -> {
+				"}", "path")).first().satisfies(pm -> {
 					assertThat(pm.getScope()).containsOnly("TestRecord");
 					assertThat(pm.getTypeParameters()).contains(entry("T", "Object"));
 				});
