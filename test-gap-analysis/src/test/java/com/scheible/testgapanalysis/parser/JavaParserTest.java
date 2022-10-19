@@ -145,6 +145,34 @@ public class JavaParserTest {
 				});
 	}
 
+	@Test
+	public void testEnhancedInstanceofParsing() {
+		// enhanced instanceof requires Java 16, test-gap source code is Java 8 --> parse from string
+		assertThat(new JavaParser().getMethods("class Test {\n" + //
+				"	void doIt() {\n" + //
+				"		Object object = \":-)\";\n" + //
+				"		if (object instanceof String string) {\n" + //
+				"		}\n" + //
+				"	}\n" + //
+				"}", "path")).first().satisfies(pm -> {
+					assertThat(pm.getName()).isEqualTo("doIt");
+				});
+	}
+
+	@Test
+	public void testEnhancedInstanceofWithFinalParsing() {
+		// enhanced instanceof requires Java 16, test-gap source code is Java 8 --> parse from string
+		assertThat(new JavaParser().getMethods("class Test {\n" + //
+				"	void doIt() {\n" + //
+				"		Object object = \":-)\";\n" + //
+				"		if (object instanceof final String string) {\n" + //
+				"		}\n" + //
+				"	}\n" + //
+				"}", "path")).first().satisfies(pm -> {
+					assertThat(pm.getName()).isEqualTo("doIt");
+				});
+	}
+
 	public static class MethodMasking { // #debug
 
 		public String doIt(String arg1, boolean isDebugMode) {

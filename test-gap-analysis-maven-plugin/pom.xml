@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.scheible.testgapanalysis</groupId>
 		<artifactId>test-gap-analysis-parent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.1</version>
 	</parent>
 
 	<groupId>com.scheible.testgapanalysis</groupId>
 	<artifactId>test-gap-analysis-maven-plugin</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 
 	<packaging>maven-plugin</packaging>
 	<name>com.scheible::test-gap-analysis maven-plugin</name>
@@ -21,7 +21,7 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<test-gap-analysis.version>1.2.1-SNAPSHOT</test-gap-analysis.version>
+		<test-gap-analysis.version>1.2.1</test-gap-analysis.version>
 	</properties>
 
 	<dependencies>

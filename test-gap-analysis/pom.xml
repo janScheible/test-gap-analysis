@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.scheible.testgapanalysis</groupId>
 		<artifactId>test-gap-analysis-parent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.1</version>
 	</parent>
 
 	<groupId>com.scheible.testgapanalysis</groupId>
 	<artifactId>test-gap-analysis</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 
 	<packaging>jar</packaging>
 	<name>com.scheible::test-gap-analysis library</name>
@@ -30,7 +30,7 @@
 		<zt-zip.version>1.15</zt-zip.version>
 
 		<jgit.version>5.13.1.202206130422-r</jgit.version>
-		<javaparser.version>3.24.2</javaparser.version>
+		<javaparser.version>3.24.4</javaparser.version>
 		<jaCoCo.version>0.8.8</jaCoCo.version>
 
 		<!-- NOTE Dependency versions alligned with Spring Boot 2.7.4 (as well spring-boot-maven-plugin version). -->

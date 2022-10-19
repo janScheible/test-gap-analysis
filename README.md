@@ -24,11 +24,11 @@ The code changes in a local Git working tree are inspected and not covered metho
 This is useful for local development iterations before pushing the changes to a remote repository and starting a CI build.
 
 ```DOS .bat
-mvn com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:clean-jacoco-reports^
+mvn com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:clean-jacoco-reports^
  jacoco:prepare-agent^
  surefire:test^
  jacoco:report^
- com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:perform
+ com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:perform
 ```
 
 By also adding `jacoco:prepare-agent-integration`, `failsafe:integration-test` and `jacoco:report-integration` integration tests are also considered (method coverages of all JaCoCo reports are merged).

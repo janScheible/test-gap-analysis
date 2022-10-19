@@ -220,22 +220,22 @@
 		<actionName>CUSTOM-Test Gap Analysis of Working Tree Changes</actionName>
 		<displayName>Test Gap Analysis of Working Tree Changes</displayName>
 		<goals>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:clean-jacoco-reports</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:clean-jacoco-reports</goal>
 			<goal>jacoco:prepare-agent</goal>
 			<goal>surefire:test</goal>
 			<goal>jacoco:report</goal>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:perform</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:perform</goal>
 		</goals>
 	</action>
 	<action>
 		<actionName>CUSTOM-Test Gap Analysis with Reference Commit</actionName>
 		<displayName>Test Gap Analysis with Reference Commit</displayName>
 		<goals>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:clean-jacoco-reports</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:clean-jacoco-reports</goal>
 			<goal>jacoco:prepare-agent</goal>
 			<goal>surefire:test</goal>
 			<goal>jacoco:report</goal>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:perform</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:perform</goal>
 		</goals>
 		<properties>
 			<test-gap-analysis.reference-commit-hash>30640f01d7c116ca0d75ce9285357e5a8053009e</test-gap-analysis.reference-commit-hash>
@@ -245,11 +245,11 @@
 		<actionName>CUSTOM-Test Gap Analysis with Previous Tag RegEx</actionName>
 		<displayName>Test Gap Analysis with Previous Tag RegEx</displayName>
 		<goals>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:clean-jacoco-reports</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:clean-jacoco-reports</goal>
 			<goal>jacoco:prepare-agent</goal>
 			<goal>surefire:test</goal>
 			<goal>jacoco:report</goal>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:perform</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:perform</goal>
 		</goals>
 		<properties>
 			<test-gap-analysis.previous-tag-regex>[0-9]+\.[0-9]+\.[0-9]+</test-gap-analysis.previous-tag-regex>
@@ -259,11 +259,11 @@
 		<actionName>CUSTOM-Debug Coverage Resolution</actionName>
 		<displayName>Debug Coverage Resolution</displayName>
 		<goals>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:clean-jacoco-reports</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:clean-jacoco-reports</goal>
 			<goal>jacoco:prepare-agent</goal>
 			<goal>surefire:test</goal>
 			<goal>jacoco:report</goal>
-			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1-SNAPSHOT:debug-coverage-resolution</goal>
+			<goal>com.scheible.testgapanalysis:test-gap-analysis-maven-plugin:1.2.1:debug-coverage-resolution</goal>
 		</goals>
 	</action>	
 </actions>
