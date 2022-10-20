@@ -35,7 +35,7 @@ public class JavaParser {
 
 		ParseResult<CompilationUnit> parserResult = javaParser.parse(code);
 		if (!parserResult.isSuccessful()) {
-			logger.error("Parsing methods of '{}' failed cause: {}", path, parserResult.getProblems().stream()
+			this.logger.error("Parsing methods of '{}' failed cause: {}", path, parserResult.getProblems().stream()
 					.map(Problem::getVerboseMessage).collect(Collectors.joining(", ")));
 			return Collections.emptySet();
 		}
