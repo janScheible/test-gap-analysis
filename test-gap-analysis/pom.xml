@@ -29,7 +29,7 @@
 		<checkstyle.version>9.3</checkstyle.version>
 		<zt-zip.version>1.15</zt-zip.version>
 
-		<jgit.version>5.13.1.202206130422-r</jgit.version>
+		<jgit.version>6.6.1.202309021850-r</jgit.version>
 		<javaparser.version>3.24.4</javaparser.version>
 		<jaCoCo.version>0.8.8</jaCoCo.version>
 
